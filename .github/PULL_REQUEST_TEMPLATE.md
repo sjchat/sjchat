@@ -1,11 +1,7 @@
-Issues:
-link to related github issues
+### Issues: #link to related github issues
 
-Reviewers:
-make sure to @mention your reviewers here!
-
-Test plan:
+### Test Plan
 describe how you have verified that your changes work
 
-Description:
+### Description
 describe what your changes do and why
