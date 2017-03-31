@@ -22,19 +22,19 @@ public class Message {
     this.id = id;
   }
 
-  public void setMessage(String message) {
-    this.message = message;
-  }
-
   public String getMessage() {
     return message;
   }
 
-  public void setUser(long user) {
-    this.user = user;
+  public void setMessage(String message) {
+    this.message = message;
   }
 
   public long getUser() {
     return user;
+  }
+
+  public void setUser(long user) {
+    this.user = user;
   }
 }
