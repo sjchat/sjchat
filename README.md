@@ -7,3 +7,4 @@
 (First setup the project by running maven)
 - Start the REST API server located in src/main/java/sjchat/backend/restapi/Application.java
 - Start the message service server located in src/main/java/sjchat/backend/messages/MessageServiceServer.java
+- Start the user service server located in src/main/java/sjchat/backend/users/UserServiceServer.java
