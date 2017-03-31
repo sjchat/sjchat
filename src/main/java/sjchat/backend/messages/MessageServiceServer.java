@@ -6,6 +6,7 @@ import java.util.Random;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import io.grpc.stub.StreamObserver;
+import sjchat.backend.users.User;
 
 public class MessageServiceServer {
   private Server server;
@@ -49,7 +50,7 @@ public class MessageServiceServer {
   private static Chat.Builder buildMockChat() {
     Random random = new Random();
     Chat.Builder chatBuilder = Chat.newBuilder();
-    chatBuilder.setId(random.nextInt());
+    chatBuilder.setId(Math.abs(random.nextInt(100)));
     chatBuilder.setTitle("Test chat " + chatBuilder.getId());
     return chatBuilder;
   }
@@ -57,7 +58,7 @@ public class MessageServiceServer {
   private static User.Builder buildMockUser() {
     Random random = new Random();
     User.Builder userBuilder = User.newBuilder();
-    userBuilder.setId(random.nextInt());
+    userBuilder.setId(Math.abs(random.nextInt(100)));
     userBuilder.setUsername("user_" + userBuilder.getId());
     return userBuilder;
   }
@@ -65,8 +66,9 @@ public class MessageServiceServer {
   private static Message.Builder buildMockMessage() {
     Random random = new Random();
     Message.Builder messageBuilder = Message.newBuilder();
-    messageBuilder.setId(random.nextInt());
+    messageBuilder.setId(Math.abs(random.nextInt(100)));
     messageBuilder.setMessage("Test message " + messageBuilder.getId());
+    messageBuilder.setUser(123);
     return messageBuilder;
   }
 
@@ -85,8 +87,8 @@ public class MessageServiceServer {
       chatListResponseBuilder.addChats(chatBuilder1);
 
       Chat.Builder chatBuilder2 = buildMockChat();
-      chatBuilder1.addUsers(userBuilder1);
-      chatBuilder1.addUsers(userBuilder2);
+      chatBuilder2.addUsers(userBuilder1);
+      chatBuilder2.addUsers(userBuilder2);
       chatListResponseBuilder.addChats(chatBuilder2);
 
       ChatListResponse chatResponse = chatListResponseBuilder.build();
@@ -115,7 +117,7 @@ public class MessageServiceServer {
       Random random = new Random();
 
       Chat.Builder chatBuilder = Chat.newBuilder();
-      chatBuilder.setId(random.nextInt());
+      chatBuilder.setId(Math.abs(random.nextInt(100)));
       chatBuilder.setTitle(req.getTitle());
       for (long userId : req.getUsersList()) {
         User.Builder userBuilder = User.newBuilder();
@@ -168,7 +170,7 @@ public class MessageServiceServer {
       Random random = new Random();
 
       Message.Builder messageBuilder = Message.newBuilder();
-      messageBuilder.setId(random.nextInt());
+      messageBuilder.setId(Math.abs(random.nextInt(100)));
       messageBuilder.setMessage(req.getMessage());
       messageBuilder.setUser(123);
 
