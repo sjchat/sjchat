@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.grpc.Channel;
+import io.grpc.ManagedChannelBuilder;
+import sjchat.backend.messages.MessageServiceGrpc;
 import sjchat.backend.restapi.entities.Chat;
 import sjchat.backend.restapi.entities.ChatRequest;
 import sjchat.backend.restapi.entities.Message;
@@ -86,14 +89,29 @@ public class ChatController {
           produces = "application/json")
   @ResponseBody
   public ResponseEntity<Chat> getChat(@PathVariable long chatId) {
-    //TODO: Fetch chat from message service
-    //TODO: Parse and response from message service
+    final MessageServiceGrpc.MessageServiceBlockingStub blockingStub = buildMessageServiceStub();
+
+    sjchat.backend.messages.ChatResponse response = blockingStub.getChat(sjchat.backend.messages.ChatRequest.newBuilder().setId(chatId).build());
+    sjchat.backend.messages.Chat responseChat = response.getChat();
 
     Chat chat = new Chat();
-    chat.setId(chatId);
-    chat.setTitle("Some chat");
+    chat.setId(responseChat.getId());
+    chat.setTitle(responseChat.getTitle());
+    List<sjchat.backend.messages.User> chatUsers = responseChat.getUsersList();
+    for (sjchat.backend.messages.User chatUser : chatUsers) {
+      User user = new User();
+      user.setId(chatUser.getId());
+      user.setUsername(chatUser.getUsername());
+      chat.addUser(user);
+    }
 
     return new ResponseEntity<>(chat, HttpStatus.OK);
+  }
+
+  private static MessageServiceGrpc.MessageServiceBlockingStub buildMessageServiceStub() {
+    Channel channel = ManagedChannelBuilder.forAddress("localhost", 50052).usePlaintext(true).build(); //TODO: Put port in config file
+    final MessageServiceGrpc.MessageServiceBlockingStub blockingStub = MessageServiceGrpc.newBlockingStub(channel);
+    return blockingStub;
   }
 
   @RequestMapping(
