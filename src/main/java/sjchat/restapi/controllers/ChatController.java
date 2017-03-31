@@ -15,22 +15,22 @@ import java.util.List;
 import io.grpc.Channel;
 import io.grpc.ManagedChannelBuilder;
 import sjchat.messages.ChatDataRequest;
-import sjchat.messages.MessageListRequest;
-import sjchat.messages.MessageServiceGrpc;
 import sjchat.messages.ChatListRequest;
 import sjchat.messages.ChatListResponse;
 import sjchat.messages.ChatResponse;
+import sjchat.messages.MessageListRequest;
 import sjchat.messages.MessageListResponse;
+import sjchat.messages.MessageResponse;
+import sjchat.messages.MessageServiceGrpc;
 import sjchat.messages.NewMessageRequest;
 import sjchat.restapi.entities.Chat;
 import sjchat.restapi.entities.ChatRequest;
 import sjchat.restapi.entities.Message;
 import sjchat.restapi.entities.User;
 import sjchat.users.UserDataRequest;
+import sjchat.users.UserRequest;
 import sjchat.users.UserResponse;
 import sjchat.users.UserServiceGrpc;
-import sjchat.messages.MessageResponse;
-import sjchat.users.UserRequest;
 
 @RestController
 public class ChatController {
@@ -165,7 +165,7 @@ public class ChatController {
           produces = "application/json")
   @ResponseBody
   public ResponseEntity<List<Message>> getMessagesList(@PathVariable long chatId) {
-   final MessageServiceGrpc.MessageServiceBlockingStub blockingStub = MessageServiceGrpc.newBlockingStub(messageServiceChannel);
+    final MessageServiceGrpc.MessageServiceBlockingStub blockingStub = MessageServiceGrpc.newBlockingStub(messageServiceChannel);
 
     ArrayList<Message> messageList = new ArrayList<>();
 
