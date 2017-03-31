@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package sjchat.messages;
 
+import "user-service.proto";
+
 option java_multiple_files = true;
 option java_package = "sjchat.backend.messages";
 option java_outer_classname = "MessageServiceProto";
@@ -55,12 +57,7 @@ message MessageResponse {
 message Chat {
     int64 id = 1;
     string title = 2;
-    repeated User users = 3;
-}
-
-message User {
-    int64 id = 1;
-    string username = 2;
+    repeated sjchat.users.User users = 3;
 }
 
 message Message {
