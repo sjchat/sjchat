@@ -11,7 +11,7 @@ service MessageService {
     rpc createChat(ChatDataRequest) returns (ChatResponse);
     rpc getChat(ChatRequest) returns (ChatResponse);
     rpc updateChat(ChatDataRequest) returns (ChatResponse);
-    rpc getMessages(MessagesRequest) returns (MessagesResponse);
+    rpc getMessages(MessageListRequest) returns (MessageListResponse);
     rpc sendMessage(NewMessageRequest) returns (MessageResponse);
 }
 
@@ -32,11 +32,11 @@ message ChatDataRequest {
     repeated int64 users = 3;
 }
 
-message MessagesRequest {
+message MessageListRequest {
     int64 chatId = 1;
 }
 
-message MessagesResponse {
+message MessageListResponse {
     repeated Message messages = 1;
 }
 
