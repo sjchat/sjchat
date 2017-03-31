@@ -22,6 +22,11 @@ import sjchat.backend.restapi.entities.User;
 
 @RestController
 public class ChatController {
+  private Channel messageServiceChannel;
+
+  public ChatController() {
+    messageServiceChannel = buildMessageServiceChannel();
+  }
 
   @RequestMapping(
           value = "/chat",
@@ -89,7 +94,7 @@ public class ChatController {
           produces = "application/json")
   @ResponseBody
   public ResponseEntity<Chat> getChat(@PathVariable long chatId) {
-    final MessageServiceGrpc.MessageServiceBlockingStub blockingStub = buildMessageServiceStub();
+    final MessageServiceGrpc.MessageServiceBlockingStub blockingStub = MessageServiceGrpc.newBlockingStub(messageServiceChannel);
 
     sjchat.backend.messages.ChatResponse response = blockingStub.getChat(sjchat.backend.messages.ChatRequest.newBuilder().setId(chatId).build());
     sjchat.backend.messages.Chat responseChat = response.getChat();
@@ -108,10 +113,8 @@ public class ChatController {
     return new ResponseEntity<>(chat, HttpStatus.OK);
   }
 
-  private static MessageServiceGrpc.MessageServiceBlockingStub buildMessageServiceStub() {
-    Channel channel = ManagedChannelBuilder.forAddress("localhost", 50052).usePlaintext(true).build(); //TODO: Put port in config file
-    final MessageServiceGrpc.MessageServiceBlockingStub blockingStub = MessageServiceGrpc.newBlockingStub(channel);
-    return blockingStub;
+  private static Channel buildMessageServiceChannel() {
+    return ManagedChannelBuilder.forAddress("localhost", 50052).usePlaintext(true).build(); //TODO: Put port in config file
   }
 
   @RequestMapping(
