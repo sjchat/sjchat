@@ -1,0 +1,70 @@
+syntax = "proto3";
+
+package sjchat.messages;
+
+option java_multiple_files = true;
+option java_package = "sjchat.backend.messages";
+option java_outer_classname = "MessageServiceProto";
+
+service MessageService {
+    rpc getChatList(ChatListRequest) returns (ChatListResponse);
+    rpc createChat(ChatDataRequest) returns (ChatResponse);
+    rpc getChat(ChatRequest) returns (ChatResponse);
+    rpc updateChat(ChatDataRequest) returns (ChatResponse);
+    rpc getMessages(MessagesRequest) returns (MessagesResponse);
+    rpc sendMessage(NewMessageRequest) returns (MessageResponse);
+}
+
+message ChatListRequest {
+}
+
+message ChatListResponse {
+    repeated Chat chats = 1;
+}
+
+message ChatRequest {
+    int64 id = 1;
+}
+
+message ChatDataRequest {
+    int64 id = 1;
+    string title = 2;
+    repeated int64 users = 3;
+}
+
+message MessagesRequest {
+    int64 chatId = 1;
+}
+
+message MessagesResponse {
+    repeated Message messages = 1;
+}
+
+message NewMessageRequest {
+    string message = 1;
+}
+
+message ChatResponse {
+    Chat chat = 1;
+}
+
+message MessageResponse {
+    Message message = 1;
+}
+
+message Chat {
+    int64 id = 1;
+    string title = 2;
+    repeated User users = 3;
+}
+
+message User {
+    int64 id = 1;
+    string username = 2;
+}
+
+message Message {
+    int64 id = 1;
+    string message = 2;
+    int64 user = 3;
+}
