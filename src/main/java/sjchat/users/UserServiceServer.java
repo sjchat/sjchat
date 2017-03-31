@@ -1,4 +1,4 @@
-package sjchat.backend.users;
+package sjchat.users;
 
 import java.io.IOException;
 import java.util.Random;
