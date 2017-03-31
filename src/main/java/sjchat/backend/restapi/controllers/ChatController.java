@@ -21,30 +21,35 @@ import sjchat.backend.restapi.entities.Chat;
 import sjchat.backend.restapi.entities.ChatRequest;
 import sjchat.backend.restapi.entities.Message;
 import sjchat.backend.restapi.entities.User;
+import sjchat.backend.users.UserDataRequest;
+import sjchat.backend.users.UserServiceGrpc;
 
 @RestController
 public class ChatController {
   private Channel messageServiceChannel;
+  private Channel userServiceChannel;
 
   public ChatController() {
     messageServiceChannel = buildMessageServiceChannel();
+    userServiceChannel = buildUserServiceChannel();
   }
 
   private static Channel buildMessageServiceChannel() {
     return ManagedChannelBuilder.forAddress("localhost", 50052).usePlaintext(true).build(); //TODO: Put port in config file
   }
 
+  private static Channel buildUserServiceChannel() {
+    return ManagedChannelBuilder.forAddress("localhost", 50051).usePlaintext(true).build(); //TODO: Put port in config file
+  }
 
   private static Chat buildChatFromResponse(sjchat.backend.messages.Chat responseChat) {
     Chat chat = new Chat();
     chat.setId(responseChat.getId());
     chat.setTitle(responseChat.getTitle());
 
-    List<sjchat.backend.messages.User> chatUsers = responseChat.getUsersList();
-    for (sjchat.backend.messages.User chatUser : chatUsers) {
-      User user = new User();
-      user.setId(chatUser.getId());
-      user.setUsername(chatUser.getUsername());
+    List<sjchat.backend.users.User> chatUsers = responseChat.getUsersList();
+    for (sjchat.backend.users.User chatUser : chatUsers) {
+      User user = buildUserFromResponse(chatUser);
       chat.addUser(user);
     }
 
@@ -58,6 +63,14 @@ public class ChatController {
     message.setUser(responseMessage.getUser());
 
     return message;
+  }
+
+  private static User buildUserFromResponse(sjchat.backend.users.User responseUser) {
+    User user = new User();
+    user.setId(responseUser.getId());
+    user.setUsername(responseUser.getUsername());
+
+    return user;
   }
 
   @RequestMapping(
@@ -174,5 +187,59 @@ public class ChatController {
     Message message = buildMessageFromResponse(responseMessage);
 
     return new ResponseEntity<>(message, HttpStatus.OK);
+  }
+
+  @RequestMapping(
+          value = "/user",
+          method = RequestMethod.POST,
+          produces = "application/json",
+          consumes = "application/json")
+  @ResponseBody
+  public ResponseEntity<User> createUser(@RequestBody User userRequest) {
+    final UserServiceGrpc.UserServiceBlockingStub blockingStub = UserServiceGrpc.newBlockingStub(userServiceChannel);
+
+    UserDataRequest.Builder userDataRequestBuilder = UserDataRequest.newBuilder();
+    userDataRequestBuilder.setUsername(userRequest.getUsername());
+
+    sjchat.backend.users.UserResponse response = blockingStub.createUser(userDataRequestBuilder.build());
+    sjchat.backend.users.User responseUser = response.getUser();
+    User user = buildUserFromResponse(responseUser);
+
+    return new ResponseEntity<>(user, HttpStatus.CREATED);
+  }
+
+  @RequestMapping(
+          value = "/user/{userId}",
+          method = RequestMethod.GET,
+          produces = "application/json")
+  @ResponseBody
+  public ResponseEntity<User> getUser(@PathVariable long userId) {
+    final UserServiceGrpc.UserServiceBlockingStub blockingStub = UserServiceGrpc.newBlockingStub(userServiceChannel);
+
+    sjchat.backend.users.UserResponse response = blockingStub.getUser(sjchat.backend.users.UserRequest.newBuilder().setId(userId).build());
+    sjchat.backend.users.User responseUser = response.getUser();
+    User user = buildUserFromResponse(responseUser);
+
+    return new ResponseEntity<>(user, HttpStatus.OK);
+  }
+
+  @RequestMapping(
+          value = "/user/{userId}",
+          method = RequestMethod.PUT,
+          produces = "application/json",
+          consumes = "application/json")
+  @ResponseBody
+  public ResponseEntity<User> updateUser(@PathVariable long userId, @RequestBody User userRequest) {
+    final UserServiceGrpc.UserServiceBlockingStub blockingStub = UserServiceGrpc.newBlockingStub(userServiceChannel);
+
+    UserDataRequest.Builder userDataRequestBuilder = UserDataRequest.newBuilder();
+    userDataRequestBuilder.setId(userId);
+    userDataRequestBuilder.setUsername(userRequest.getUsername());
+
+    sjchat.backend.users.UserResponse response = blockingStub.createUser(userDataRequestBuilder.build());
+    sjchat.backend.users.User responseUser = response.getUser();
+    User user = buildUserFromResponse(responseUser);
+
+    return new ResponseEntity<>(user, HttpStatus.OK);
   }
 }
