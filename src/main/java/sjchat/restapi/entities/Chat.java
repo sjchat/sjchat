@@ -1,4 +1,4 @@
-package sjchat.backend.restapi.entities;
+package sjchat.restapi.entities;
 
 import java.util.ArrayList;
 import java.util.List;

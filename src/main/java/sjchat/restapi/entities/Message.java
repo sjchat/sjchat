@@ -1,4 +1,4 @@
-package sjchat.backend.restapi.entities;
+package sjchat.restapi.entities;
 
 public class Message {
   private long id;
