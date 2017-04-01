@@ -77,7 +77,6 @@ Calculator calculator = ctx.getBean(Calculator.class);
 
       //If a user with this username already exists this function will throw.
       userDao.create(sjchat.restapi.entities.User.buildUser(userBuilder.build()));
-      //service.create(sjchat.restapi.entities.User.buildUser(userBuilder.build()));
 
       responseObserver.onNext(userResponse);
       responseObserver.onCompleted();
