@@ -19,7 +19,6 @@ public class MessageServiceServer {
   }
 
   private void start() throws IOException {
-    ;
     server = ServerBuilder.forPort(port).addService(new MessageService()).build().start();
     System.out.println("Server started, listening on " + port);
     Runtime.getRuntime().addShutdownHook(new Thread() {

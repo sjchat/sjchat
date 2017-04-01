@@ -1,7 +1,14 @@
 package sjchat.restapi.entities;
 
+import javax.persistence.*;
+
+@Entity
+@Table(name="users")
 public class User {
+  @Id
+  @GeneratedValue(strategy = GenerationType.AUTO)
   private long id;
+  @Column(name="username")
   private String username;
 
   public User() {
@@ -26,5 +33,9 @@ public class User {
 
   public void setUsername(String username) {
     this.username = username;
+  }
+
+  public static User buildUser(sjchat.users.User usr){
+    return new User(usr.getId(), usr.getUsername());
   }
 }
