@@ -1,0 +1,278 @@
+# Example YAML to get you started quickly.
+# Be aware that YAML has indentation based scoping.
+# Code completion support is available so start typing for available options.
+swagger: '2.0'
+
+# This is your document metadata
+info:
+  version: "0.1"
+  title: SJCHAT
+host: localhost:8080
+# Describe your paths here
+paths:
+  # This is a path endpoint. Change it.
+  /chat:
+    # This is a HTTP operation
+    get:
+      produces:
+        - application/json
+      # Describe this verb here. Note: you can use markdown
+      description: |
+        Gets a list of `Chat` objects.
+      # Expected responses for this operation:
+      responses:
+        # Response code
+        200:
+          description: Successful response
+          # A schema describing your response object.
+          # Use JSON Schema format
+          schema:
+            title: ArrayOfChats
+            type: array
+            items:
+              $ref: '#/definitions/Chat'
+    post:
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      # Describe this verb here. Note: you can use markdown
+      description: |
+        Creates a `Chat` object.
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/NewChat'
+      # Expected responses for this operation:
+      responses:
+        # Response code
+        201:
+          description: Successful creation response
+          # A schema describing your response object.
+          # Use JSON Schema format
+          schema:
+            $ref: '#/definitions/Chat'
+  /chat/{chatId}:
+    get:
+      produces:
+        - application/json
+      description: |
+        Gets a `Chat` object.
+      parameters:
+        - name: chatId
+          in: path
+          description: ID of chat to get
+          required: true
+          type: integer
+      responses:
+        # Response code
+        200:
+          description: Successful response
+          # A schema describing your response object.
+          # Use JSON Schema format
+          schema:
+            $ref: '#/definitions/Chat'
+        404:
+          description: No chat with that id
+    put:
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      description: |
+        Updates a `Chat` object.
+      parameters:
+        - name: chatId
+          in: path
+          description: ID of chat to update
+          required: true
+          type: integer
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/NewChat'
+      responses:
+        # Response code
+        200:
+          description: Successful response
+          # A schema describing your response object.
+          # Use JSON Schema format
+          schema:
+            $ref: '#/definitions/Chat'
+        404:
+          description: No chat with that id
+  /chat/{chatId}/message:
+    get:
+      produces:
+        - application/json
+      description: |
+        Gets a list of `Message` objects in the given chat.
+      parameters:
+        - name: chatId
+          in: path
+          description: ID of chat to get
+          required: true
+          type: integer
+      responses:
+        # Response code
+        200:
+          description: Successful response
+          # A schema describing your response object.
+          # Use JSON Schema format
+          schema:
+            title: ArrayOfMessages
+            type: array
+            items:
+              $ref: '#/definitions/Message'
+    post:
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      description: |
+        Creates a `Message` objects in the given chat.
+      parameters:
+        - name: chatId
+          in: path
+          description: ID of chat to get
+          required: true
+          type: integer
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/NewMessage'
+      responses:
+        # Response code
+        201:
+          description: Successful creation response
+          # A schema describing your response object.
+          # Use JSON Schema format
+          schema:
+            $ref: '#/definitions/Message'
+  /user:
+    post:
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      # Describe this verb here. Note: you can use markdown
+      description: |
+        Creates a `User` object.
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/NewUser'
+      # Expected responses for this operation:
+      responses:
+        # Response code
+        201:
+          description: Successful creation response
+          # A schema describing your response object.
+          # Use JSON Schema format
+          schema:
+            $ref: '#/definitions/User'
+  /user/{userId}:
+    get:
+      produces:
+        - application/json
+      description: |
+        Gets a `User` object.
+      parameters:
+        - name: userId
+          in: path
+          description: ID of user to get
+          required: true
+          type: integer
+      responses:
+        # Response code
+        200:
+          description: Successful response
+          # A schema describing your response object.
+          # Use JSON Schema format
+          schema:
+            $ref: '#/definitions/User'
+        404:
+          description: No chat with that id
+    put:
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      description: |
+        Updates a `User` object.
+      parameters:
+        - name: userId
+          in: path
+          description: ID of user to update
+          required: true
+          type: integer
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/NewUser'
+      responses:
+        # Response code
+        200:
+          description: Successful response
+          # A schema describing your response object.
+          # Use JSON Schema format
+          schema:
+            $ref: '#/definitions/User'
+        404:
+          description: No chat with that id
+definitions:
+  Chat:
+    type: object
+    properties:
+      id:
+        type: integer
+      title:
+        type: string
+      users:
+        title: ArrayOfUsers
+        type: array
+        items: 
+          $ref: '#/definitions/User'
+  User:
+    type: object
+    properties:
+      id:
+        type: integer
+      username:
+        type: string
+  NewChat:
+    type: object
+    properties:
+      title:
+        type: string
+      users:
+        title: ArrayOfUserIds
+        type: array
+        items: 
+          type: string
+  Message:
+    type: object
+    properties:
+      id:
+        type: integer
+      message:
+        type: string
+      user:
+        type: integer
+  NewMessage:
+    type: object
+    properties:
+      message:
+        type: string
+  NewUser:
+    type: object
+    properties:
+      username:
+        type: string
