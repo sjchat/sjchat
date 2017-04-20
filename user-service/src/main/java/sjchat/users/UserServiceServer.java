@@ -6,6 +6,10 @@ import java.util.Random;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import io.grpc.stub.StreamObserver;
+import sjchat.daos.UserDao;
+import sjchat.daos.UserDaoImpl;
+import sjchat.entities.UserEntity;
+import sjchat.exceptions.NoEntityExistsException;
 
 public class UserServiceServer {
   private Server server;
@@ -48,13 +52,22 @@ public class UserServiceServer {
 
   static class UserService extends UserServiceGrpc.UserServiceImplBase {
 
+    UserDao dao;
+    public UserService(){
+      super();
+      dao = new UserDaoImpl();
+    }
+
     @Override
     public void createUser(UserDataRequest req, StreamObserver<UserResponse> responseObserver) {
       Random random = new Random();
 
+      UserEntity entity = new UserEntity(Math.abs(random.nextInt(100)), req.getUsername());
+      dao.create(entity);
+
       User.Builder userBuilder = User.newBuilder();
-      userBuilder.setId(Math.abs(random.nextInt(100)));
       userBuilder.setUsername(req.getUsername());
+      userBuilder.setId(entity.getId());
 
       UserResponse userResponse = UserResponse.newBuilder().setUser(userBuilder).build();
 
@@ -64,9 +77,13 @@ public class UserServiceServer {
 
     @Override
     public void getUser(UserRequest req, StreamObserver<UserResponse> responseObserver) {
+      UserEntity gotten = dao.findById(req.getId());
+      if(gotten == null){
+        responseObserver.onError(new NoUserExistsException());
+      }
       User.Builder userBuilder = User.newBuilder();
-      userBuilder.setId(req.getId());
-      userBuilder.setUsername("user_" + req.getId());
+      userBuilder.setId(gotten.getId());
+      userBuilder.setUsername(gotten.getUsername());
 
       UserResponse userResponse = UserResponse.newBuilder().setUser(userBuilder).build();
 
@@ -80,10 +97,24 @@ public class UserServiceServer {
       userBuilder.setId(req.getId());
       userBuilder.setUsername(req.getUsername());
 
+      UserEntity updated = new UserEntity(req.getId(), req.getUsername());
+      try{
+        dao.update(updated);
+      }catch(NoEntityExistsException e){
+        responseObserver.onError(new NoEntityExistsException());
+      }
+
       UserResponse userResponse = UserResponse.newBuilder().setUser(userBuilder).build();
 
       responseObserver.onNext(userResponse);
       responseObserver.onCompleted();
     }
+    public UserEntity buildUserEntity(UserDataRequest req){
+      return new UserEntity(req.getId(), req.getUsername());
+    }
+
+    public class NoUserExistsException extends Exception{}
   }
+
+
 }
