@@ -196,7 +196,7 @@ public class ChatController {
 
     return new ResponseEntity<>(message, HttpStatus.OK);
   }
-
+  
   @RequestMapping(
           value = "/user",
           method = RequestMethod.POST,
