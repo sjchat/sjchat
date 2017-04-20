@@ -45,6 +45,17 @@
     </extensions>
     <plugins>
       <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>1.2.1</version>
+        <configuration>
+          <mainClass>sjchat.messages.MessageServiceServer</mainClass>
+          <arguments>
+            <argument>Dspring.profiles.active=rest-api</argument>
+          </arguments>
+        </configuration>
+      </plugin>
+      <plugin>
         <groupId>org.xolstice.maven.plugins</groupId>
         <artifactId>protobuf-maven-plugin</artifactId>
         <version>0.5.0</version>
