@@ -36,5 +36,4 @@ public class UserEntity {
   public void setUsername(String username) {
     this.username = username;
   }
-
 }
