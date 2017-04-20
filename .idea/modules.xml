@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/database-service/database.iml" filepath="$PROJECT_DIR$/database-service/database.iml" />
+      <module fileurl="file://$PROJECT_DIR$/message-service/messages.iml" filepath="$PROJECT_DIR$/message-service/messages.iml" />
+      <module fileurl="file://$PROJECT_DIR$/restapi/restapi.iml" filepath="$PROJECT_DIR$/restapi/restapi.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/sjchat.iml" filepath="$PROJECT_DIR$/.idea/sjchat.iml" />
+      <module fileurl="file://$PROJECT_DIR$/user-service/users.iml" filepath="$PROJECT_DIR$/user-service/users.iml" />
+    </modules>
+  </component>
+</project>
