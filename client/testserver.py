@@ -1,6 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+# Den här koden är tagen direkt från internet och används i testsyfte.
+
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from http.server import SimpleHTTPRequestHandler
 
