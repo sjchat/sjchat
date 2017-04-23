@@ -21,7 +21,7 @@ public class UserDaoImpl extends DaoImpl implements UserDao{
         }
     }
 
-    public UserEntity findById(long id){
+    public UserEntity findById(String id){
         return em.find(UserEntity.class, id);
     }
 }

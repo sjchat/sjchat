@@ -7,7 +7,7 @@ import javax.persistence.*;
 public class UserEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
-  private long id;
+  private String id;
   @Column(name="username")
   private String username;
   private String password;
@@ -15,16 +15,16 @@ public class UserEntity {
   public UserEntity() {
   }
 
-  public UserEntity(long id, String username) {
+  public UserEntity(String id, String username) {
     this.id = id;
     this.username = username;
   }
 
-  public long getId() {
+  public String getId() {
     return id;
   }
 
-  public void setId(long id) {
+  public void setId(String id) {
     this.id = id;
   }
 
@@ -36,7 +36,4 @@ public class UserEntity {
     this.username = username;
   }
 
-  /*public static UserEntity buildUser(sjchat.users.UserEntity usr){
-    return new UserEntity(usr.getId(), usr.getUsername());
-  }*/
 }
