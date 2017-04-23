@@ -10,7 +10,7 @@ import org.springframework.context.annotation.ComponentScan;
 import javax.security.auth.message.config.AuthConfigFactory;
 
 @SpringBootApplication(exclude = {MongoAutoConfiguration.class, MongoDataAutoConfiguration.class})
- public class Application {
+public class Application {
 
   public static void main(String[] args) {
     if (AuthConfigFactory.getFactory() == null) {
