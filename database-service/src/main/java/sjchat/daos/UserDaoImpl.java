@@ -18,9 +18,8 @@ public class UserDaoImpl extends DaoImpl implements UserDao {
     List<UserEntity> users = q.getResultList();
     if (users == null || users.isEmpty()) {
       return null;
-    } else {
-      return users.get(0);
     }
+    return users.get(0);
   }
 
   public UserEntity findById(String id) {
