@@ -34,6 +34,7 @@ import sjchat.users.UserServiceGrpc;
 
 @RestController
 public class ChatController {
+
   private Channel messageServiceChannel;
   private Channel userServiceChannel;
 
@@ -43,11 +44,13 @@ public class ChatController {
   }
 
   private static Channel buildMessageServiceChannel() {
-    return ManagedChannelBuilder.forAddress("localhost", 50052).usePlaintext(true).build(); //TODO: Put port in config file
+    return ManagedChannelBuilder.forAddress("localhost", 50052).usePlaintext(true)
+        .build(); //TODO: Put port in config file
   }
 
   private static Channel buildUserServiceChannel() {
-    return ManagedChannelBuilder.forAddress("localhost", 50051).usePlaintext(true).build(); //TODO: Put port in config file
+    return ManagedChannelBuilder.forAddress("localhost", 50051).usePlaintext(true)
+        .build(); //TODO: Put port in config file
   }
 
   private static Chat buildChatFromResponse(sjchat.messages.Chat responseChat) {
@@ -82,12 +85,13 @@ public class ChatController {
   }
 
   @RequestMapping(
-          value = "/chat",
-          method = RequestMethod.GET,
-          produces = "application/json")
+      value = "/chat",
+      method = RequestMethod.GET,
+      produces = "application/json")
   @ResponseBody
   public ResponseEntity<List<Chat>> getChatList() {
-    final MessageServiceGrpc.MessageServiceBlockingStub blockingStub = MessageServiceGrpc.newBlockingStub(messageServiceChannel);
+    final MessageServiceGrpc.MessageServiceBlockingStub blockingStub = MessageServiceGrpc
+        .newBlockingStub(messageServiceChannel);
 
     ArrayList<Chat> chatList = new ArrayList<>();
 
@@ -101,13 +105,14 @@ public class ChatController {
   }
 
   @RequestMapping(
-          value = "/chat",
-          method = RequestMethod.POST,
-          produces = "application/json",
-          consumes = "application/json")
+      value = "/chat",
+      method = RequestMethod.POST,
+      produces = "application/json",
+      consumes = "application/json")
   @ResponseBody
   public ResponseEntity<Chat> createChat(@RequestBody ChatRequest chatRequest) {
-    final MessageServiceGrpc.MessageServiceBlockingStub blockingStub = MessageServiceGrpc.newBlockingStub(messageServiceChannel);
+    final MessageServiceGrpc.MessageServiceBlockingStub blockingStub = MessageServiceGrpc
+        .newBlockingStub(messageServiceChannel);
 
     ChatDataRequest.Builder chatDataRequestBuilder = ChatDataRequest.newBuilder();
     chatDataRequestBuilder.setTitle(chatRequest.getTitle());
@@ -123,27 +128,31 @@ public class ChatController {
   }
 
   @RequestMapping(
-          value = "/chat/{chatId}",
-          method = RequestMethod.GET,
-          produces = "application/json")
+      value = "/chat/{chatId}",
+      method = RequestMethod.GET,
+      produces = "application/json")
   @ResponseBody
   public ResponseEntity<Chat> getChat(@PathVariable long chatId) {
-    final MessageServiceGrpc.MessageServiceBlockingStub blockingStub = MessageServiceGrpc.newBlockingStub(messageServiceChannel);
+    final MessageServiceGrpc.MessageServiceBlockingStub blockingStub = MessageServiceGrpc
+        .newBlockingStub(messageServiceChannel);
 
-    ChatResponse response = blockingStub.getChat(sjchat.messages.ChatRequest.newBuilder().setId(chatId).build());
+    ChatResponse response = blockingStub
+        .getChat(sjchat.messages.ChatRequest.newBuilder().setId(chatId).build());
     sjchat.messages.Chat responseChat = response.getChat();
     Chat chat = buildChatFromResponse(responseChat);
     return new ResponseEntity<>(chat, HttpStatus.OK);
   }
 
   @RequestMapping(
-          value = "/chat/{chatId}",
-          method = RequestMethod.PUT,
-          produces = "application/json",
-          consumes = "application/json")
+      value = "/chat/{chatId}",
+      method = RequestMethod.PUT,
+      produces = "application/json",
+      consumes = "application/json")
   @ResponseBody
-  public ResponseEntity<Chat> updateChat(@PathVariable long chatId, @RequestBody ChatRequest chatRequest) {
-    final MessageServiceGrpc.MessageServiceBlockingStub blockingStub = MessageServiceGrpc.newBlockingStub(messageServiceChannel);
+  public ResponseEntity<Chat> updateChat(@PathVariable long chatId,
+      @RequestBody ChatRequest chatRequest) {
+    final MessageServiceGrpc.MessageServiceBlockingStub blockingStub = MessageServiceGrpc
+        .newBlockingStub(messageServiceChannel);
 
     ChatDataRequest.Builder chatDataRequestBuilder = ChatDataRequest.newBuilder();
     chatDataRequestBuilder.setId(chatId);
@@ -160,16 +169,18 @@ public class ChatController {
   }
 
   @RequestMapping(
-          value = "/chat/{chatId}/message",
-          method = RequestMethod.GET,
-          produces = "application/json")
+      value = "/chat/{chatId}/message",
+      method = RequestMethod.GET,
+      produces = "application/json")
   @ResponseBody
   public ResponseEntity<List<Message>> getMessagesList(@PathVariable long chatId) {
-    final MessageServiceGrpc.MessageServiceBlockingStub blockingStub = MessageServiceGrpc.newBlockingStub(messageServiceChannel);
+    final MessageServiceGrpc.MessageServiceBlockingStub blockingStub = MessageServiceGrpc
+        .newBlockingStub(messageServiceChannel);
 
     ArrayList<Message> messageList = new ArrayList<>();
 
-    MessageListResponse response = blockingStub.getMessages(MessageListRequest.newBuilder().setChatId(chatId).build());
+    MessageListResponse response = blockingStub
+        .getMessages(MessageListRequest.newBuilder().setChatId(chatId).build());
     for (sjchat.messages.Message responseMessage : response.getMessagesList()) {
       Message message = buildMessageFromResponse(responseMessage);
       messageList.add(message);
@@ -179,13 +190,15 @@ public class ChatController {
   }
 
   @RequestMapping(
-          value = "/chat/{chatId}/message",
-          method = RequestMethod.POST,
-          produces = "application/json",
-          consumes = "application/json")
+      value = "/chat/{chatId}/message",
+      method = RequestMethod.POST,
+      produces = "application/json",
+      consumes = "application/json")
   @ResponseBody
-  public ResponseEntity<Message> createMessage(@PathVariable long chatId, @RequestBody Message messageRequest) {
-    final MessageServiceGrpc.MessageServiceBlockingStub blockingStub = MessageServiceGrpc.newBlockingStub(messageServiceChannel);
+  public ResponseEntity<Message> createMessage(@PathVariable long chatId,
+      @RequestBody Message messageRequest) {
+    final MessageServiceGrpc.MessageServiceBlockingStub blockingStub = MessageServiceGrpc
+        .newBlockingStub(messageServiceChannel);
 
     NewMessageRequest.Builder messageRequestBuilder = NewMessageRequest.newBuilder();
     messageRequestBuilder.setMessage(messageRequest.getMessage());
@@ -196,15 +209,16 @@ public class ChatController {
 
     return new ResponseEntity<>(message, HttpStatus.OK);
   }
-  
+
   @RequestMapping(
-          value = "/user",
-          method = RequestMethod.POST,
-          produces = "application/json",
-          consumes = "application/json")
+      value = "/user",
+      method = RequestMethod.POST,
+      produces = "application/json",
+      consumes = "application/json")
   @ResponseBody
   public ResponseEntity<User> createUser(@RequestBody User userRequest) {
-    final UserServiceGrpc.UserServiceBlockingStub blockingStub = UserServiceGrpc.newBlockingStub(userServiceChannel);
+    final UserServiceGrpc.UserServiceBlockingStub blockingStub = UserServiceGrpc
+        .newBlockingStub(userServiceChannel);
 
     UserDataRequest.Builder userDataRequestBuilder = UserDataRequest.newBuilder();
     userDataRequestBuilder.setUsername(userRequest.getUsername());
@@ -217,12 +231,13 @@ public class ChatController {
   }
 
   @RequestMapping(
-          value = "/user/{userId}",
-          method = RequestMethod.GET,
-          produces = "application/json")
+      value = "/user/{userId}",
+      method = RequestMethod.GET,
+      produces = "application/json")
   @ResponseBody
   public ResponseEntity<User> getUser(@PathVariable String userId) {
-    final UserServiceGrpc.UserServiceBlockingStub blockingStub = UserServiceGrpc.newBlockingStub(userServiceChannel);
+    final UserServiceGrpc.UserServiceBlockingStub blockingStub = UserServiceGrpc
+        .newBlockingStub(userServiceChannel);
 
     UserResponse response = blockingStub.getUser(UserRequest.newBuilder().setId(userId).build());
     sjchat.users.User responseUser = response.getUser();
@@ -232,13 +247,15 @@ public class ChatController {
   }
 
   @RequestMapping(
-          value = "/user/{userId}",
-          method = RequestMethod.PUT,
-          produces = "application/json",
-          consumes = "application/json")
+      value = "/user/{userId}",
+      method = RequestMethod.PUT,
+      produces = "application/json",
+      consumes = "application/json")
   @ResponseBody
-  public ResponseEntity<User> updateUser(@PathVariable String userId, @RequestBody User userRequest) {
-    final UserServiceGrpc.UserServiceBlockingStub blockingStub = UserServiceGrpc.newBlockingStub(userServiceChannel);
+  public ResponseEntity<User> updateUser(@PathVariable String userId,
+      @RequestBody User userRequest) {
+    final UserServiceGrpc.UserServiceBlockingStub blockingStub = UserServiceGrpc
+        .newBlockingStub(userServiceChannel);
 
     UserDataRequest.Builder userDataRequestBuilder = UserDataRequest.newBuilder();
     userDataRequestBuilder.setId(userId);

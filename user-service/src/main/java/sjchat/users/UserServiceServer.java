@@ -12,6 +12,7 @@ import sjchat.entities.UserEntity;
 import sjchat.exceptions.NoEntityExistsException;
 
 public class UserServiceServer {
+
   private Server server;
   private int port = 50051;
 
@@ -53,7 +54,8 @@ public class UserServiceServer {
   static class UserService extends UserServiceGrpc.UserServiceImplBase {
 
     UserDao dao;
-    public UserService(){
+
+    public UserService() {
       super();
       dao = new UserDaoImpl();
     }
@@ -76,7 +78,7 @@ public class UserServiceServer {
     @Override
     public void getUser(UserRequest req, StreamObserver<UserResponse> responseObserver) {
       UserEntity gotten = dao.findById(req.getId());
-      if(gotten == null){
+      if (gotten == null) {
         responseObserver.onError(new NoUserExistsException());
       }
       User.Builder userBuilder = User.newBuilder();
@@ -96,9 +98,9 @@ public class UserServiceServer {
       userBuilder.setUsername(req.getUsername());
 
       UserEntity updated = new UserEntity(req.getId(), req.getUsername());
-      try{
+      try {
         dao.update(updated);
-      }catch(NoEntityExistsException e){
+      } catch (NoEntityExistsException e) {
         responseObserver.onError(new NoEntityExistsException());
       }
 
@@ -107,11 +109,14 @@ public class UserServiceServer {
       responseObserver.onNext(userResponse);
       responseObserver.onCompleted();
     }
-    public UserEntity buildUserEntity(UserDataRequest req){
+
+    public UserEntity buildUserEntity(UserDataRequest req) {
       return new UserEntity(req.getId(), req.getUsername());
     }
 
-    public class NoUserExistsException extends Exception{}
+    public class NoUserExistsException extends Exception {
+
+    }
   }
 
 

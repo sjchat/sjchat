@@ -3,12 +3,13 @@ package sjchat.entities;
 import javax.persistence.*;
 
 @Entity
-@Table(name="users")
+@Table(name = "users")
 public class UserEntity {
+
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   private String id;
-  @Column(name="username")
+  @Column(name = "username")
   private String username;
   private String password;
 

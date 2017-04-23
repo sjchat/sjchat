@@ -9,6 +9,7 @@ import io.grpc.stub.StreamObserver;
 import sjchat.users.User;
 
 public class MessageServiceServer {
+
   private Server server;
   private int port = 50052;
 
@@ -74,7 +75,8 @@ public class MessageServiceServer {
   static class MessageService extends MessageServiceGrpc.MessageServiceImplBase {
 
     @Override
-    public void getChatList(ChatListRequest req, StreamObserver<ChatListResponse> responseObserver) {
+    public void getChatList(ChatListRequest req,
+        StreamObserver<ChatListResponse> responseObserver) {
       ChatListResponse.Builder chatListResponseBuilder = ChatListResponse.newBuilder();
 
       User.Builder userBuilder1 = buildMockUser();
@@ -150,7 +152,8 @@ public class MessageServiceServer {
     }
 
     @Override
-    public void getMessages(MessageListRequest req, StreamObserver<MessageListResponse> responseObserver) {
+    public void getMessages(MessageListRequest req,
+        StreamObserver<MessageListResponse> responseObserver) {
       MessageListResponse.Builder messageListResponseBuilder = MessageListResponse.newBuilder();
 
       long chatId = req.getChatId();
@@ -165,7 +168,8 @@ public class MessageServiceServer {
     }
 
     @Override
-    public void sendMessage(NewMessageRequest req, StreamObserver<MessageResponse> responseObserver) {
+    public void sendMessage(NewMessageRequest req,
+        StreamObserver<MessageResponse> responseObserver) {
       Random random = new Random();
 
       Message.Builder messageBuilder = Message.newBuilder();
@@ -173,7 +177,8 @@ public class MessageServiceServer {
       messageBuilder.setMessage(req.getMessage());
       messageBuilder.setUser("user-uuid");
 
-      MessageResponse messageResponse = MessageResponse.newBuilder().setMessage(messageBuilder).build();
+      MessageResponse messageResponse = MessageResponse.newBuilder().setMessage(messageBuilder)
+          .build();
 
       responseObserver.onNext(messageResponse);
       responseObserver.onCompleted();
