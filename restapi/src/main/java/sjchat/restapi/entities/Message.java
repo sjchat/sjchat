@@ -3,12 +3,12 @@ package sjchat.restapi.entities;
 public class Message {
   private long id;
   private String message;
-  private long user;
+  private String user;
 
   public Message() {
   }
 
-  public Message(long id, String message, long user) {
+  public Message(long id, String message, String user) {
     this.id = id;
     this.message = message;
     this.user = user;
@@ -30,11 +30,11 @@ public class Message {
     this.message = message;
   }
 
-  public long getUser() {
+  public String getUser() {
     return user;
   }
 
-  public void setUser(long user) {
+  public void setUser(String user) {
     this.user = user;
   }
 }

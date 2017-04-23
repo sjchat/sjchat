@@ -31,7 +31,7 @@ message ChatRequest {
 message ChatDataRequest {
     int64 id = 1;
     string title = 2;
-    repeated int64 users = 3;
+    repeated string users = 3;
 }
 
 message MessageListRequest {
@@ -63,5 +63,5 @@ message Chat {
 message Message {
     int64 id = 1;
     string message = 2;
-    int64 user = 3;
+    string user = 3;
 }

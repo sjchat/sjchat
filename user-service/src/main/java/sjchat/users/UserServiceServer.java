@@ -60,9 +60,7 @@ public class UserServiceServer {
 
     @Override
     public void createUser(UserDataRequest req, StreamObserver<UserResponse> responseObserver) {
-      Random random = new Random();
-
-      UserEntity entity = new UserEntity(Math.abs(random.nextInt(100)), req.getUsername());
+      UserEntity entity = new UserEntity(null, req.getUsername());
       dao.create(entity);
 
       User.Builder userBuilder = User.newBuilder();

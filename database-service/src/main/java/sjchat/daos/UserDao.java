@@ -7,5 +7,5 @@ import sjchat.entities.UserEntity;
  */
 public interface UserDao extends Dao{
     public UserEntity findByUsername(String username);
-    public UserEntity findById(long id);
+    public UserEntity findById(String id);
 }

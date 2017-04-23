@@ -111,7 +111,7 @@ public class ChatController {
 
     ChatDataRequest.Builder chatDataRequestBuilder = ChatDataRequest.newBuilder();
     chatDataRequestBuilder.setTitle(chatRequest.getTitle());
-    for (long userId : chatRequest.getUsers()) {
+    for (String userId : chatRequest.getUsers()) {
       chatDataRequestBuilder.addUsers(userId);
     }
 
@@ -148,7 +148,7 @@ public class ChatController {
     ChatDataRequest.Builder chatDataRequestBuilder = ChatDataRequest.newBuilder();
     chatDataRequestBuilder.setId(chatId);
     chatDataRequestBuilder.setTitle(chatRequest.getTitle());
-    for (long userId : chatRequest.getUsers()) {
+    for (String userId : chatRequest.getUsers()) {
       chatDataRequestBuilder.addUsers(userId);
     }
 
@@ -221,7 +221,7 @@ public class ChatController {
           method = RequestMethod.GET,
           produces = "application/json")
   @ResponseBody
-  public ResponseEntity<User> getUser(@PathVariable long userId) {
+  public ResponseEntity<User> getUser(@PathVariable String userId) {
     final UserServiceGrpc.UserServiceBlockingStub blockingStub = UserServiceGrpc.newBlockingStub(userServiceChannel);
 
     UserResponse response = blockingStub.getUser(UserRequest.newBuilder().setId(userId).build());
@@ -237,7 +237,7 @@ public class ChatController {
           produces = "application/json",
           consumes = "application/json")
   @ResponseBody
-  public ResponseEntity<User> updateUser(@PathVariable long userId, @RequestBody User userRequest) {
+  public ResponseEntity<User> updateUser(@PathVariable String userId, @RequestBody User userRequest) {
     final UserServiceGrpc.UserServiceBlockingStub blockingStub = UserServiceGrpc.newBlockingStub(userServiceChannel);
 
     UserDataRequest.Builder userDataRequestBuilder = UserDataRequest.newBuilder();

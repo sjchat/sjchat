@@ -56,9 +56,8 @@ public class MessageServiceServer {
   }
 
   private static User.Builder buildMockUser() {
-    Random random = new Random();
     User.Builder userBuilder = User.newBuilder();
-    userBuilder.setId(Math.abs(random.nextInt(100)));
+    userBuilder.setId(null);
     userBuilder.setUsername("user_" + userBuilder.getId());
     return userBuilder;
   }
@@ -68,7 +67,7 @@ public class MessageServiceServer {
     Message.Builder messageBuilder = Message.newBuilder();
     messageBuilder.setId(Math.abs(random.nextInt(100)));
     messageBuilder.setMessage("Test message " + messageBuilder.getId());
-    messageBuilder.setUser(123);
+    messageBuilder.setUser("user-uuid");
     return messageBuilder;
   }
 
@@ -119,7 +118,7 @@ public class MessageServiceServer {
       Chat.Builder chatBuilder = Chat.newBuilder();
       chatBuilder.setId(Math.abs(random.nextInt(100)));
       chatBuilder.setTitle(req.getTitle());
-      for (long userId : req.getUsersList()) {
+      for (String userId : req.getUsersList()) {
         User.Builder userBuilder = User.newBuilder();
         userBuilder.setId(userId);
         userBuilder.setUsername("mock_username");
@@ -137,7 +136,7 @@ public class MessageServiceServer {
       Chat.Builder chatBuilder = Chat.newBuilder();
       chatBuilder.setId(req.getId());
       chatBuilder.setTitle(req.getTitle());
-      for (long userId : req.getUsersList()) {
+      for (String userId : req.getUsersList()) {
         User.Builder userBuilder = User.newBuilder();
         userBuilder.setId(userId);
         userBuilder.setUsername("mock_username");
@@ -172,7 +171,7 @@ public class MessageServiceServer {
       Message.Builder messageBuilder = Message.newBuilder();
       messageBuilder.setId(Math.abs(random.nextInt(100)));
       messageBuilder.setMessage(req.getMessage());
-      messageBuilder.setUser(123);
+      messageBuilder.setUser("user-uuid");
 
       MessageResponse messageResponse = MessageResponse.newBuilder().setMessage(messageBuilder).build();
 
