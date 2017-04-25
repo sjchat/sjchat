@@ -23,6 +23,7 @@ import sjchat.messages.MessageListResponse;
 import sjchat.messages.MessageResponse;
 import sjchat.messages.MessageServiceGrpc;
 import sjchat.messages.NewMessageRequest;
+import sjchat.restapi.ChannelManager;
 import sjchat.restapi.entities.Chat;
 import sjchat.restapi.entities.ChatRequest;
 import sjchat.restapi.entities.Message;
@@ -34,21 +35,7 @@ import sjchat.users.UserServiceGrpc;
 
 @RestController
 public class ChatController {
-  private Channel messageServiceChannel;
-  private Channel userServiceChannel;
-
-  public ChatController() {
-    messageServiceChannel = buildMessageServiceChannel();
-    userServiceChannel = buildUserServiceChannel();
-  }
-
-  private static Channel buildMessageServiceChannel() {
-    return ManagedChannelBuilder.forAddress("localhost", 50052).usePlaintext(true).build(); //TODO: Put port in config file
-  }
-
-  private static Channel buildUserServiceChannel() {
-    return ManagedChannelBuilder.forAddress("localhost", 50051).usePlaintext(true).build(); //TODO: Put port in config file
-  }
+  public ChatController() { }
 
   private static Chat buildChatFromResponse(sjchat.messages.Chat responseChat) {
     Chat chat = new Chat();
@@ -87,7 +74,7 @@ public class ChatController {
           produces = "application/json")
   @ResponseBody
   public ResponseEntity<List<Chat>> getChatList() {
-    final MessageServiceGrpc.MessageServiceBlockingStub blockingStub = MessageServiceGrpc.newBlockingStub(messageServiceChannel);
+    final MessageServiceGrpc.MessageServiceBlockingStub blockingStub = MessageServiceGrpc.newBlockingStub(ChannelManager.getInstance().messageServiceChannel);
 
     ArrayList<Chat> chatList = new ArrayList<>();
 
@@ -107,7 +94,7 @@ public class ChatController {
           consumes = "application/json")
   @ResponseBody
   public ResponseEntity<Chat> createChat(@RequestBody ChatRequest chatRequest) {
-    final MessageServiceGrpc.MessageServiceBlockingStub blockingStub = MessageServiceGrpc.newBlockingStub(messageServiceChannel);
+    final MessageServiceGrpc.MessageServiceBlockingStub blockingStub = MessageServiceGrpc.newBlockingStub(ChannelManager.getInstance().messageServiceChannel);
 
     ChatDataRequest.Builder chatDataRequestBuilder = ChatDataRequest.newBuilder();
     chatDataRequestBuilder.setTitle(chatRequest.getTitle());
@@ -128,7 +115,7 @@ public class ChatController {
           produces = "application/json")
   @ResponseBody
   public ResponseEntity<Chat> getChat(@PathVariable long chatId) {
-    final MessageServiceGrpc.MessageServiceBlockingStub blockingStub = MessageServiceGrpc.newBlockingStub(messageServiceChannel);
+    final MessageServiceGrpc.MessageServiceBlockingStub blockingStub = MessageServiceGrpc.newBlockingStub(getMessageServiceChannel());
 
     ChatResponse response = blockingStub.getChat(sjchat.messages.ChatRequest.newBuilder().setId(chatId).build());
     sjchat.messages.Chat responseChat = response.getChat();
@@ -143,7 +130,7 @@ public class ChatController {
           consumes = "application/json")
   @ResponseBody
   public ResponseEntity<Chat> updateChat(@PathVariable long chatId, @RequestBody ChatRequest chatRequest) {
-    final MessageServiceGrpc.MessageServiceBlockingStub blockingStub = MessageServiceGrpc.newBlockingStub(messageServiceChannel);
+    final MessageServiceGrpc.MessageServiceBlockingStub blockingStub = MessageServiceGrpc.newBlockingStub(getMessageServiceChannel());
 
     ChatDataRequest.Builder chatDataRequestBuilder = ChatDataRequest.newBuilder();
     chatDataRequestBuilder.setId(chatId);
@@ -165,7 +152,7 @@ public class ChatController {
           produces = "application/json")
   @ResponseBody
   public ResponseEntity<List<Message>> getMessagesList(@PathVariable long chatId) {
-    final MessageServiceGrpc.MessageServiceBlockingStub blockingStub = MessageServiceGrpc.newBlockingStub(messageServiceChannel);
+    final MessageServiceGrpc.MessageServiceBlockingStub blockingStub = MessageServiceGrpc.newBlockingStub(ChannelManager.getInstance().getMessageServiceChannel());
 
     ArrayList<Message> messageList = new ArrayList<>();
 

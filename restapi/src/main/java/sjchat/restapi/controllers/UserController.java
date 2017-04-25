@@ -23,6 +23,7 @@ import sjchat.messages.MessageListResponse;
 import sjchat.messages.MessageResponse;
 import sjchat.messages.MessageServiceGrpc;
 import sjchat.messages.NewMessageRequest;
+import sjchat.restapi.ChannelManager;
 import sjchat.restapi.entities.Chat;
 import sjchat.restapi.entities.ChatRequest;
 import sjchat.restapi.entities.Message;
@@ -41,7 +42,7 @@ public class UserController {
           consumes = "application/json")
   @ResponseBody
   public ResponseEntity<User> createUser(@RequestBody User userRequest) {
-    final UserServiceGrpc.UserServiceBlockingStub blockingStub = UserServiceGrpc.newBlockingStub(userServiceChannel);
+    final UserServiceGrpc.UserServiceBlockingStub blockingStub = UserServiceGrpc.newBlockingStub(ChannelManager.getInstance().getUserServiceChannel());
 
     UserDataRequest.Builder userDataRequestBuilder = UserDataRequest.newBuilder();
     userDataRequestBuilder.setUsername(userRequest.getUsername());
@@ -59,7 +60,7 @@ public class UserController {
           produces = "application/json")
   @ResponseBody
   public ResponseEntity<User> getUser(@PathVariable long userId) {
-    final UserServiceGrpc.UserServiceBlockingStub blockingStub = UserServiceGrpc.newBlockingStub(userServiceChannel);
+    final UserServiceGrpc.UserServiceBlockingStub blockingStub = UserServiceGrpc.newBlockingStub(ChannelManager.getInstance().getUserServiceChannel());
 
     UserResponse response = blockingStub.getUser(UserRequest.newBuilder().setId(userId).build());
     sjchat.users.User responseUser = response.getUser();
@@ -75,7 +76,7 @@ public class UserController {
           consumes = "application/json")
   @ResponseBody
   public ResponseEntity<User> updateUser(@PathVariable long userId, @RequestBody User userRequest) {
-    final UserServiceGrpc.UserServiceBlockingStub blockingStub = UserServiceGrpc.newBlockingStub(userServiceChannel);
+    final UserServiceGrpc.UserServiceBlockingStub blockingStub = UserServiceGrpc.newBlockingStub(ChannelManager.getInstance().getUserServiceChannel());
 
     UserDataRequest.Builder userDataRequestBuilder = UserDataRequest.newBuilder();
     userDataRequestBuilder.setId(userId);
