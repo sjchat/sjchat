@@ -75,84 +75,84 @@ public class MessageServiceServer {
   static class MessageService extends MessageServiceGrpc.MessageServiceImplBase {
 
     @Override
-    public void getChatList(ChatListRequest req, StreamObserver<ChatListResponse> responseObserver) {
-      ChatListResponse.Builder chatListResponseBuilder = ChatListResponse.newBuilder();
+    public void getChatList(GetChatListRequest req, StreamObserver<GetChatListResponse> responseObserver) {
+      GetChatListResponse.Builder chatListResponseBuilder = GetChatListResponse.newBuilder();
 
       User.Builder userBuilder1 = buildMockUser();
       User.Builder userBuilder2 = buildMockUser();
 
       Chat.Builder chatBuilder1 = buildMockChat();
-      chatBuilder1.addUsers(userBuilder1);
-      chatBuilder1.addUsers(userBuilder2);
+      chatBuilder1.addParticipants(userBuilder1);
+      chatBuilder1.addParticipants(userBuilder2);
       chatListResponseBuilder.addChats(chatBuilder1);
 
       Chat.Builder chatBuilder2 = buildMockChat();
-      chatBuilder2.addUsers(userBuilder1);
-      chatBuilder2.addUsers(userBuilder2);
+      chatBuilder2.addParticipants(userBuilder1);
+      chatBuilder2.addParticipants(userBuilder2);
       chatListResponseBuilder.addChats(chatBuilder2);
 
-      ChatListResponse chatResponse = chatListResponseBuilder.build();
+      GetChatListResponse chatResponse = chatListResponseBuilder.build();
 
       responseObserver.onNext(chatResponse);
       responseObserver.onCompleted();
     }
 
     @Override
-    public void getChat(ChatRequest req, StreamObserver<ChatResponse> responseObserver) {
+    public void getChat(GetChatRequest req, StreamObserver<GetChatResponse> responseObserver) {
       User.Builder userBuilder1 = buildMockUser();
       User.Builder userBuilder2 = buildMockUser();
 
       Chat.Builder chatBuilder1 = buildMockChat();
-      chatBuilder1.addUsers(userBuilder1);
-      chatBuilder1.addUsers(userBuilder2);
+      chatBuilder1.addParticipants(userBuilder1);
+      chatBuilder1.addParticipants(userBuilder2);
 
-      ChatResponse chatResponse = ChatResponse.newBuilder().setChat(chatBuilder1).build();
+      GetChatResponse chatResponse = GetChatResponse.newBuilder().setChat(chatBuilder1).build();
 
       responseObserver.onNext(chatResponse);
       responseObserver.onCompleted();
     }
 
     @Override
-    public void createChat(ChatDataRequest req, StreamObserver<ChatResponse> responseObserver) {
+    public void createChat(CreateChatRequest req, StreamObserver<CreateChatResponse> responseObserver) {
       Random random = new Random();
 
       Chat.Builder chatBuilder = Chat.newBuilder();
       chatBuilder.setId(Math.abs(random.nextInt(100)));
       chatBuilder.setTitle(req.getTitle());
-      for (long userId : req.getUsersList()) {
+      for (long userId : req.getParticipantsList()) {
         User.Builder userBuilder = User.newBuilder();
         userBuilder.setId(userId);
         userBuilder.setUsername("mock_username");
-        chatBuilder.addUsers(userBuilder);
+        chatBuilder.addParticipants(userBuilder);
       }
 
-      ChatResponse chatResponse = ChatResponse.newBuilder().setChat(chatBuilder).build();
+      CreateChatResponse chatResponse = CreateChatResponse.newBuilder().setChat(chatBuilder).build();
 
       responseObserver.onNext(chatResponse);
       responseObserver.onCompleted();
     }
 
     @Override
-    public void updateChat(ChatDataRequest req, StreamObserver<ChatResponse> responseObserver) {
+    public void updateChat(UpdateChatRequest req, StreamObserver<UpdateChatResponse> responseObserver) {
       Chat.Builder chatBuilder = Chat.newBuilder();
       chatBuilder.setId(req.getId());
       chatBuilder.setTitle(req.getTitle());
-      for (long userId : req.getUsersList()) {
+      for (long userId : req.getParticipantsList()) {
         User.Builder userBuilder = User.newBuilder();
         userBuilder.setId(userId);
         userBuilder.setUsername("mock_username");
-        chatBuilder.addUsers(userBuilder);
+        chatBuilder.addParticipants(userBuilder);
       }
 
-      ChatResponse chatResponse = ChatResponse.newBuilder().setChat(chatBuilder).build();
+      UpdateChatResponse chatResponse = UpdateChatResponse.newBuilder().setChat(chatBuilder).build();
 
       responseObserver.onNext(chatResponse);
       responseObserver.onCompleted();
     }
 
     @Override
-    public void getMessages(MessageListRequest req, StreamObserver<MessageListResponse> responseObserver) {
-      MessageListResponse.Builder messageListResponseBuilder = MessageListResponse.newBuilder();
+    public void getMessages(GetMessagesRequest req, StreamObserver<GetMessagesResponse> responseObserver) {
+      GetMessagesResponse.Builder messageListResponseBuilder = GetMessagesResponse.newBuilder();
 
       long chatId = req.getChatId();
 
@@ -166,7 +166,7 @@ public class MessageServiceServer {
     }
 
     @Override
-    public void sendMessage(NewMessageRequest req, StreamObserver<MessageResponse> responseObserver) {
+    public void sendMessage(SendMessageRequest req, StreamObserver<SendMessageResponse> responseObserver) {
       Random random = new Random();
 
       Message.Builder messageBuilder = Message.newBuilder();
@@ -174,7 +174,7 @@ public class MessageServiceServer {
       messageBuilder.setMessage(req.getMessage());
       messageBuilder.setUser(123);
 
-      MessageResponse messageResponse = MessageResponse.newBuilder().setMessage(messageBuilder).build();
+      SendMessageResponse messageResponse = SendMessageResponse.newBuilder().setMessage(messageBuilder).build();
 
       responseObserver.onNext(messageResponse);
       responseObserver.onCompleted();

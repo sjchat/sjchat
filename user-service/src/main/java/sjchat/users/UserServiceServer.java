@@ -49,38 +49,38 @@ public class UserServiceServer {
   static class UserService extends UserServiceGrpc.UserServiceImplBase {
 
     @Override
-    public void createUser(UserDataRequest req, StreamObserver<UserResponse> responseObserver) {
+    public void createUser(CreateUserRequest req, StreamObserver<CreateUserResponse> responseObserver) {
       Random random = new Random();
 
       User.Builder userBuilder = User.newBuilder();
       userBuilder.setId(Math.abs(random.nextInt(100)));
       userBuilder.setUsername(req.getUsername());
 
-      UserResponse userResponse = UserResponse.newBuilder().setUser(userBuilder).build();
+      CreateUserResponse userResponse = CreateUserResponse.newBuilder().setUser(userBuilder).build();
 
       responseObserver.onNext(userResponse);
       responseObserver.onCompleted();
     }
 
     @Override
-    public void getUser(UserRequest req, StreamObserver<UserResponse> responseObserver) {
+    public void getUser(GetUserRequest req, StreamObserver<GetUserResponse> responseObserver) {
       User.Builder userBuilder = User.newBuilder();
       userBuilder.setId(req.getId());
       userBuilder.setUsername("user_" + req.getId());
 
-      UserResponse userResponse = UserResponse.newBuilder().setUser(userBuilder).build();
+      GetUserResponse userResponse = GetUserResponse.newBuilder().setUser(userBuilder).build();
 
       responseObserver.onNext(userResponse);
       responseObserver.onCompleted();
     }
 
     @Override
-    public void updateUser(UserDataRequest req, StreamObserver<UserResponse> responseObserver) {
+    public void updateUser(UpdateUserRequest req, StreamObserver<UpdateUserResponse> responseObserver) {
       User.Builder userBuilder = User.newBuilder();
       userBuilder.setId(req.getId());
       userBuilder.setUsername(req.getUsername());
 
-      UserResponse userResponse = UserResponse.newBuilder().setUser(userBuilder).build();
+      UpdateUserResponse userResponse = UpdateUserResponse.newBuilder().setUser(userBuilder).build();
 
       responseObserver.onNext(userResponse);
       responseObserver.onCompleted();
