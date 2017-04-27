@@ -235,7 +235,7 @@ definitions:
         type: integer
       title:
         type: string
-      users:
+      participants:
         title: ArrayOfUsers
         type: array
         items: 
@@ -252,7 +252,7 @@ definitions:
     properties:
       title:
         type: string
-      users:
+      participants:
         title: ArrayOfUserIds
         type: array
         items: 

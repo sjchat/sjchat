@@ -73,7 +73,7 @@ public class ChatController {
     List<sjchat.users.User> chatUsers = responseChat.getParticipantsList();
     for (sjchat.users.User chatUser : chatUsers) {
       User user = buildUserFromResponse(chatUser);
-      chat.addUser(user);
+      chat.addParticipant(user);
     }
 
     return chat;
@@ -126,7 +126,7 @@ public class ChatController {
 
     CreateChatRequest.Builder chatDataRequestBuilder = CreateChatRequest.newBuilder();
     chatDataRequestBuilder.setTitle(chatRequest.getTitle());
-    for (long userId : chatRequest.getUsers()) {
+    for (long userId : chatRequest.getParticipants()) {
       chatDataRequestBuilder.addParticipants(userId);
     }
 
@@ -163,7 +163,7 @@ public class ChatController {
     UpdateChatRequest.Builder chatDataRequestBuilder = UpdateChatRequest.newBuilder();
     chatDataRequestBuilder.setId(chatId);
     chatDataRequestBuilder.setTitle(chatRequest.getTitle());
-    for (long userId : chatRequest.getUsers()) {
+    for (long userId : chatRequest.getParticipants()) {
       chatDataRequestBuilder.addParticipants(userId);
     }
 
