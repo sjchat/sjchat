@@ -264,7 +264,7 @@ definitions:
         type: integer
       message:
         type: string
-      user:
+      sender:
         type: integer
   NewMessage:
     type: object

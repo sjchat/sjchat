@@ -27,7 +27,7 @@ class MessageService extends MessageServiceGrpc.MessageServiceImplBase {
     Message.Builder messageBuilder = Message.newBuilder();
     messageBuilder.setId(Math.abs(random.nextInt(100)));
     messageBuilder.setMessage("Test message " + messageBuilder.getId());
-    messageBuilder.setUser(123);
+    messageBuilder.setSender(123);
     return messageBuilder;
   }
 
@@ -129,7 +129,7 @@ class MessageService extends MessageServiceGrpc.MessageServiceImplBase {
     Message.Builder messageBuilder = Message.newBuilder();
     messageBuilder.setId(Math.abs(random.nextInt(100)));
     messageBuilder.setMessage(req.getMessage());
-    messageBuilder.setUser(123);
+    messageBuilder.setSender(123);
 
     SendMessageResponse messageResponse = SendMessageResponse.newBuilder().setMessage(messageBuilder).build();
 

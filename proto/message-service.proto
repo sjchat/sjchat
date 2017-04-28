@@ -76,5 +76,5 @@ message Chat {
 message Message {
     int64 id = 1;
     string message = 2;
-    int64 user = 3;
+    int64 sender = 3;
 }

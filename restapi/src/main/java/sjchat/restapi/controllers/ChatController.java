@@ -75,7 +75,7 @@ public class ChatController {
     Message message = new Message();
     message.setId(responseMessage.getId());
     message.setMessage(responseMessage.getMessage());
-    message.setUser(responseMessage.getUser());
+    message.setUser(responseMessage.getSender());
 
     return message;
   }
