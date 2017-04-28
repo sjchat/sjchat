@@ -104,7 +104,7 @@ public class ChatController {
   public ResponseEntity<List<Chat>> getChatList() {
     final MessageServiceGrpc.MessageServiceBlockingStub blockingStub = MessageServiceGrpc.newBlockingStub(messageServiceChannel);
 
-    ArrayList<Chat> chatList = new ArrayList<>();
+    List<Chat> chatList = new ArrayList<>();
 
     GetChatListResponse response = blockingStub.getChatList(GetChatListRequest.newBuilder().build());
     for (sjchat.messages.Chat responseChat : response.getChatsList()) {
