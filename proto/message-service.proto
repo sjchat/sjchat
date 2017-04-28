@@ -9,12 +9,12 @@ option java_package = "sjchat.messages";
 option java_outer_classname = "MessageServiceProto";
 
 service MessageService {
-    rpc getChatList(GetChatListRequest) returns (GetChatListResponse);
-    rpc createChat(CreateChatRequest) returns (CreateChatResponse);
-    rpc getChat(GetChatRequest) returns (GetChatResponse);
-    rpc updateChat(UpdateChatRequest) returns (UpdateChatResponse);
-    rpc getMessages(GetMessagesRequest) returns (GetMessagesResponse);
-    rpc sendMessage(SendMessageRequest) returns (SendMessageResponse);
+    rpc getChatList (GetChatListRequest) returns (GetChatListResponse);
+    rpc createChat (CreateChatRequest) returns (CreateChatResponse);
+    rpc getChat (GetChatRequest) returns (GetChatResponse);
+    rpc updateChat (UpdateChatRequest) returns (UpdateChatResponse);
+    rpc getMessages (GetMessagesRequest) returns (GetMessagesResponse);
+    rpc sendMessage (SendMessageRequest) returns (SendMessageResponse);
 }
 
 message GetChatListRequest {
