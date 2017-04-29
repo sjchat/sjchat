@@ -10,6 +10,7 @@ services:
           memory: 200M
       restart_policy:
         condition: on-failure
+        max_attempts: 3
     ports:
       - "8080:8080"
     networks:
@@ -28,6 +29,7 @@ services:
           memory: 200M
       restart_policy:
         condition: on-failure
+        max_attempts: 3
     ports:
       - "50052:50052"
     networks:
@@ -43,6 +45,7 @@ services:
           memory: 200M
       restart_policy:
         condition: on-failure
+        max_attempts: 3
     ports:
       - "50051:50051"
     networks:
