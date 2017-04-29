@@ -18,4 +18,7 @@ docker build -t sjchat-user-service ./user-service
 echo "Building docker container 'sjchat-restapi'"
 docker build -t sjchat-restapi ./restapi
 
+echo "Building docker container 'sjchat-web-client'"
+docker build -t sjchat-web-client ./client
+
 echo "Build finished"

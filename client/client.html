@@ -9,7 +9,8 @@
 	</h1>
 	<p id="hw"> </p>
 	<script>
-		$.get("http://localhost:8080", function(data){
+		$.get("http://localhost:8080/chat", function(data) {
+			console.log(data);
 			document.getElementById("hw").innerHTML = data;
 		});
 	</script>
