@@ -43,11 +43,17 @@ public class ChatController {
   }
 
   private static Channel buildMessageServiceChannel() {
-    return ManagedChannelBuilder.forAddress("localhost", 50052).usePlaintext(true).build(); //TODO: Put port in config file
+    String host = System.getenv("MESSAGE_SERVICE_HOST");
+    host = (host == null) ? "localhost" : host;
+
+    return ManagedChannelBuilder.forAddress(host, 50052).usePlaintext(true).build(); //TODO: Put port in config file
   }
 
   private static Channel buildUserServiceChannel() {
-    return ManagedChannelBuilder.forAddress("localhost", 50051).usePlaintext(true).build(); //TODO: Put port in config file
+    String host = System.getenv("USER_SERVICE_HOST");
+    host = (host == null) ? "localhost" : host;
+
+    return ManagedChannelBuilder.forAddress(host, 50051).usePlaintext(true).build(); //TODO: Put port in config file
   }
 
   private static Chat buildChatFromResponse(sjchat.messages.Chat responseChat) {
