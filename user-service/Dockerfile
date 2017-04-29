@@ -1,5 +1,9 @@
-FROM maven:3.5-jdk-8-onbuild-alpine
+FROM openjdk:8-alpine
 
-EXPOSE 50052
+RUN mkdir app
+WORKDIR /app
+COPY target/users-0.0.1-SNAPSHOT-jar-with-dependencies.jar /app
 
-CMD ["mvn", "exec:java"]
+EXPOSE 50051
+
+ENTRYPOINT ["java", "-jar", "users-0.0.1-SNAPSHOT-jar-with-dependencies.jar"]
