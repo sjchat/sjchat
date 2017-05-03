@@ -26,7 +26,7 @@ message GetChatListResponse {
 
 message CreateChatRequest {
     string title = 1;
-    repeated int64 participants = 2;
+    repeated string participants = 2;
 }
 
 message CreateChatResponse {
@@ -34,7 +34,7 @@ message CreateChatResponse {
 }
 
 message GetChatRequest {
-    int64 id = 1;
+    string id = 1;
 }
 
 message GetChatResponse {
@@ -42,9 +42,9 @@ message GetChatResponse {
 }
 
 message UpdateChatRequest {
-    int64 id = 1;
+    string id = 1;
     string title = 2;
-    repeated int64 participants = 3;
+    repeated string participants = 3;
 }
 
 message UpdateChatResponse {
@@ -52,7 +52,7 @@ message UpdateChatResponse {
 }
 
 message GetMessagesRequest {
-    int64 chatId = 1;
+    string chatId = 1;
 }
 
 message GetMessagesResponse {
