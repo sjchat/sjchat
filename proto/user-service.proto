@@ -10,7 +10,8 @@ service UserService {
     rpc createUser (CreateUserRequest) returns (CreateUserResponse);
     rpc getUser (GetUserRequest) returns (GetUserResponse);
     rpc updateUser (UpdateUserRequest) returns (UpdateUserResponse);
-    rpc loginUser(LoginRequest) returns (Token);
+    rpc loginUser(LoginRequest) returns (LoginResponse);
+    rpc logoutUser(Token) returns (LogoutResponse);
 }
 
 message User {
@@ -43,6 +44,16 @@ message UpdateUserResponse {
 message LoginRequest {
     String username = 1;
     String password = 2;
+}
+
+message LogoutResponse {
+    required bool authenticated = 1;
+    optional String errorMessage = 2;
+}
+
+message LogoutResponse {
+    required authenticated = 1;
+    optional String errorMessage = 2;
 }
 
 message Token {
