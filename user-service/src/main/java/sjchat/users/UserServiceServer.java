@@ -86,14 +86,20 @@ public class UserServiceServer {
       responseObserver.onCompleted();
     }
 
-    public void loginUser(LoginRequest req, StreamObserver<AuthResponse> responseObserver) {
-      
+    public void loginUser(LoginRequest req, StreamObserver<LoginResponse> responseObserver) {
+      LoginResponse loginResponse = LoginResponse.newBuilder().setAuthenticated(true).build();
+      resonspeObserver.onNext(loginResponse);
+      responseObserver.onCompleted();
     }
 
     /**
      * Logout from all devices
      */
-    public void logout(LogoutRequest req, StreamObserver)
+    public void logout(LogoutRequest req, StreamObserver) {
+      LogoutResponse logoutResponse = LogoutResponse
+        .newBuilder().setAuthenticated(true).build();
+      responseObserver.onCompleted();
+    }
 
   }
 }
