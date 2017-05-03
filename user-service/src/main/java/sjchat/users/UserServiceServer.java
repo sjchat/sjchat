@@ -1,9 +1,19 @@
 package sjchat.users;
 
+
+import java.io.IOException;
+import java.util.Random;
+
+import io.grpc.Server;
+import io.grpc.ServerBuilder;
+import io.grpc.stub.StreamObserver;
+import sjchat.users.UserAuthentication;
 import sjchat.general.GRPCServer;
 
 public class UserServiceServer {
-  private static final int port = 50051;
+  private Server server;
+  private int port = 50051;
+  private final UserAuthentication userautentication;
 
   public static void main(String[] args) throws Exception {
     GRPCServer messageServiceServer = new GRPCServer(new UserService(), port);
@@ -83,6 +93,8 @@ public class UserServiceServer {
     }
 
     public void loginUser(LoginRequest req, StreamObserver<AuthResponse> responseObserver) {
+        
+
       
     }
 
@@ -91,6 +103,5 @@ public class UserServiceServer {
      */
     public void logout(LogoutRequest req, StreamObserver)
 
->>>>>>> start of authentication functions
   }
 }
