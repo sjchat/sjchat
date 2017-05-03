@@ -11,7 +11,10 @@
 	<p id="hw"> </p>
 	<p id="chatExample"> </p>
 	<script>
+		// Change when back-end works
+		var apiAddress = "http://localhost:8080/";
 		var dataManager = new DataManager();
+
 
 		// Add a new chat to the dataManager
 		dataManager.putChat(
@@ -35,12 +38,24 @@
 			});
 
 
-		document.getElementById("chatExample").innerHTML = JSON.stringify(dataManager, null, 2);
+		$.get(apiAddress, function(data){
+			var chats = JSON.parse(data);
+			for (let chat of chats){
+				dataManager.putChat(chat);
+			}
 
-
-		$.get("http://localhost:8080", function(data){
-			document.getElementById("hw").innerHTML = data;
+			document.getElementById("chatExample").innerHTML = JSON.stringify(dataManager, null, 2);
 		});
+
+		
+		/*var xhttp = new XMLHttpRequest();
+		xhttp.open("GET", apiAddress+"/chat", false);
+		xhttp.setRequestHeader("Content-type", "application/json");
+		xhttp.send();
+		var response = JSON.parse(xhttp.responseText);
+		document.getElementById("hw").innerHTML = response;*/
+
+
 	</script>
 </body>
 </html>
