@@ -1,6 +1,9 @@
 set -e
 echo "Build started"
 
+echo "Building service general"
+mvn -f service-general install
+
 echo "Building user service"
 mvn -f user-service install
 
