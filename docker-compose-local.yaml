@@ -7,7 +7,6 @@ services:
       resources:
         limits:
           cpus: "1.0"
-          memory: 200M
       restart_policy:
         condition: on-failure
         max_attempts: 3
