@@ -18,7 +18,12 @@
 
   <dependencies>
 
-    <dependency>
+  <dependency>
+    <groupId>io.jsonwebtoken</groupId>
+    <artifactId>jjwt</artifactId>
+    <version>0.7.0</version>
+  </dependency>  
+  <dependency>
     <groupId>io.grpc</groupId>
     <artifactId>grpc-netty</artifactId>
     <version>1.0.1</version>
