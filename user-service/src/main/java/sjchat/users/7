@@ -88,17 +88,10 @@ public class UserServiceServer {
       responseObserver.onCompleted();
     }
 
-<<<<<<< HEAD
     public void loginUser(LoginRequest req, StreamObserver<LoginResponse> responseObserver) {
       LoginResponse loginResponse = LoginResponse.newBuilder().setAuthenticated(true).build();
       resonspeObserver.onNext(loginResponse);
       responseObserver.onCompleted();
-=======
-    public void loginUser(LoginRequest req, StreamObserver<AuthResponse> responseObserver) {
-        
-
-      
->>>>>>> 5ced78b50a74ef561e0fa1822a4cb4b2d0c9c950
     }
 
     /**
