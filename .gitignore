@@ -91,6 +91,10 @@ local.properties
 # Eclipse Core
 .project
 
+# Eclimd
+workbench.xmi
+eclimd.log
+
 # External tool builders
 .externalToolBuilders/
 
