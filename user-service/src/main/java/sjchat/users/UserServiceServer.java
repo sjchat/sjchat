@@ -85,5 +85,15 @@ public class UserServiceServer {
       responseObserver.onNext(userResponse);
       responseObserver.onCompleted();
     }
+
+    public void loginUser(LoginRequest req, StreamObserver<AuthResponse> responseObserver) {
+      
+    }
+
+    /**
+     * Logout from all devices
+     */
+    public void logout(LogoutRequest req, StreamObserver)
+
   }
 }

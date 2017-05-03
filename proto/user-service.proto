@@ -10,6 +10,7 @@ service UserService {
     rpc createUser (UserDataRequest) returns (UserResponse);
     rpc getUser (UserRequest) returns (UserResponse);
     rpc updateUser (UserDataRequest) returns (UserResponse);
+    rpc loginUser(LoginRequest) returns (Token);
 }
 
 message User {
@@ -20,6 +21,15 @@ message User {
 message UserDataRequest {
     int64 id = 1;
     string username = 2;
+}
+
+message LoginRequest {
+    String username = 1;
+    String password = 2;
+}
+
+message Token {
+    String token;
 }
 
 message UserRequest {
