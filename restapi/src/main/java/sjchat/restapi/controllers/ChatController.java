@@ -155,7 +155,7 @@ public class ChatController {
           produces = "application/json",
           consumes = "application/json")
   @ResponseBody
-  public ResponseEntity<Chat> updateChat(@PathVariable long chatId, @RequestBody ChatRequest chatRequest) {
+  public ResponseEntity<Chat> updateChat(@PathVariable String chatId, @RequestBody ChatRequest chatRequest) {
     final MessageServiceGrpc.MessageServiceBlockingStub blockingStub = MessageServiceGrpc.newBlockingStub(messageServiceChannel);
 
     UpdateChatRequest.Builder chatDataRequestBuilder = UpdateChatRequest.newBuilder();

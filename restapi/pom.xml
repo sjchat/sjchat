@@ -39,6 +39,13 @@
 
     <dependency>
       <groupId>com.sjchat</groupId>
+      <artifactId>database</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+      <scope>compile</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>com.sjchat</groupId>
       <artifactId>users</artifactId>
       <version>0.0.1-SNAPSHOT</version>
       <scope>compile</scope>
@@ -72,6 +79,7 @@
       <version>1.0.1</version>
     </dependency>
   </dependencies>
+  
 
   <build>
     <extensions>
