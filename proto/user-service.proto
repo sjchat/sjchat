@@ -7,9 +7,10 @@ option java_package = "sjchat.users";
 option java_outer_classname = "UserServiceProto";
 
 service UserService {
-    rpc createUser (CreateUserRequest) returns (CreateUserResponse);
-    rpc getUser (GetUserRequest) returns (GetUserResponse);
-    rpc updateUser (UpdateUserRequest) returns (UpdateUserResponse);
+    rpc createUser (UserDataRequest) returns (CreateUserResponse);
+    rpc getUser (UserRequest) returns (GetUserResponse);
+    rpc updateUser (UserDataRequest) returns (UpdateUserResponse);
+    rpc loginUser(LoginRequest) returns (Token);
 }
 
 message User {
@@ -20,6 +21,15 @@ message User {
 message UserDataRequest {
     string id = 1;
     string username = 2;
+}
+
+message LoginRequest {
+    String username = 1;
+    String password = 2;
+}
+
+message Token {
+    String token;
 }
 
 message UserRequest {
