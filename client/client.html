@@ -1,0 +1,18 @@
+<html>
+<head>
+	<title>Chat prototype</title>
+	<script src="jquery-3.2.1.min.js"></script>
+</head>
+<body>
+	<h1>
+		SjChat
+	</h1>
+	<p id="hw"> </p>
+	<script>
+		$.get("http://localhost:8080/chat", function(data) {
+			console.log(data);
+			document.getElementById("hw").innerHTML = data;
+		});
+	</script>
+</body>
+</html>
