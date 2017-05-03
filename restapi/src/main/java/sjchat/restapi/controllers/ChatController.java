@@ -140,7 +140,7 @@ public class ChatController {
           method = RequestMethod.GET,
           produces = "application/json")
   @ResponseBody
-  public ResponseEntity<Chat> getChat(@PathVariable long chatId) {
+  public ResponseEntity<Chat> getChat(@PathVariable String chatId) {
     final MessageServiceGrpc.MessageServiceBlockingStub blockingStub = MessageServiceGrpc.newBlockingStub(messageServiceChannel);
 
     GetChatResponse response = blockingStub.getChat(GetChatRequest.newBuilder().setId(chatId).build());
@@ -177,7 +177,7 @@ public class ChatController {
           method = RequestMethod.GET,
           produces = "application/json")
   @ResponseBody
-  public ResponseEntity<List<Message>> getMessagesList(@PathVariable long chatId) {
+  public ResponseEntity<List<Message>> getMessagesList(@PathVariable String chatId) {
     final MessageServiceGrpc.MessageServiceBlockingStub blockingStub = MessageServiceGrpc.newBlockingStub(messageServiceChannel);
 
     ArrayList<Message> messageList = new ArrayList<>();
@@ -197,7 +197,7 @@ public class ChatController {
           produces = "application/json",
           consumes = "application/json")
   @ResponseBody
-  public ResponseEntity<Message> createMessage(@PathVariable long chatId, @RequestBody Message messageRequest) {
+  public ResponseEntity<Message> createMessage(@PathVariable String chatId, @RequestBody Message messageRequest) {
     final MessageServiceGrpc.MessageServiceBlockingStub blockingStub = MessageServiceGrpc.newBlockingStub(messageServiceChannel);
 
     SendMessageRequest.Builder messageRequestBuilder = SendMessageRequest.newBuilder();
