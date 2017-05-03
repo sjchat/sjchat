@@ -1,3 +1,4 @@
+set -e
 echo "Build started"
 
 echo "Building user service"
