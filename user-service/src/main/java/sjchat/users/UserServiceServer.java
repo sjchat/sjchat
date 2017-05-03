@@ -1,123 +1,12 @@
 package sjchat.users;
 
-import java.io.IOException;
-import java.util.Random;
-
-import io.grpc.Server;
-import io.grpc.ServerBuilder;
-import io.grpc.stub.StreamObserver;
-import sjchat.daos.UserDao;
-import sjchat.daos.UserDaoImpl;
-import sjchat.entities.UserEntity;
-import sjchat.exceptions.NoEntityExistsException;
+import sjchat.general.GRPCServer;
 
 public class UserServiceServer {
-
-  private Server server;
-  private int port = 50051;
+  private static final int port = 50051;
 
   public static void main(String[] args) throws Exception {
-    UserServiceServer userServiceServer = new UserServiceServer();
-    userServiceServer.start();
-    userServiceServer.blockUntilShutdown();
+    GRPCServer messageServiceServer = new GRPCServer(new UserService(), port);
+    messageServiceServer.start();
   }
-
-  private void start() throws IOException {
-    ;
-    server = ServerBuilder.forPort(port).addService(new UserService()).build().start();
-    System.out.println("Server started, listening on " + port);
-    Runtime.getRuntime().addShutdownHook(new Thread() {
-      @Override
-      public void run() {
-        System.err.println("*** shutting down gRPC server since JVM is shutting down");
-        UserServiceServer.this.stop();
-        System.err.println("*** server shut down");
-      }
-    });
-  }
-
-  private void stop() {
-    if (server != null) {
-      server.shutdown();
-    }
-  }
-
-  /**
-   * Await termination on the main thread since the grpc library uses daemon threads.
-   */
-  private void blockUntilShutdown() throws InterruptedException {
-    if (server != null) {
-      server.awaitTermination();
-    }
-  }
-
-  static class UserService extends UserServiceGrpc.UserServiceImplBase {
-
-    UserDao dao;
-
-    public UserService() {
-      super();
-      dao = new UserDaoImpl();
-    }
-
-    @Override
-    public void createUser(UserDataRequest req, StreamObserver<UserResponse> responseObserver) {
-      UserEntity entity = new UserEntity(null, req.getUsername());
-      dao.create(entity);
-
-      User.Builder userBuilder = User.newBuilder();
-      userBuilder.setUsername(req.getUsername());
-      userBuilder.setId(entity.getId());
-
-      UserResponse userResponse = UserResponse.newBuilder().setUser(userBuilder).build();
-
-      responseObserver.onNext(userResponse);
-      responseObserver.onCompleted();
-    }
-
-    @Override
-    public void getUser(UserRequest req, StreamObserver<UserResponse> responseObserver) {
-      UserEntity gotten = dao.findById(req.getId());
-      if (gotten == null) {
-        responseObserver.onError(new NoUserExistsException());
-      }
-      User.Builder userBuilder = User.newBuilder();
-      userBuilder.setId(gotten.getId());
-      userBuilder.setUsername(gotten.getUsername());
-
-      UserResponse userResponse = UserResponse.newBuilder().setUser(userBuilder).build();
-
-      responseObserver.onNext(userResponse);
-      responseObserver.onCompleted();
-    }
-
-    @Override
-    public void updateUser(UserDataRequest req, StreamObserver<UserResponse> responseObserver) {
-      User.Builder userBuilder = User.newBuilder();
-      userBuilder.setId(req.getId());
-      userBuilder.setUsername(req.getUsername());
-
-      UserEntity updated = new UserEntity(req.getId(), req.getUsername());
-      try {
-        dao.update(updated);
-      } catch (NoEntityExistsException e) {
-        responseObserver.onError(new NoEntityExistsException());
-      }
-
-      UserResponse userResponse = UserResponse.newBuilder().setUser(userBuilder).build();
-
-      responseObserver.onNext(userResponse);
-      responseObserver.onCompleted();
-    }
-
-    public UserEntity buildUserEntity(UserDataRequest req) {
-      return new UserEntity(req.getId(), req.getUsername());
-    }
-
-    public class NoUserExistsException extends Exception {
-
-    }
-  }
-
-
 }

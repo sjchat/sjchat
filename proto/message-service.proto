@@ -9,59 +9,72 @@ option java_package = "sjchat.messages";
 option java_outer_classname = "MessageServiceProto";
 
 service MessageService {
-    rpc getChatList(ChatListRequest) returns (ChatListResponse);
-    rpc createChat(ChatDataRequest) returns (ChatResponse);
-    rpc getChat(ChatRequest) returns (ChatResponse);
-    rpc updateChat(ChatDataRequest) returns (ChatResponse);
-    rpc getMessages(MessageListRequest) returns (MessageListResponse);
-    rpc sendMessage(NewMessageRequest) returns (MessageResponse);
+    rpc getChatList (GetChatListRequest) returns (GetChatListResponse);
+    rpc createChat (CreateChatRequest) returns (CreateChatResponse);
+    rpc getChat (GetChatRequest) returns (GetChatResponse);
+    rpc updateChat (UpdateChatRequest) returns (UpdateChatResponse);
+    rpc getMessages (GetMessagesRequest) returns (GetMessagesResponse);
+    rpc sendMessage (SendMessageRequest) returns (SendMessageResponse);
 }
 
-message ChatListRequest {
+message GetChatListRequest {
 }
 
-message ChatListResponse {
+message GetChatListResponse {
     repeated Chat chats = 1;
 }
 
-message ChatRequest {
-    string id = 1;
+message CreateChatRequest {
+    string title = 1;
+    repeated int64 participants = 2;
 }
 
-message ChatDataRequest {
-    string id = 1;
-    string title = 2;
-    repeated string users = 3;
-}
-
-message MessageListRequest {
-    string chatId = 1;
-}
-
-message MessageListResponse {
-    repeated Message messages = 1;
-}
-
-message NewMessageRequest {
-    string message = 1;
-}
-
-message ChatResponse {
+message CreateChatResponse {
     Chat chat = 1;
 }
 
-message MessageResponse {
+message GetChatRequest {
+    int64 id = 1;
+}
+
+message GetChatResponse {
+    Chat chat = 1;
+}
+
+message UpdateChatRequest {
+    int64 id = 1;
+    string title = 2;
+    repeated int64 participants = 3;
+}
+
+message UpdateChatResponse {
+    Chat chat = 1;
+}
+
+message GetMessagesRequest {
+    int64 chatId = 1;
+}
+
+message GetMessagesResponse {
+    repeated Message messages = 1;
+}
+
+message SendMessageRequest {
+    string message = 1;
+}
+
+message SendMessageResponse {
     Message message = 1;
 }
 
 message Chat {
     string id = 1;
     string title = 2;
-    repeated sjchat.users.User users = 3;
+    repeated sjchat.users.User participants = 3;
 }
 
 message Message {
     string id = 1;
     string message = 2;
-    string user = 3;
+    string sender = 3;
 }
