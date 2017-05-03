@@ -1,12 +1,9 @@
 dist: trusty
 
-addons:
-  apt:
-    sources:
-      - ubuntu-toolchain-r-test
-    packages:
-      - wget
-      - pkg-config  
+sudo: required
+
+services:
+  - docker
 
 script:
   - ./build.sh
