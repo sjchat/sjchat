@@ -2,6 +2,19 @@
 
 [![Build Status](https://travis-ci.org/sjchat/sjchat.svg?branch=master)](https://travis-ci.org/sjchat/sjchat)
 
+## Dependencies
+
+ - Java 8
+ - Maven
+ - Docker
+ - Unix enviroment to run build.sh (On windows)
+
+## Services
+
+- RestAPI on port 8080
+- Visualizer on port 8081
+- Web client on port 8082
+
 ## Backend
 
 ### Building
@@ -16,8 +29,10 @@
 ### Local development
 
 1. Build with `sh build.sh`
-2. Run all services with `docker deploy stack -c docker-compose.yaml sjchat`
+2. Run all services with `docker stack deploy -c docker-compose-local.yaml sjchat`
 3. You can now access the services via `localhost:8080` etc.
+
+To stop all services you can use `docker stack rm sjchat`.
 
 ### Pushing to production
 
