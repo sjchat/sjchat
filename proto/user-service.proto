@@ -68,6 +68,15 @@ message UpdateUserResponse {
     User user = 1;
 }
 
+message LoginRequest {
+    String username = 1;
+    String password = 2;
+}
+
+message Token {
+    String token;
+}
+
 message GetUserRequest {
     string id = 1;
 }

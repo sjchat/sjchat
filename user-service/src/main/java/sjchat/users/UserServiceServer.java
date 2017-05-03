@@ -1,14 +1,11 @@
 package sjchat.users;
 
-
 import java.io.IOException;
 import java.util.Random;
 
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import io.grpc.stub.StreamObserver;
-import sjchat.users.UserAuthentication;
-import sjchat.general.GRPCServer;
 
 public class UserServiceServer {
   private Server server;
@@ -16,8 +13,6 @@ public class UserServiceServer {
   private final UserAuthentication userautentication = new UserAuthentication();
 
   public static void main(String[] args) throws Exception {
-    GRPCServer messageServiceServer = new GRPCServer(new UserService(), port);
-    messageServiceServer.start();
     UserServiceServer userServiceServer = new UserServiceServer();
     userServiceServer.start();
     userServiceServer.blockUntilShutdown();
