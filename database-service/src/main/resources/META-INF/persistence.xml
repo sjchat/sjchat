@@ -7,7 +7,7 @@
   <persistence-unit name="mongo_pu">
     <provider>com.impetus.kundera.KunderaPersistence</provider>
     <properties>
-      <property name="kundera.nodes" value="192.168.10.190"/>
+      <property name="kundera.nodes" value="190.171.123.12"/>
       <property name="kundera.port" value="27017"/>
       <property name="kundera.keyspace" value="sjchat"/>
       <property name="kundera.dialect" value="mongodb"/>

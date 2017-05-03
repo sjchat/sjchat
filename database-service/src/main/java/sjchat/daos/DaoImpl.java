@@ -6,6 +6,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.PersistenceUnit;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by Johan Vikström on 2017-04-01.
@@ -17,7 +19,13 @@ public class DaoImpl implements Dao {
   protected EntityManager em;
 
   public DaoImpl() {
-    emf = Persistence.createEntityManagerFactory(PU);
+    String nodes = System.getenv("DATABASE_HOST");
+    nodes = (nodes == null) ? "localhost" : nodes;
+
+    Map<String, String> props = new HashMap<String, String>();
+    props.put("kundera.nodes", nodes);
+    System.out.println(props.get("kundera.nodes"));
+    emf = Persistence.createEntityManagerFactory(PU, props);
     em = emf.createEntityManager();
   }
 
