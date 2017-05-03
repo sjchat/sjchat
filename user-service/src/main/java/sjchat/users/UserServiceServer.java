@@ -6,10 +6,12 @@ import java.util.Random;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import io.grpc.stub.StreamObserver;
+import sjchat.users.UserAuthentication;
 
 public class UserServiceServer {
   private Server server;
   private int port = 50051;
+  private final UserAuthentication userautentication;
 
   public static void main(String[] args) throws Exception {
     UserServiceServer userServiceServer = new UserServiceServer();
@@ -87,6 +89,8 @@ public class UserServiceServer {
     }
 
     public void loginUser(LoginRequest req, StreamObserver<AuthResponse> responseObserver) {
+        
+
       
     }
 
