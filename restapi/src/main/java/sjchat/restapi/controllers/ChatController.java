@@ -135,7 +135,7 @@ public class ChatController {
       method = RequestMethod.GET,
       produces = "application/json")
   @ResponseBody
-  public ResponseEntity<Chat> getChat(@PathVariable long chatId) {
+  public ResponseEntity<Chat> getChat(@PathVariable String chatId) {
     final MessageServiceGrpc.MessageServiceBlockingStub blockingStub = MessageServiceGrpc
         .newBlockingStub(messageServiceChannel);
 
@@ -152,7 +152,7 @@ public class ChatController {
       produces = "application/json",
       consumes = "application/json")
   @ResponseBody
-  public ResponseEntity<Chat> updateChat(@PathVariable long chatId,
+  public ResponseEntity<Chat> updateChat(@PathVariable String chatId,
       @RequestBody ChatRequest chatRequest) {
     final MessageServiceGrpc.MessageServiceBlockingStub blockingStub = MessageServiceGrpc
         .newBlockingStub(messageServiceChannel);
@@ -176,7 +176,7 @@ public class ChatController {
       method = RequestMethod.GET,
       produces = "application/json")
   @ResponseBody
-  public ResponseEntity<List<Message>> getMessagesList(@PathVariable long chatId) {
+  public ResponseEntity<List<Message>> getMessagesList(@PathVariable String chatId) {
     final MessageServiceGrpc.MessageServiceBlockingStub blockingStub = MessageServiceGrpc
         .newBlockingStub(messageServiceChannel);
 

@@ -2,24 +2,24 @@ package sjchat.restapi.entities;
 
 public class Message {
 
-  private long id;
+  private String id;
   private String message;
   private String user;
 
   public Message() {
   }
 
-  public Message(long id, String message, String user) {
+  public Message(String id, String message, String user) {
     this.id = id;
     this.message = message;
     this.user = user;
   }
 
-  public long getId() {
+  public String getId() {
     return id;
   }
 
-  public void setId(long id) {
+  public void setId(String id) {
     this.id = id;
   }
 

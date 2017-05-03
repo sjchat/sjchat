@@ -25,17 +25,17 @@ message ChatListResponse {
 }
 
 message ChatRequest {
-    int64 id = 1;
+    string id = 1;
 }
 
 message ChatDataRequest {
-    int64 id = 1;
+    string id = 1;
     string title = 2;
     repeated string users = 3;
 }
 
 message MessageListRequest {
-    int64 chatId = 1;
+    string chatId = 1;
 }
 
 message MessageListResponse {
@@ -55,13 +55,13 @@ message MessageResponse {
 }
 
 message Chat {
-    int64 id = 1;
+    string id = 1;
     string title = 2;
     repeated sjchat.users.User users = 3;
 }
 
 message Message {
-    int64 id = 1;
+    string id = 1;
     string message = 2;
     string user = 3;
 }

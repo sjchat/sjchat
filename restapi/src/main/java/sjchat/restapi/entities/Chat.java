@@ -5,7 +5,7 @@ import java.util.List;
 
 public class Chat {
 
-  private long id;
+  private String id;
   private String title;
   private List<User> users;
 
@@ -13,11 +13,11 @@ public class Chat {
     users = new ArrayList<>();
   }
 
-  public long getId() {
+  public String getId() {
     return id;
   }
 
-  public void setId(long id) {
+  public void setId(String id) {
     this.id = id;
   }
 

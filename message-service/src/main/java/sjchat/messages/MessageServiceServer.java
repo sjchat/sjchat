@@ -51,7 +51,7 @@ public class MessageServiceServer {
   private static Chat.Builder buildMockChat() {
     Random random = new Random();
     Chat.Builder chatBuilder = Chat.newBuilder();
-    chatBuilder.setId(Math.abs(random.nextInt(100)));
+    chatBuilder.setId(null);
     chatBuilder.setTitle("Test chat " + chatBuilder.getId());
     return chatBuilder;
   }
@@ -66,7 +66,7 @@ public class MessageServiceServer {
   private static Message.Builder buildMockMessage() {
     Random random = new Random();
     Message.Builder messageBuilder = Message.newBuilder();
-    messageBuilder.setId(Math.abs(random.nextInt(100)));
+    messageBuilder.setId(null);
     messageBuilder.setMessage("Test message " + messageBuilder.getId());
     messageBuilder.setUser("user-uuid");
     return messageBuilder;
@@ -118,7 +118,7 @@ public class MessageServiceServer {
       Random random = new Random();
 
       Chat.Builder chatBuilder = Chat.newBuilder();
-      chatBuilder.setId(Math.abs(random.nextInt(100)));
+      chatBuilder.setId(null);
       chatBuilder.setTitle(req.getTitle());
       for (String userId : req.getUsersList()) {
         User.Builder userBuilder = User.newBuilder();
@@ -156,7 +156,7 @@ public class MessageServiceServer {
         StreamObserver<MessageListResponse> responseObserver) {
       MessageListResponse.Builder messageListResponseBuilder = MessageListResponse.newBuilder();
 
-      long chatId = req.getChatId();
+      String chatId = req.getChatId();
 
       messageListResponseBuilder.addMessages(buildMockMessage());
       messageListResponseBuilder.addMessages(buildMockMessage());
@@ -173,7 +173,7 @@ public class MessageServiceServer {
       Random random = new Random();
 
       Message.Builder messageBuilder = Message.newBuilder();
-      messageBuilder.setId(Math.abs(random.nextInt(100)));
+      messageBuilder.setId(null);
       messageBuilder.setMessage(req.getMessage());
       messageBuilder.setUser("user-uuid");
 
