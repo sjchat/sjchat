@@ -12,8 +12,8 @@ import sjchat.general.GRPCServer;
 
 public class UserServiceServer {
   private Server server;
-  private int port = 50051;
-  private final UserAuthentication userautentication;
+  private final int port = 50051;
+  private final UserAuthentication userautentication = new UserAuthentication();
 
   public static void main(String[] args) throws Exception {
     GRPCServer messageServiceServer = new GRPCServer(new UserService(), port);
@@ -24,7 +24,6 @@ public class UserServiceServer {
   }
 
   private void start() throws IOException {
-    ;
     server = ServerBuilder.forPort(port).addService(new UserService()).build().start();
     System.out.println("Server started, listening on " + port);
     Runtime.getRuntime().addShutdownHook(new Thread() {
@@ -94,14 +93,14 @@ public class UserServiceServer {
 
     public void loginUser(LoginRequest req, StreamObserver<LoginResponse> responseObserver) {
       LoginResponse loginResponse = LoginResponse.newBuilder().setAuthenticated(true).build();
-      resonspeObserver.onNext(loginResponse);
+      responseObserver.onNext(loginResponse);
       responseObserver.onCompleted();
     }
 
     /**
      * Logout from all devices
      */
-    public void logout(LogoutRequest req, StreamObserver) {
+    public void logout(LogoutRequest req, StreamObserver<LogoutResponse> responseObserver) {
       LogoutResponse logoutResponse = LogoutResponse
         .newBuilder().setAuthenticated(true).build();
       responseObserver.onCompleted();
