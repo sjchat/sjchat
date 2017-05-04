@@ -13,8 +13,25 @@ service UserService {
 }
 
 message User {
-    int64 id = 1;
+    string id = 1;
     string username = 2;
+}
+
+message UserDataRequest {
+    string id = 1;
+    string username = 2;
+}
+
+message UserRequest {
+    string id = 1;
+}
+
+message CreateUserRequest {
+    string username = 1;
+}
+
+message CreateUserRequest {
+    string username = 1;
 }
 
 message CreateUserRequest {
@@ -26,7 +43,7 @@ message CreateUserResponse {
 }
 
 message UpdateUserRequest {
-    int64 id = 1;
+    string id = 1;
     string username = 2;
 }
 
@@ -35,7 +52,7 @@ message UpdateUserResponse {
 }
 
 message GetUserRequest {
-    int64 id = 1;
+    string id = 1;
 }
 
 message GetUserResponse {

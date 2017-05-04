@@ -24,7 +24,12 @@
             <version>0.0.1-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
-
+        <dependency>
+             <groupId>com.sjchat</groupId>
+             <artifactId>database</artifactId>
+             <version>0.0.1-SNAPSHOT</version>
+             <scope>compile</scope>
+        </dependency>
         <dependency>
             <groupId>io.grpc</groupId>
             <artifactId>grpc-netty</artifactId>
