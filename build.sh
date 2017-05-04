@@ -1,6 +1,9 @@
 set -e
 echo "Build started"
 
+echo "Building database service"
+mvn -f database-service install
+
 echo "Building service general"
 mvn -f service-general install
 

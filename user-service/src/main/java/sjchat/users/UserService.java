@@ -11,7 +11,7 @@ class UserService extends UserServiceGrpc.UserServiceImplBase {
     Random random = new Random();
 
     User.Builder userBuilder = User.newBuilder();
-    userBuilder.setId(Math.abs(random.nextInt(100)));
+    userBuilder.setId(null);
     userBuilder.setUsername(req.getUsername());
 
     CreateUserResponse userResponse = CreateUserResponse.newBuilder().setUser(userBuilder).build();

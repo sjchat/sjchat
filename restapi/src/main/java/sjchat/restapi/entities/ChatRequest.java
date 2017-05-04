@@ -3,13 +3,13 @@ package sjchat.restapi.entities;
 public class ChatRequest {
 
   private String title;
-  private long[] participants;
+  private String[] participants;
 
   public String getTitle() {
     return title;
   }
 
-  public long[] getParticipants() {
+  public String[] getParticipants() {
     return participants;
   }
 }
