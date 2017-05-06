@@ -1,37 +1,31 @@
 package sjchat.users;
 
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.SignatureException;
-import io.jsonwebtoken.UnsupportedJwtException;
+import io.jsonwebtoken.*;
 import java.util.Date;
+import sjchat.users.SJJwtAuthentication;
+import sjchat.users.SJJwtBuilder;
+import sjchat.users.AuthenticationResult;
+import sjchat.restapi.entities.User;
+public class UserAuthentication {
+    
+    private SJJwtAuthentication JWSauth;
+    private SJJwtBuilder JWSbuilder;
 
-class UserAuthentication {
-  
-  public static final String issuser = "Sjchat";
-  public static final long expiration_time = 10000000;
-  public static final byte[] secret_key = {1, 7, 8, 7, 5, 6, 9};
-  
-  String tokenize(String username) {
-    return Jwts.builder()
-            .setSubject(username)
-            .setExpiration(new Date(System.currentTimeMillis() + expiration_time))
-            .setIssuer(issuser)
-            .signWith(SignatureAlgorithm.HS512, secret_key).compact();
-  }
-  
-  AuthenticationResult authenticate(String token, String username) {
-    try {
-      Jwts.parser()
-              .requireIssuer(issuser)
-              .setSigningKey(secret_key)
-              .requireSubject(username)
-              .parse(token);
-      return new AuthenticationResult(true, null);
-    } catch (ExpiredJwtException | UnsupportedJwtException | MalformedJwtException | SignatureException e) {
-      return new AuthenticationResult(false, e.getMessage());
+
+    public UserAuthentication(String issuer, byte[] secret) {
+        this.auth = new SJJwtAuthentication(issuer, secret);
+        this.builder = new SJJwtBuilder(issuer, secret);
     }
-  }
+
+    String tokenize(User user, Date expiration) {
+        return this.JWSbuilder.build(user.getUsername(), expiration);
+    }
+
+    AuthenticationResult authenticate(User user, String jws) {
+        try {
+           return new AuthenticationResult(this.JWSauth.authenticate(user.getUsername(), jws), true);
+        } catch (Exception e) {
+            return new AuthenticationResult(e.getMessage(), false);
+        }
+    }
 }
