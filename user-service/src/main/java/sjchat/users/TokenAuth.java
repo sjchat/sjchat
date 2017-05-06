@@ -2,12 +2,12 @@ package sjchat.users;
 
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
-public class SJJwtAuthentication {
+public class TokenAuth {
     
     private final String issuer;
     private final byte[] secret;
 
-    public SJJwtAuthentication(String issuer, byte[] secret) {
+    public TokenAuth(String issuer, byte[] secret) {
         this.issuer = issuer;
         this.secret = secret;
     }

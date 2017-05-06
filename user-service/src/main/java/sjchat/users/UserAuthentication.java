@@ -1,6 +1,5 @@
 package sjchat.users;
 
-import io.jsonwebtoken.*;
 import java.util.Date;
 import sjchat.users.AuthenticationResult;
 import sjchat.restapi.entities.User;
@@ -10,12 +9,12 @@ public class UserAuthentication {
     
     private TokenAuth auth;
     private TokenBuilder builder;
+    
 
 
     public UserAuthentication(String issuer, byte[] secret) {
         this.auth = new TokenAuth(issuer, secret);
         this.builder = new TokenBuilder(issuer, secret);
-        
     }
 
     String tokenize(User user, Date expiration) {
@@ -23,10 +22,15 @@ public class UserAuthentication {
     }
 
     AuthenticationResult authenticate(User user, String jws) {
+      
         try {
-           return new AuthenticationResult(this.auth.authenticate(user.getUsername(), jws), true);
+     
+            return new AuthenticationResult(this.auth.authenticate(user.getUsername(), jws), true);
+      
         } catch (Exception e) {
+      
             return new AuthenticationResult(e.getMessage(), false);
+      
         }
     }
 }
