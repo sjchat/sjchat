@@ -20,60 +20,12 @@
   </properties>
 
   <dependencies>
-
-  <dependency>
-    <groupId>io.jsonwebtoken</groupId>
-    <artifactId>jjwt</artifactId>
-    <version>0.7.0</version>
-  </dependency>  
-  <dependency>
-    <groupId>io.grpc</groupId>
-    <artifactId>grpc-netty</artifactId>
-    <version>1.0.1</version>
-  </dependency>
-  <dependency>
-    <groupId>io.grpc</groupId>
-    <artifactId>grpc-protobuf</artifactId>
-    <version>1.0.1</version>
-  </dependency>
-  <dependency>
-    <groupId>io.grpc</groupId>
-    <artifactId>grpc-stub</artifactId>
-    <version>1.0.1</version>
-  </dependency>
-  </dependencies>
-
-    <dependencies>
-        <dependency>
-            <groupId>com.sjchat</groupId>
-            <artifactId>general</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-             <groupId>com.sjchat</groupId>
-             <artifactId>database</artifactId>
-             <version>0.0.1-SNAPSHOT</version>
-             <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.grpc</groupId>
-            <artifactId>grpc-netty</artifactId>
-            <version>1.0.1</version>
-        </dependency>
-        <dependency>
-            <groupId>io.grpc</groupId>
-            <artifactId>grpc-protobuf</artifactId>
-            <version>1.0.1</version>
-        </dependency>
-        <dependency>
-            <groupId>io.grpc</groupId>
-            <artifactId>grpc-stub</artifactId>
-            <version>1.0.1</version>
-        </dependency>
-    </dependencies>
-
-  <dependencies>
+    <dependency>
+      <groupId>com.sjchat</groupId>
+      <artifactId>database</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+      <scope>compile</scope>
+    </dependency>
     <dependency>
       <groupId>com.sjchat</groupId>
       <artifactId>general</artifactId>
@@ -102,7 +54,6 @@
     </dependency>
   </dependencies>
   
->>>>>>> Added Authentication Class and jjwt to Pom User-Service
   <build>
     <extensions>
       <extension>
