@@ -4,9 +4,6 @@ services:
     image: sjchat-restapi
     deploy:
       replicas: 1
-      resources:
-        limits:
-          cpus: "1.0"
       restart_policy:
         condition: on-failure
         max_attempts: 3
@@ -22,10 +19,6 @@ services:
     image: sjchat-message-service
     deploy:
       replicas: 1
-      resources:
-        limits:
-          cpus: "1.0"
-          memory: 200M
       restart_policy:
         condition: on-failure
         max_attempts: 3
@@ -38,10 +31,6 @@ services:
     image: sjchat-user-service
     deploy:
       replicas: 1
-      resources:
-        limits:
-          cpus: "1.0"
-          memory: 200M
       restart_policy:
         condition: on-failure
         max_attempts: 3
