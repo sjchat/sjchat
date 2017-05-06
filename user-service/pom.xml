@@ -20,7 +20,7 @@
   </properties>
 
   <dependencies>
-    <dependency>
+      <dependency>
       <groupId>com.sjchat</groupId>
       <artifactId>general</artifactId>
       <version>0.0.1-SNAPSHOT</version>
