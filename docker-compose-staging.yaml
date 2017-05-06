@@ -1,7 +1,7 @@
 version: "3"
 services:
   restapi:
-    image: sawny/sjchat-restapi
+    image: sjchat/sjchat-restapi
     deploy:
       replicas: 1
       resources:
@@ -20,7 +20,7 @@ services:
       - user-service
 
   message-service:
-    image: sawny/sjchat-message-service
+    image: sjchat/sjchat-message-service
     deploy:
       replicas: 1
       resources:
@@ -47,7 +47,7 @@ services:
       - webnet
 
   user-service:
-    image: sawny/sjchat-user-service
+    image: sjchat/sjchat-user-service
     deploy:
       replicas: 1
       resources:
@@ -63,7 +63,7 @@ services:
       - webnet
 
   web-client:
-    image: sawny/sjchat-web-client
+    image: sjchat/sjchat-web-client
     ports:
       - "8082:80"
     networks:
