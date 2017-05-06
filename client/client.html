@@ -12,7 +12,7 @@
 		
 		function testAPI(apiEndpoint) {
 			$('.js-api-test').append('<h2>'+ apiEndpoint +'</h2>');
-			$.get('http://localhost:8080'+ apiEndpoint, function(data) {
+			$.get(window.location.protocol +'//'+ window.location.hostname +':8080'+ apiEndpoint, function(data) {
 				console.log(data);
 				$('.js-api-test').append($('<pre>').append(JSON.stringify(data)));
 			});
