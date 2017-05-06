@@ -4,12 +4,12 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
 import java.util.Date;
-public class SJJwtBuilder {
+public class TokenBuilder {
 
     private final byte[] secret;
     private final String issuer;
 
-    public SJJwtBuilder(String issuer, byte[] secret) {
+    public TokenBuilder(String issuer, byte[] secret) {
         this.secret = secret;
         this.issuer = issuer;
     }

@@ -8,6 +8,7 @@ public class AuthenticationResult {
 
     public AuthenticationResult(boolean result, String message) {
         this.message = message;
-        this.result = result;
+        this.result = result
     }
+
 }
