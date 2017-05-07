@@ -16,6 +16,10 @@ mvn -f message-service install
 echo "Building rest api"
 mvn -f restapi install
 
+
+
+# Docker
+
 echo "Building docker container 'sjchat-message-service'"
 docker build -t sjchat-message-service ./message-service
 
