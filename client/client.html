@@ -2,7 +2,7 @@
 <head>
 	<title>Chat prototype</title>
 	<script src="jquery-3.2.1.min.js"></script>
-	<script src="js/chat.js"></script>
+	<script src="js/dataManager.js"></script>
 </head>
 <body>
 	<h1>
@@ -12,49 +12,45 @@
 	<p id="chatExample"> </p>
 	<script>
 		// Change when back-end works
-		var apiAddress = "http://localhost:8080/";
+		var apiAddress = window.location.protocol +'//'+ window.location.hostname +':8080';
 		var dataManager = new DataManager();
 
-
-		// Add a new chat to the dataManager
-		dataManager.putChat(
-			{
-				"id": 123,
-				"title": "exampleChat",
-				"participants": [
-					{
-						"id": 5,
-						"username": "Five"
-					}
-				]
-			});
-
-		// Add a message to that chat, written by Five
-		dataManager.putMessage(123, 
-			{
-				"id": 0,
-				"message": "Hej! Det är Five som skriver det här!",
-				"sender": 5
-			});
-
-
-		$.get(apiAddress, function(data){
-			var chats = JSON.parse(data);
-			for (let chat of chats){
-				dataManager.putChat(chat);
-			}
-
-			document.getElementById("chatExample").innerHTML = JSON.stringify(dataManager, null, 2);
+		// Temporary, this user sends all the messages in the mock data
+		dataManager.putUser({
+			"id": 123,
+			"username": "user_123"
 		});
 
-		
-		/*var xhttp = new XMLHttpRequest();
-		xhttp.open("GET", apiAddress+"/chat", false);
-		xhttp.setRequestHeader("Content-type", "application/json");
-		xhttp.send();
-		var response = JSON.parse(xhttp.responseText);
-		document.getElementById("hw").innerHTML = response;*/
+		$.ajaxSetup({
+			async: false
+ 		});
 
+		// Add chats
+		$.get(apiAddress+"/chat", function(data){
+			var chats = data;
+
+			for (let chat of chats){
+				dataManager.putChat(chat);
+
+				for (let user of chat.users){
+					dataManager.putUser(user);
+				}
+			}
+
+		});
+
+		// Add messages to chats
+		for (var chatId in dataManager.chats){
+			$.get(apiAddress+"/chat/"+chatId+"/message", function(data){
+				var messages = data;
+
+				for (let message of messages){
+					dataManager.putMessage(chatId, message);
+				}
+			});
+		}
+
+		document.getElementById("chatExample").innerHTML = JSON.stringify(dataManager, null, 2);
 
 	</script>
 </body>
