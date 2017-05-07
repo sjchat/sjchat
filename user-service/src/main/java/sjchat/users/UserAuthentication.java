@@ -1,36 +1,39 @@
 package sjchat.users;
 
 import java.util.Date;
-import sjchat.users.AuthenticationResult;
-import sjchat.restapi.entities.User;
-import sjchat.users.TokenAuth;
-import sjchat.users.TokenBuilder;
+import sjchat.users.tokens*;
+import java.lang.Exception;
+
+
 public class UserAuthentication {
-    
+
     private TokenAuth auth;
     private TokenBuilder builder;
-    
+    private TokenConfig.Configurations configurations;
 
-
-    public UserAuthentication(String issuer, byte[] secret) {
-        this.auth = new TokenAuth(issuer, secret);
-        this.builder = new TokenBuilder(issuer, secret);
+    public UserAuthentication(TokenConfig.Configurations configurations) {
+        this.auth = new TokenAuth(configurations.issuer, configurations.secret);
+        this.builder = new new TokenBuilder(configurations.issuer, configurations.secret);
     }
 
-    String tokenize(User user, Date expiration) {
-        return this.builder.build(user.getUsername(), expiration);
+    String tokenize(String username, Date tokenExpiration) {
+        return this.builder.build(username, expiration);
     }
 
-    AuthenticationResult authenticate(User user, String jws) {
-      
+    String tokenize(String username) {
+        return this.builder.build(username, configurations.getExpiration());
+    }
+
+    AuthenticationResult authenticate(String username, String jws) {
+
         try {
-     
-            return new AuthenticationResult(this.auth.authenticate(user.getUsername(), jws), true);
-      
+            
+            return new AuthenticationResult(this.auth.authenticate(username, jws), true);
+
         } catch (Exception e) {
-      
+
             return new AuthenticationResult(e.getMessage(), false);
-      
+
         }
     }
 }

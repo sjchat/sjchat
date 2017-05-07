@@ -1,15 +1,14 @@
-package sjchat.users;
+package sjchat.users.tokens;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-
 import java.util.Date;
 public class TokenBuilder {
 
-    private final byte[] secret;
+    private final String secret;
     private final String issuer;
 
-    public TokenBuilder(String issuer, byte[] secret) {
+    public TokenBuilder(String issuer, String secret) {
         this.secret = secret;
         this.issuer = issuer;
     }
@@ -22,5 +21,4 @@ public class TokenBuilder {
             .signWith(SignatureAlgorithm.HS512, this.secret)
             .compact();
     }
-}
 
