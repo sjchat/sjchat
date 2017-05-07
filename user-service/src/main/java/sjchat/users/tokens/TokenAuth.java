@@ -1,13 +1,13 @@
-package sjchat.users;
+package sjchat.users.tokens;
 
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 public class TokenAuth {
     
     private final String issuer;
-    private final byte[] secret;
+    private final String secret;
 
-    public TokenAuth(String issuer, byte[] secret) {
+    public TokenAuth(String issuer, String secret) {
         this.issuer = issuer;
         this.secret = secret;
     }

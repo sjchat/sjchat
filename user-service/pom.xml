@@ -27,13 +27,6 @@
       <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>com.sjchat</groupId>
-      <artifactId>general</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-      <scope>compile</scope>
-    </dependency>
-    
-    <dependency>
       <groupId>io.jsonwebtoken</groupId>
       <artifactId>jjwt</artifactId>
       <version>0.7.0</version>
