@@ -21,4 +21,4 @@ public class TokenBuilder {
             .signWith(SignatureAlgorithm.HS512, this.secret)
             .compact();
     }
-
+}

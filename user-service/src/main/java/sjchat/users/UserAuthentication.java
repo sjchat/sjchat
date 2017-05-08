@@ -1,39 +1,43 @@
 package sjchat.users;
 
-import java.util.Date;
-import sjchat.users.tokens*;
 import java.lang.Exception;
+import java.util.Date;
 
+import sjchat.users.tokens.*;
 
 public class UserAuthentication {
 
-    private TokenAuth auth;
-    private TokenBuilder builder;
-    private TokenConfig.Configurations configurations;
-
-    public UserAuthentication(TokenConfig.Configurations configurations) {
-        this.auth = new TokenAuth(configurations.issuer, configurations.secret);
-        this.builder = new new TokenBuilder(configurations.issuer, configurations.secret);
+    private final TokenConfig.Configurations config;
+    private final TokenAuth auth;
+    private final TokenBuilder builder;
+    
+    public String tokenize(String username) {
+        return this.builder.build(username, config.getExpiration());
+        
     }
 
-    String tokenize(String username, Date tokenExpiration) {
-        return this.builder.build(username, expiration);
-    }
-
-    String tokenize(String username) {
-        return this.builder.build(username, configurations.getExpiration());
-    }
-
-    AuthenticationResult authenticate(String username, String jws) {
-
+    public AuthenticationResult authenticate(String username, String jws) {
         try {
-            
-            return new AuthenticationResult(this.auth.authenticate(username, jws), true);
-
+            return new AuthenticationResult(this.auth.authenticate(jws, username), true);
         } catch (Exception e) {
-
             return new AuthenticationResult(e.getMessage(), false);
-
         }
     }
+
+    
+    private UserAuthentication() {
+        this.config = TokenConfig.get();
+        this.auth = new TokenAuth(this.config.issuer, this.config.secret);
+        this.builder = new TokenBuilder(this.config.issuer, this.config.secret); 
+    }
+
+    public static UserAuthentication getInstance() {
+        return UserAuthenticationHolder.INSTANCE;
+    }
+
+    private static class UserAuthenticationHolder {
+        private static final UserAuthentication INSTANCE = new UserAuthentication();
+    }
+
 }
+

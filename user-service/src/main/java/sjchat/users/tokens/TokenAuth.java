@@ -1,9 +1,9 @@
 package sjchat.users.tokens;
 
-import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
+
 public class TokenAuth {
-    
+
     private final String issuer;
     private final String secret;
 
@@ -17,10 +17,9 @@ public class TokenAuth {
              .requireIssuer(this.issuer)
              .setSigningKey(this.secret)
              .requireSubject(subject)
-             .parseClaimsJws()
+             .parseClaimsJws(jws)
              .getBody()
              .getSubject() + " Authenticated Successfully";
     }
 }
-
 
