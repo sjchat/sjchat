@@ -13,10 +13,6 @@
 	<h1>
 		SjChat
 	</h1>
-	<div>
-		<h3>Data loaded</h3>
-		<p id="datadump"> </p>
-	</div>
 	<script>
 		var apiAddress = window.location.protocol +'//'+ window.location.hostname +':8080';
 		var dataManager = new DataManager();
@@ -49,7 +45,6 @@
 			});
 		}
 
-		document.getElementById("datadump").innerHTML = JSON.stringify(dataManager, null, 2);
 	</script>
 
 	<div style="width: 30%; background-color: #FF55AA; float: left">
@@ -61,6 +56,11 @@
 		<div id = "chatView"></div>
 	</div>
 
+	<div style="clear:both;">
+		<br/>
+		<p id="datadump"> </p>
+	</div>
+
 	<script type="text/babel">
 
 
@@ -68,7 +68,7 @@
 	class ChatListEntry extends React.Component {
 		constructor(props) {
 			super(props);
-    		this.changeChat = this.changeChat.bind(this);
+			this.changeChat = this.changeChat.bind(this);
 		}
 
 		changeChat (){
@@ -102,6 +102,22 @@
 		}
 	}
 
+	class ChatMessage extends React.Component {
+		constructor(props) {
+			super(props);
+		}
+
+		render() {
+			var username = dataManager.users[this.props.data.user].username;
+			return (
+				<div style={{"backgroundColor": "rgba(255, 255, 255, 0.5)"}}>
+					<span style={{"fontSize": "70%", "color":"white"}}>{username}<br/></span>
+					{this.props.data.message}
+				</div>
+			);
+		}
+	}
+
 	class ChatView extends React.Component {
 		constructor(props) {
 			super(props);
@@ -114,10 +130,20 @@
 
 		render() {
 			if (!(this.state.chatId in dataManager.chats))
-				return <div> <h3>No chat chosen {this.state.chatId}</h3> </div>;
+				return <div> <h3>No chat chosen ({this.state.chatId})</h3> </div>;
+
+			var chat = dataManager.chats[this.state.chatId];
+
+			var messages = [];
+			for (let message of chat.messages) {
+				messages.push(<ChatMessage key={message.id} data={message}/>);
+			}
+
+
 			return (
 				<div>
-					<h3>{this.state.chatId}</h3>
+					<h3>{dataManager.chats[this.state.chatId].title}</h3>
+					{messages}
 				</div>
 			);
 		}
@@ -131,6 +157,9 @@
 		<ChatList />,
 		document.getElementById('chatList')
 	);
+
+
+	document.getElementById("datadump").innerHTML = JSON.stringify(dataManager, null, 2);
 	</script>
 	
 </body>
