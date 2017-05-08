@@ -8,18 +8,11 @@
 	<h1>
 		SjChat
 	</h1>
-	<p id="hw"> </p>
 	<p id="chatExample"> </p>
 	<script>
 		// Change when back-end works
 		var apiAddress = window.location.protocol +'//'+ window.location.hostname +':8080';
 		var dataManager = new DataManager();
-
-		// Temporary, this user sends all the messages in the mock data
-		dataManager.putUser({
-			"id": 123,
-			"username": "user_123"
-		});
 
 		$.ajaxSetup({
 			async: false

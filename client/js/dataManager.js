@@ -22,6 +22,13 @@ class DataManager {
 
     // Add a message to the chat with id chatId
     putMessage(chatId, messageObject) {
+        // If the message is sent by an undefined user, add the user.
+        // If the user is already defined this object will not be added.
+        this.putUser({
+            "id": messageObject.user,
+            "username": "unnamed_user_"+messageObject.user
+        });
+
         this.chats[chatId].putMessage(messageObject);
     }
 
