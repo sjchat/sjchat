@@ -9,7 +9,7 @@ class MessageService extends MessageServiceGrpc.MessageServiceImplBase {
   private static Chat.Builder buildMockChat() {
     Random random = new Random();
     Chat.Builder chatBuilder = Chat.newBuilder();
-    chatBuilder.setId(null);
+    chatBuilder.setId("mock-id");
     chatBuilder.setTitle("Test chat " + chatBuilder.getId());
     return chatBuilder;
   }
@@ -17,7 +17,7 @@ class MessageService extends MessageServiceGrpc.MessageServiceImplBase {
   private static User.Builder buildMockUser() {
     Random random = new Random();
     User.Builder userBuilder = User.newBuilder();
-    userBuilder.setId(null);
+    userBuilder.setId("mock-id");
     userBuilder.setUsername("user_" + userBuilder.getId());
     return userBuilder;
   }
@@ -25,7 +25,7 @@ class MessageService extends MessageServiceGrpc.MessageServiceImplBase {
   private static Message.Builder buildMockMessage() {
     Random random = new Random();
     Message.Builder messageBuilder = Message.newBuilder();
-    messageBuilder.setId(null);
+    messageBuilder.setId("mock-id");
     messageBuilder.setMessage("Test message " + messageBuilder.getId());
     messageBuilder.setSender("id");
     return messageBuilder;
