@@ -110,7 +110,7 @@
 		render() {
 			var username = dataManager.users[this.props.data.user].username;
 			return (
-				<div style={{"backgroundColor": "rgba(255, 255, 255, 0.5)"}}>
+				<div style={{"backgroundColor": "rgba(255, 255, 255, 0.5)", "marginTop":"2px"}}>
 					<span style={{"fontSize": "70%", "color":"white"}}>{username}<br/></span>
 					{this.props.data.message}
 				</div>
@@ -143,7 +143,12 @@
 			return (
 				<div>
 					<h3>{dataManager.chats[this.state.chatId].title}</h3>
+
 					{messages}
+					
+					<br/>
+					Write message:
+					<input type="text" style={{"width": "100%"}}/>
 				</div>
 			);
 		}
