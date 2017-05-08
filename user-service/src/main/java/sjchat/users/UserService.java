@@ -1,7 +1,6 @@
 package sjchat.users;
 
 import java.util.Random;
-
 import io.grpc.stub.StreamObserver;
 import sjchat.daos.UserDao;
 import sjchat.daos.UserDaoImpl;

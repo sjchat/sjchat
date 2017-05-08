@@ -1,5 +1,7 @@
 package sjchat.users.tokens;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 
 public class TokenAuth {
@@ -12,14 +14,13 @@ public class TokenAuth {
         this.secret = secret;
     }
 
-    public String authenticate(String jws, String subject) {
+    public Jws<Claims> authenticate(String subject, String jws) {
          return Jwts.parser()
              .requireIssuer(this.issuer)
              .setSigningKey(this.secret)
              .requireSubject(subject)
-             .parseClaimsJws(jws)
-             .getBody()
-             .getSubject() + " Authenticated Successfully";
+             .parseClaimsJws(jws);
+
     }
 }
 
