@@ -5,6 +5,8 @@
 	<title>Chat prototype</title>
 	<script src="js/jquery-3.2.1.min.js"></script>
 	<script src="js/dataManager.js"></script>
+    <script src="https://unpkg.com/react@15/dist/react.js"></script>
+    <script src="https://unpkg.com/react-dom@15/dist/react-dom.js"></script>
     <script src="js/react/browser.min.js"></script>
 </head>
 <body>
@@ -34,7 +36,6 @@
 					dataManager.putUser(user);
 				}
 			}
-
 		});
 
 		// Add messages to chats
@@ -53,12 +54,84 @@
 
 	<div style="width: 30%; background-color: #FF55AA; float: left">
 		<h3>Chats</h3>
+		<div id = "chatList"></div>
 	</div>
 
 	<div style="width: 70%; background-color: #AA55FF; float: right">
-		<h3>Chat: </h3>
+		<div id = "chatView"></div>
 	</div>
 
+	<script type="text/babel">
+
+
+
+	class ChatListEntry extends React.Component {
+		constructor(props) {
+			super(props);
+    		this.changeChat = this.changeChat.bind(this);
+		}
+
+		changeChat (){
+			chatView.setChatId(this.props.id);
+		}
+
+		render() {
+			return (
+				<div onClick={this.changeChat}> {dataManager.chats[this.props.id].title} (id {this.props.id}) </div>
+			);
+		}
+	}
+
+	class ChatList extends React.Component {
+		constructor(props) {
+			super(props);
+		}
+
+		render() {
+			var rows = [];
+			for (var chatId in dataManager.chats) {
+				var chat = dataManager.chats[chatId];
+				rows.push(<ChatListEntry key={chatId} id = {chatId} />);
+			}
+
+			return (
+				<div>
+				{rows}
+				</div>
+			);
+		}
+	}
+
+	class ChatView extends React.Component {
+		constructor(props) {
+			super(props);
+			this.state = {chatId: -1};
+		}
+
+		setChatId(newId){
+			this.setState({chatId: newId});
+		}
+
+		render() {
+			if (!(this.state.chatId in dataManager.chats))
+				return <div> <h3>No chat chosen {this.state.chatId}</h3> </div>;
+			return (
+				<div>
+					<h3>{this.state.chatId}</h3>
+				</div>
+			);
+		}
+	}
+
+	var chatView = ReactDOM.render(
+		<ChatView />,
+		document.getElementById('chatView')
+	);
+	ReactDOM.render(
+		<ChatList />,
+		document.getElementById('chatList')
+	);
+	</script>
 	
 </body>
 </html>
