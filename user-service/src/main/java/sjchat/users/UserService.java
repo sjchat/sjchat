@@ -1,7 +1,6 @@
 package sjchat.users;
 
 import java.util.Random;
-
 import io.grpc.stub.StreamObserver;
 
 class UserService extends UserServiceGrpc.UserServiceImplBase {
