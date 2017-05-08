@@ -5,34 +5,33 @@ import java.io.InputStream;
 import java.util.Date;
 import java.util.Properties;
 
-class TokenConfig {
+public class TokenConfig {
     
     static final String CONFIGFILE = "TokenConfig.Properties";
-    static final Properties properties;
+    static final Properties properties = new Properties();
 
 
     static {
-        InputStream in;
         try {
-            in = TokenConfig.class.getClassLoader().getResourceAsStream(CONFIGFILE);
+            properties.load(TokenConfig.class.getClassLoader().getResourceAsStream(CONFIGFILE));
         } catch (IOException e) {
             System.err.println("Unable to Load Resource: " + CONFIGFILE);
         }
     }
 
-    static Configurations get() {
-        return new Configurations(properties.get("issuer"), properties.get("expiration"), properties.get("secret");
+    public static Configurations get() {
+        return new Configurations(properties.getProperty("issuer"), properties.getProperty("expiration"), properties.getProperty("secret"));
     }
 
-    static class Configurations {
+    public static class Configurations {
         public final String issuer;
         public final String secret;
-        public final long long tokenDefaultExpiration;
+        public final long tokenDefaultExpiration;
         
-        public Configurations(String issuer, long long tokenDefaultExpiration, String secret) {
+        public Configurations(String issuer, String tokenDefaultExpiration, String secret) {
             this.issuer = issuer;
             this.secret = secret;
-            this.tokenDefaultExpiration = tokenDefaultExpiration;
+            this.tokenDefaultExpiration = Long.parseLong(tokenDefaultExpiration);
         }
 
         public Date getExpiration() {
