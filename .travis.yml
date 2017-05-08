@@ -7,6 +7,9 @@ services:
 
 script:
   - ./build.sh
-  
+
+after_success:
+ - ./tools/travis-after-success.sh
+
 notifications:
   email: false
