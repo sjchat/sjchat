@@ -13,3 +13,7 @@ after_success:
 
 notifications:
   email: false
+
+cache:
+  directories:
+  - $HOME/.m2
