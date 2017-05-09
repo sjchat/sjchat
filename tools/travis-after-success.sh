@@ -1,4 +1,4 @@
-if [ "$TRAVIS_BRANCH" == "master" ]
+if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "master" ]
 then
     docker login -u $DOCKER_USER -p $DOCKER_PASS
 
