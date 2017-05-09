@@ -1,24 +1,12 @@
-Skip to content
-This repository
-Search
-Pull requests
-Issues
-Gist
- @victors97
- Sign out
- Watch 2
-  Star 9
- Fork 8 teamintrepid/react-instant-chat
- Code  Issues 0  Pull requests 0  Projects 0  Wiki  Pulse  Graphs
-Branch: master Find file Copy pathreact-instant-chat/src/styles/App.css
-3ca0daa  on Sep 16 2016
-@paul-pagnan paul-pagnan Initial commit
-1 contributor
-RawBlameHistory     
-58 lines (52 sloc)  1.44 KB
 body {
   font-family: 'proxima-nova', sans-serif;
   margin: 0;
+}
+h1 {
+  font-family: 'proxima-nova', sans-serif;
+  margin: 0;
+  font-size: 80px;
+  text-align: center;
 }
 
 html, body, #app, .container {
@@ -73,5 +61,3 @@ input[type="submit"]:hover {
   box-shadow: -10px 10px 0px rgba(50,50,50,0.15);
   background-color: #1e1e1e;
 }
-Contact GitHub API Training Shop Blog About
-© 2017 GitHub, Inc. Terms Privacy Security Status Help
