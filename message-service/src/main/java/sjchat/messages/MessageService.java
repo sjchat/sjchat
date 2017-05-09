@@ -3,6 +3,10 @@ package sjchat.messages;
 import java.util.Random;
 
 import io.grpc.stub.StreamObserver;
+import sjchat.daos.ChatDao;
+import sjchat.daos.ChatDaoImpl;
+import sjchat.daos.MessageDao;
+import sjchat.daos.MessageDaoImpl;
 import sjchat.users.User;
 
 class MessageService extends MessageServiceGrpc.MessageServiceImplBase {
