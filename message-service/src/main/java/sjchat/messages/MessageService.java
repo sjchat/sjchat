@@ -26,7 +26,7 @@ class MessageService extends MessageServiceGrpc.MessageServiceImplBase {
     String host = System.getenv("USER_SERVICE_HOST");
     host = (host == null) ? "localhost" : host;
 
-    return ManagedChannelBuilder.forAddress(host, 50051).usePlaintext(true).build(); //TODO: Put port in config file
+    return ManagedChannelBuilder.forAddress(host, 50051).usePlaintext(true).build();
   }
   private static Chat.Builder buildMockChat(String id) {
     Random random = new Random();
@@ -97,7 +97,6 @@ class MessageService extends MessageServiceGrpc.MessageServiceImplBase {
     ChatEntity.Builder chatBuilder = new ChatEntity.Builder();
     chatBuilder.setId(null);
     chatBuilder.setTitle(req.getTitle());
-    //TODO: Check that all participants are actual valid userids
     chatBuilder.setParticipants(req.getParticipantsList());
 
     ChatEntity entity = chatBuilder.build();
