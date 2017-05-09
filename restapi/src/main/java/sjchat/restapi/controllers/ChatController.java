@@ -201,7 +201,7 @@ public class ChatController {
     final MessageServiceGrpc.MessageServiceBlockingStub blockingStub = MessageServiceGrpc.newBlockingStub(messageServiceChannel);
 
     SendMessageRequest.Builder messageRequestBuilder = SendMessageRequest.newBuilder();
-    messageRequestBuilder.setMessage(messageRequest.getMessage());
+    messageRequestBuilder.setMessage(messageRequest.getMessage()).setChatId(chatId).setSender(messageRequest.getSender());
 
     SendMessageResponse response = blockingStub.sendMessage(messageRequestBuilder.build());
     sjchat.messages.Message responseMessage = response.getMessage();

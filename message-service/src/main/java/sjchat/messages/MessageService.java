@@ -11,6 +11,8 @@ import sjchat.daos.ChatDaoImpl;
 import sjchat.daos.MessageDao;
 import sjchat.daos.MessageDaoImpl;
 import sjchat.entities.ChatEntity;
+import sjchat.entities.MessageEntity;
+import sjchat.exceptions.NoEntityExistsException;
 import sjchat.users.GetUserRequest;
 import sjchat.users.User;
 import sjchat.users.UserServiceGrpc;
@@ -78,8 +80,13 @@ class MessageService extends MessageServiceGrpc.MessageServiceImplBase {
   @Override
   public void getChat(GetChatRequest req, StreamObserver<GetChatResponse> responseObserver) {
     ChatEntity entity = chatDao.find(req.getId());
+    GetChatResponse chatResponse;
+    if(entity == null){
+      chatResponse = GetChatResponse.newBuilder().setChat(Chat.newBuilder().setId("null").setTitle("Not existing")).build();
+    }else{
+      chatResponse = GetChatResponse.newBuilder().setChat(buildChat(entity)).build();
+    }
 
-    GetChatResponse chatResponse = GetChatResponse.newBuilder().setChat(buildChat(entity)).build();
 
     responseObserver.onNext(chatResponse);
     responseObserver.onCompleted();
@@ -104,17 +111,19 @@ class MessageService extends MessageServiceGrpc.MessageServiceImplBase {
 
   @Override
   public void updateChat(UpdateChatRequest req, StreamObserver<UpdateChatResponse> responseObserver) {
-    Chat.Builder chatBuilder = Chat.newBuilder();
-    chatBuilder.setId(req.getId());
-    chatBuilder.setTitle(req.getTitle());
-    for (String userId : req.getParticipantsList()) {
-      User.Builder userBuilder = User.newBuilder();
-      userBuilder.setId(userId);
-      userBuilder.setUsername("mock_username");
-      chatBuilder.addParticipants(userBuilder);
+    ChatEntity.Builder builder = new ChatEntity.Builder();
+    builder.setId(req.getId())
+            .setTitle(req.getTitle())
+            .setParticipants(req.getParticipantsList());
+
+    ChatEntity entity = builder.build();
+    try{
+      entity = chatDao.update(entity);
+    }catch(NoEntityExistsException e){
+      System.out.println("No chat with id: " + req.getId() + " exists");
     }
 
-    UpdateChatResponse chatResponse = UpdateChatResponse.newBuilder().setChat(chatBuilder).build();
+    UpdateChatResponse chatResponse = UpdateChatResponse.newBuilder().setChat(buildChat(entity)).build();
 
     responseObserver.onNext(chatResponse);
     responseObserver.onCompleted();
@@ -124,12 +133,11 @@ class MessageService extends MessageServiceGrpc.MessageServiceImplBase {
   public void getMessages(GetMessagesRequest req, StreamObserver<GetMessagesResponse> responseObserver) {
     GetMessagesResponse.Builder messageListResponseBuilder = GetMessagesResponse.newBuilder();
 
-    String chatId = req.getChatId();
+    List<MessageEntity> messageEntities = messageDao.getInChat(req.getChatId());
 
-    messageListResponseBuilder.addMessages(buildMockMessage("msg-1"));
-    messageListResponseBuilder.addMessages(buildMockMessage("msg-2"));
-    messageListResponseBuilder.addMessages(buildMockMessage("msg-3"));
-    messageListResponseBuilder.addMessages(buildMockMessage("msg-4"));
+    for(MessageEntity entity : messageEntities){
+      messageListResponseBuilder.addMessages(Message.newBuilder().setId(entity.getId()).setSender(entity.getSender()).setMessage(entity.getMessage()));
+    }
 
     responseObserver.onNext(messageListResponseBuilder.build());
     responseObserver.onCompleted();
@@ -137,13 +145,11 @@ class MessageService extends MessageServiceGrpc.MessageServiceImplBase {
 
   @Override
   public void sendMessage(SendMessageRequest req, StreamObserver<SendMessageResponse> responseObserver) {
-    Random random = new Random();
-
     Message.Builder messageBuilder = Message.newBuilder();
-    messageBuilder.setId(null);
-    messageBuilder.setMessage(req.getMessage());
-    messageBuilder.setSender("id");
 
+    MessageEntity entity = new MessageEntity(null, req.getChatId(), req.getMessage(), req.getSender());
+    messageDao.create(entity);
+    messageBuilder.setId(entity.getId()).setMessage(entity.getMessage()).setSender(entity.getSender());
     SendMessageResponse messageResponse = SendMessageResponse.newBuilder().setMessage(messageBuilder).build();
 
     responseObserver.onNext(messageResponse);
