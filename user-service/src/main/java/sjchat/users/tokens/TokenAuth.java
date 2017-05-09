@@ -6,21 +6,21 @@ import io.jsonwebtoken.Jwts;
 
 public class TokenAuth {
 
-    private final String issuer;
-    private final String secret;
+  private final String issuer;
+  private final String secret;
 
-    public TokenAuth(String issuer, String secret) {
-        this.issuer = issuer;
-        this.secret = secret;
-    }
+  public TokenAuth(String issuer, String secret) {
+    this.issuer = issuer;
+    this.secret = secret;
+  }
 
-    public Jws<Claims> authenticate(String subject, String jws) {
-         return Jwts.parser()
-             .requireIssuer(this.issuer)
-             .setSigningKey(this.secret)
-             .requireSubject(subject)
-             .parseClaimsJws(jws);
+  public Jws<Claims> authenticate(String subject, String jws) {
+    return Jwts.parser()
+      .requireIssuer(this.issuer)
+      .setSigningKey(this.secret)
+      .requireSubject(subject)
+      .parseClaimsJws(jws);
 
-    }
+  }
 }
 
