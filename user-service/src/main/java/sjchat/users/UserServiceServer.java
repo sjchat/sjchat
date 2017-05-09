@@ -6,8 +6,8 @@ import java.util.Random;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import io.grpc.stub.StreamObserver;
-import java.io.InputStream;
-import java.util.Properties;
+
+import sjchat.users.tokens.AuthenticationResult;
 
 public class UserServiceServer {
   private Server server;
@@ -91,8 +91,7 @@ public class UserServiceServer {
       responseObserver.onCompleted();
     }
 
-    @Override
-    public void loginUser(LoginRequest req, StreamObserver<LoginResponse> responseObserver) {
+    public void loginUserPassword(LoginRequest req, StreamObserver<LoginResponse> responseObserver) {
       LoginResponse loginResponse = LoginResponse.newBuilder().setAuthenticated(true).build();
       responseObserver.onNext(loginResponse);
       responseObserver.onCompleted();
@@ -101,10 +100,16 @@ public class UserServiceServer {
     /**
      * Logout from all devices
      */
-    public void logout(LogoutRequest req, StreamObserver<LogoutResponse> responseObserver) {
+    public void logout(AuthRequest req, StreamObserver<LogoutResponse> responseObserver) {
       LogoutResponse logoutResponse = LogoutResponse
         .newBuilder().setAuthenticated(true).build();
       responseObserver.onCompleted();
+    }
+
+    public void validateToken(AuthRequest req, StreamObserver<ValidateTokenResponse> responseObserver) {
+      String username = req.getUsername();
+      String token = req.getToken();
+      AuthenticationResult authResult = UserAuthentication.getInstance().authenticateToken(username, token);
     }
 
   }
