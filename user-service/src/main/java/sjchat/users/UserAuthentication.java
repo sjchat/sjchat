@@ -9,12 +9,16 @@ import java.util.Date;
 import sjchat.users.tokens.*;
 import sjchat.users.entities.User;
 
+import sjchat.daos.UserDao;
+import sjchat.daos.UserDaoImpl;
+import sjchat.entities.UserEntity;
 
 public class UserAuthentication {
   private TokenConfig.Configurations config;
   private TokenAuth auth;
   private TokenBuilder builder;
   private final Date nulldate = new Date(0);
+  private final UserDao dao = new UserDaoImpl();
 
   public void updateConfiguration() {
     TokenConfig.refreshConfiguration();
@@ -38,6 +42,21 @@ public class UserAuthentication {
   private static class UserAuthenticationHolder {
     private static final UserAuthentication INSTANCE = new UserAuthentication();
   }
+
+  public AuthenticationResult verifyCredentials(String username, String password) {
+    UserEntity user = dao.findByUsername(username);
+    Date expiration = config.getExpiration();
+
+    if (user == null)
+      return new AuthenticationResult("User does not exist", false, nulldate, "");
+
+    if (user.getPassword() == password)
+      return new AuthenticationResult("Authentication successful", true, expiration, this.tokenize(username));
+
+    return new AuthenticationResult("Wrong Password", false, nulldate, "");
+
+  }
+
   public User tokenize(User user) {
     user.jws = this.builder.build(user.username, config.getExpiration());
 
@@ -59,7 +78,7 @@ public class UserAuthentication {
     } catch (Exception e) {
       return new AuthenticationResult(username
                                       + " failed to authenticate, reason being:  "
-                                      + e.getMessage(), false, nulldate);
+                                      + e.getMessage(), false, nulldate, "");
     }
 
     return new AuthenticationResult(token.getBody().getSubject()
@@ -67,6 +86,6 @@ public class UserAuthentication {
                                     + " token expires at "
                                     + token.getBody().getExpiration().toGMTString(),
                                     true,
-                                    token.getBody().getIssuedAt());
+                                    token.getBody().getIssuedAt(), serializedToken);
   }
 }

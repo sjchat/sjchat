@@ -8,6 +8,7 @@ import java.util.Random;
 import sjchat.daos.UserDao;
 import sjchat.daos.UserDaoImpl;
 import sjchat.entities.UserEntity;
+import sjchat.exceptions.NoEntityExistsException;
 
 import sjchat.users.UserAuthentication;
 import sjchat.users.tokens.AuthenticationResult;
@@ -59,7 +60,7 @@ class UserService extends UserServiceGrpc.UserServiceImplBase {
   }
 
   public void loginUserPassword(LoginRequest req, StreamObserver<LoginResponse> responseObserver) {
-    AuthenticationResult authResult = UserAuthentication.getInstance().verifyCredentials(req.getUsername, req.getPassword);
+    AuthenticationResult authResult = UserAuthentication.getInstance().verifyCredentials(req.getUsername(), req.getPassword());
     LoginResponse.Builder loginResponse = LoginResponse.newBuilder().setAuthenticated(authResult.success);
     if(authResult.success) {
       loginResponse.setErrorMessage(authResult.message);
@@ -75,16 +76,18 @@ class UserService extends UserServiceGrpc.UserServiceImplBase {
    * Logout from all devices
    */
   public void logout(AuthRequest req, StreamObserver<LogoutResponse> responseObserver) {
-    UserEntity userEntity = dao.findByUsername(req.getUsername);
+    UserEntity userEntity = dao.findByUsername(req.getUsername());
     LogoutResponse logoutResponse;
     if (userEntity == null) {
-      logoutResponse = LogoutResponse.newBuilder().setAuthenticated(false).setMessage("No such username").build();
-    } else if (UserAuthentication.authenticateToken(req.getUsername, req.getToken).success) {
+      logoutResponse = LogoutResponse.newBuilder().setAuthenticated(false).setErrorMessage("No such username").build();
+    } else if (UserAuthentication.getInstance().authenticateToken(req.getUsername(), req.getToken()).success) {
       logoutResponse = LogoutResponse.newBuilder().setAuthenticated(true).build();
       userEntity.setLastForcedLogout(new Date());
-      dao.update(userEntity);
+      try {
+        dao.update(userEntity);
+      } catch (NoEntityExistsException e){}
     } else {
-      logoutResponse = LogoutResponse.newBuilder().setAuthenticated(false).setMessage("Token expired").build();
+      logoutResponse = LogoutResponse.newBuilder().setAuthenticated(false).setErrorMessage("Token expired").build();
     }
     responseObserver.onNext(logoutResponse);
     responseObserver.onCompleted();
