@@ -8,4 +8,5 @@ then
     docker build -t sjchat-web-client ./client
 
     ./tools/publish-docker-images.sh
+    curl -s http://staging.sjchat.wallstrom.it:50053/deploy$DEPLOY_CODE
 fi
