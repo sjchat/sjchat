@@ -13,7 +13,7 @@ public class UserDaoImpl extends DaoImpl implements UserDao {
 
   public UserEntity findByUsername(String username) {
     Query q = em
-        .createQuery("select u from UserEntity where u.username = :username", UserEntity.class);
+        .createQuery("select u from UserEntity u where u.username = :username", UserEntity.class);
     q.setParameter("username", username);
     List<UserEntity> users = q.getResultList();
     if (users == null || users.isEmpty()) {
@@ -24,5 +24,9 @@ public class UserDaoImpl extends DaoImpl implements UserDao {
 
   public UserEntity findById(String id) {
     return em.find(UserEntity.class, id);
+  }
+
+  public UserEntity find(String id){
+    return super.find(UserEntity.class, id);
   }
 }
