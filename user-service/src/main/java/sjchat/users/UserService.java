@@ -8,6 +8,7 @@ import sjchat.daos.UserDao;
 import sjchat.daos.UserDaoImpl;
 import sjchat.entities.UserEntity;
 
+import sjchat.users.UserAuthentication;
 import sjchat.users.tokens.AuthenticationResult;
 
 
@@ -55,9 +56,16 @@ class UserService extends UserServiceGrpc.UserServiceImplBase {
     responseObserver.onNext(userResponse);
     responseObserver.onCompleted();
   }
-    
+
   public void loginUserPassword(LoginRequest req, StreamObserver<LoginResponse> responseObserver) {
-    LoginResponse loginResponse = LoginResponse.newBuilder().setAuthenticated(true).build();
+    AuthenticationResult authResult = UserAuthentication.getInstance().verifyCredentials(req.username, req.password);
+    LoginResponse.Builder loginResponse = LoginResponse.newBuilder().setAuthenticated(authResult.success)
+    if(authResult.success) {
+      loginResponse.setErrorMessage(authResult.message);
+    } else {
+      loginResponse.setToken(authResult.token);
+    }
+
     responseObserver.onNext(loginResponse);
     responseObserver.onCompleted();
   }
