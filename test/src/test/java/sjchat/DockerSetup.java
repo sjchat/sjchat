@@ -6,7 +6,7 @@ public final class DockerSetup {
   
   private DockerSetup() {}
   
-  private static final String DOCKER_COMPOSE_PATH = "src/test/resources/docker-compose-test.yaml";
+  private static final String DOCKER_COMPOSE_PATH = "../docker-compose-local.yaml";//"src/test/resources/docker-compose-test.yaml";
   
   public static void startDocker() {
     startDocker(DOCKER_COMPOSE_PATH);
@@ -15,7 +15,7 @@ public final class DockerSetup {
   public static void startDocker(String composePath) {
     System.out.println("Starting docker...");
     try {
-      Process p = Runtime.getRuntime().exec("docker stack deploy -c \"" + composePath + "\" sjchat-test");
+      Process p = Runtime.getRuntime().exec("docker stack deploy -c \"" + composePath + "\" sjchat");
       OutputPrinter d = new OutputPrinter(p);
       d.start();
       
@@ -32,7 +32,7 @@ public final class DockerSetup {
   
   public static void stopDocker() {
     try {
-      Process p = Runtime.getRuntime().exec("docker stack rm sjchat-test");
+      Process p = Runtime.getRuntime().exec("docker stack rm sjchat");
       OutputPrinter d = new OutputPrinter(p);
       d.start();
       

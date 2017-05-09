@@ -17,6 +17,8 @@ services:
     depends_on:
       - message-service
       - user-service
+    environment:
+      - 
 
   message-service:
     image: sjchat-message-service
@@ -33,6 +35,9 @@ services:
       - "50052:50052"
     networks:
       - webnet
+    depends_on:
+      - database
+      - user-service
   
   database:
     image: mongo:3.4.4
@@ -60,6 +65,8 @@ services:
       - "50051:50051"
     networks:
       - webnet
+    depends_on:
+      - database
 
   web-client:
     image: sjchat-web-client
