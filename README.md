@@ -44,11 +44,10 @@ You need both **maven** and **docker** to compile and run the project.
 3. Upload the latest docker-compose file to the manager server with `docker-machine scp docker-compose-staging.yaml sjchat-staging-mgr1:~`
 4. SSH to the manager server in the docker swarm and run 
 ```
-docker-machine ssh sjchat-staging-mgr1 "sudo docker stack rm sjchat"
 docker-machine ssh sjchat-staging-mgr1 "sudo docker stack deploy -c docker-compose-staging.yaml sjchat"
 ```
 
-This will cause a few seconds of downtime though. To prevent downtime you need to run two instances of every service and then take down one of the services, upload a newer version, take down the second service, upload the new service.
+This command probably create some downtime.
 
 ### It doesn't work! :c
 
