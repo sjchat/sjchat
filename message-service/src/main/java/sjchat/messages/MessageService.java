@@ -87,8 +87,6 @@ class MessageService extends MessageServiceGrpc.MessageServiceImplBase {
 
   @Override
   public void createChat(CreateChatRequest req, StreamObserver<CreateChatResponse> responseObserver) {
-    Random random = new Random();
-
     ChatEntity.Builder chatBuilder = new ChatEntity.Builder();
     chatBuilder.setId(null);
     chatBuilder.setTitle(req.getTitle());
