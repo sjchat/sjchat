@@ -77,14 +77,9 @@ class MessageService extends MessageServiceGrpc.MessageServiceImplBase {
 
   @Override
   public void getChat(GetChatRequest req, StreamObserver<GetChatResponse> responseObserver) {
-    User.Builder userBuilder1 = buildMockUser();
-    User.Builder userBuilder2 = buildMockUser();
+    ChatEntity entity = chatDao.find(req.getId());
 
-    Chat.Builder chatBuilder1 = buildMockChat();
-    chatBuilder1.addParticipants(userBuilder1);
-    chatBuilder1.addParticipants(userBuilder2);
-
-    GetChatResponse chatResponse = GetChatResponse.newBuilder().setChat(chatBuilder1).build();
+    GetChatResponse chatResponse = GetChatResponse.newBuilder().setChat(buildChat(entity)).build();
 
     responseObserver.onNext(chatResponse);
     responseObserver.onCompleted();
