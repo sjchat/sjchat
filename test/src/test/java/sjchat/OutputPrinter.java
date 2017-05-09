@@ -6,17 +6,17 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 
-public class DockerOutput {
+public class OutputPrinter {
   
   private final StreamPrinter in, err;
   private Thread inThread, errThread;
   private boolean stop = false;
   
-  public DockerOutput(Process p) {
+  public OutputPrinter(Process p) {
     this(p.getInputStream(), p.getErrorStream());
   }
   
-  public DockerOutput(InputStream in, InputStream err) {
+  public OutputPrinter(InputStream in, InputStream err) {
     this.in = new StreamPrinter(in, System.out);
     this.err = new StreamPrinter(err, System.err);
   }
@@ -38,8 +38,8 @@ public class DockerOutput {
   
   private class StreamPrinter implements Runnable {
     
-    private BufferedReader input;
-    private PrintStream output;
+    private final BufferedReader input;
+    private final PrintStream output;
     
     private StreamPrinter(InputStream input, PrintStream output) {
       this.input = new BufferedReader(new InputStreamReader(input));
