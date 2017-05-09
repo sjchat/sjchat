@@ -33,6 +33,7 @@ message LoginRequest {
 message LoginResponse {
     bool authenticated = 1;
     string errorMessage = 2;
+    string token = 3;
 }
 
 message LogoutRequest {
@@ -73,24 +74,9 @@ message ValidateTokenResponse {
     bool valid = 1;
 }
 
-message LoginRequest {
-    string username = 1;
-    string password = 2;
-}
-
-message LoginResponse {
-    bool authenticated = 1;
-    string errorMessage = 2;
-}
-
 message AuthRequest {
     string token = 1;
     string username = 2;
-}
-
-message LogoutResponse {
-    bool authenticated = 1;
-    string errorMessage = 2;
 }
 
 message GetUserRequest {

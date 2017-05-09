@@ -54,7 +54,7 @@ public class UserServiceServer {
       Random random = new Random();
 
       User.Builder userBuilder = User.newBuilder();
-      userBuilder.setId(Math.abs(random.nextInt(100)));
+      userBuilder.setId(Integer.toString(Math.abs(random.nextInt(100))));
       userBuilder.setUsername(req.getUsername());
 
       CreateUserResponse userResponse = CreateUserResponse.newBuilder().setUser(userBuilder).build();
