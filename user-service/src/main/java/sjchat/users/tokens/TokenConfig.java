@@ -14,13 +14,24 @@ public class TokenConfig {
     static {
         try {
             properties.load(TokenConfig.class.getClassLoader().getResourceAsStream(CONFIGFILE));
+            System.err.println("Configurations has been properly loaded");
         } catch (IOException e) {
-            System.err.println("Unable to Load Resource: " + CONFIGFILE);
+            System.err.println("Unable to Load Resource: " + CONFIGFILE + " Error: " + e.getMessage()
+                    + "\nWARNING: Tokenization & Authentication features will not work");
         }
     }
 
     public static Configurations get() {
         return new Configurations(properties.getProperty("issuer"), properties.getProperty("expiration"), properties.getProperty("secret"));
+    }
+
+    public static void refreshConfiguration() {
+        try {
+            properties.load(TokenConfig.class.getClassLoader().getResourceAsStream(CONFIGFILE));
+            System.err.println("Configurations has been properly loaded");
+        } catch(IOException e) {
+            System.err.println("Unable to Load Resource: " + CONFIGFILE + " Error: " + e.getMessage());
+        }
     }
 
     public static class Configurations {
