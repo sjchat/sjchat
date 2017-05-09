@@ -89,17 +89,16 @@ class MessageService extends MessageServiceGrpc.MessageServiceImplBase {
   public void createChat(CreateChatRequest req, StreamObserver<CreateChatResponse> responseObserver) {
     Random random = new Random();
 
-    Chat.Builder chatBuilder = Chat.newBuilder();
+    ChatEntity.Builder chatBuilder = new ChatEntity.Builder();
     chatBuilder.setId(null);
     chatBuilder.setTitle(req.getTitle());
-    for (String userId : req.getParticipantsList()) {
-      User.Builder userBuilder = User.newBuilder();
-      userBuilder.setId(userId);
-      userBuilder.setUsername("mock_username");
-      chatBuilder.addParticipants(userBuilder);
-    }
+    //TODO: Check that all participants are actual valid userids
+    chatBuilder.setParticipants(req.getParticipantsList());
 
-    CreateChatResponse chatResponse = CreateChatResponse.newBuilder().setChat(chatBuilder).build();
+    ChatEntity entity = chatBuilder.build();
+    chatDao.create(entity);
+
+    CreateChatResponse chatResponse = CreateChatResponse.newBuilder().setChat(buildChat(entity)).build();
 
     responseObserver.onNext(chatResponse);
     responseObserver.onCompleted();
