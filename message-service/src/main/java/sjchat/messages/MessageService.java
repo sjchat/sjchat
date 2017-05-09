@@ -26,7 +26,7 @@ class MessageService extends MessageServiceGrpc.MessageServiceImplBase {
 
     return ManagedChannelBuilder.forAddress(host, 50051).usePlaintext(true).build(); //TODO: Put port in config file
   }
-  private static Chat.Builder buildMockChat() {
+  private static Chat.Builder buildMockChat(String id) {
     Random random = new Random();
     Chat.Builder chatBuilder = Chat.newBuilder();
     chatBuilder.setId("mock-id");
@@ -126,10 +126,10 @@ class MessageService extends MessageServiceGrpc.MessageServiceImplBase {
 
     String chatId = req.getChatId();
 
-    messageListResponseBuilder.addMessages(buildMockMessage());
-    messageListResponseBuilder.addMessages(buildMockMessage());
-    messageListResponseBuilder.addMessages(buildMockMessage());
-    messageListResponseBuilder.addMessages(buildMockMessage());
+    messageListResponseBuilder.addMessages(buildMockMessage("msg-1"));
+    messageListResponseBuilder.addMessages(buildMockMessage("msg-2"));
+    messageListResponseBuilder.addMessages(buildMockMessage("msg-3"));
+    messageListResponseBuilder.addMessages(buildMockMessage("msg-4"));
 
     responseObserver.onNext(messageListResponseBuilder.build());
     responseObserver.onCompleted();
