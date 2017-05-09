@@ -55,3 +55,6 @@ If you're stuck ask on slack for help, and update this with what went wrong and 
 
 #### ``docker stack deploy`` scares me with ``unable to pin image`` and ``unauthorized: authentication required``
 This is normal, and just a warning that the images wasn't found online so docker uses the local ones. Everything actually works
+
+#### I have run out of disk space!
+Old docker images are saved on your system. **All docker images on your system** can be removed by running cleanup-docker.sh in tools.
