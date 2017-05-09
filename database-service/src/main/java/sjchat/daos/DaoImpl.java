@@ -24,7 +24,6 @@ public class DaoImpl implements Dao {
 
     Map<String, String> props = new HashMap<String, String>();
     props.put("kundera.nodes", nodes);
-    System.out.println(props.get("kundera.nodes"));
     emf = Persistence.createEntityManagerFactory(PU, props);
     em = emf.createEntityManager();
   }
