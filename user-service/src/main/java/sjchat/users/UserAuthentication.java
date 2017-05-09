@@ -44,20 +44,25 @@ public class UserAuthentication {
     return user;
   }
 
-  public AuthenticationResult authenticate(User user) {
+  public AuthenticationResult authenticateUser(User user) {
+    return authenticateToken(user.username, user.jws);
+  }
+
+  public AuthenticationResult authenticateToken(String username, String serializedToken) {
+    Jws<Claims> token;
     try {
-      Jws<Claims> token = this.auth.authenticate(user.username, user.jws);
-
-      return new AuthenticationResult(token.getBody().getSubject()
-                                      + " Authenticated Successfully "
-                                      + " token expires at "
-                                      + token.getBody().getExpiration().toGMTString(), true, token.getBody().getIssuedAt());
-
+      token = this.auth.authenticate(username, serializedToken);
     } catch (Exception e) {
-      return new AuthenticationResult(user.username
+      return new AuthenticationResult(username
                                       + " failed to authenticate, reason being:  "
                                       + e.getMessage(), false, nulldate);
     }
-  }
 
+    return new AuthenticationResult(token.getBody().getSubject()
+                                    + " Authenticated Successfully "
+                                    + " token expires at "
+                                    + token.getBody().getExpiration().toGMTString(),
+                                    true,
+                                    token.getBody().getIssuedAt());
+  }
 }

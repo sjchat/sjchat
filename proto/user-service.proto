@@ -11,7 +11,8 @@ service UserService {
     rpc getUser (GetUserRequest) returns (GetUserResponse);
     rpc updateUser (UpdateUserRequest) returns (UpdateUserResponse);
     rpc loginUser(LoginRequest) returns (LoginResponse);
-    rpc logoutUser(Token) returns (LogoutResponse);
+    rpc logoutUser(AuthRequest) returns (LogoutResponse);
+    rpc validateToken(AuthRequest) returns (ValidateTokenResponse);
 }
 
 message User {
@@ -68,6 +69,10 @@ message UpdateUserResponse {
     User user = 1;
 }
 
+message ValidateTokenResponse {
+    bool valid = 1;
+}
+
 message LoginRequest {
     string username = 1;
     string password = 2;
@@ -78,17 +83,14 @@ message LoginResponse {
     string errorMessage = 2;
 }
 
-message LogoutRequest {
-    
+message AuthRequest {
+    string token = 1;
+    string username = 2;
 }
 
 message LogoutResponse {
     bool authenticated = 1;
     string errorMessage = 2;
-}
-
-message Token {
-    string token = 1;
 }
 
 message GetUserRequest {
