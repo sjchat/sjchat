@@ -11,12 +11,16 @@ import sjchat.users.tokens.AuthenticationResult;
 
 public class UserServiceServer {
   private Server server;
-  private final int port = 50051;
+  private final int port;
 
   public static void main(String[] args) throws Exception {
-    UserServiceServer userServiceServer = new UserServiceServer();
+    UserServiceServer userServiceServer = new UserServiceServer(UserServerConfig.getPort());
     userServiceServer.start();
     userServiceServer.blockUntilShutdown();
+  }
+
+  public UserServiceServer(int port) {
+    this.port = port;
   }
 
   private void start() throws IOException {
