@@ -6,28 +6,28 @@ import io.grpc.stub.StreamObserver;
 import sjchat.users.User;
 
 class MessageService extends MessageServiceGrpc.MessageServiceImplBase {
-  private static Chat.Builder buildMockChat() {
+  private static Chat.Builder buildMockChat(String id) {
     Random random = new Random();
     Chat.Builder chatBuilder = Chat.newBuilder();
-    chatBuilder.setId("mock-id");
+    chatBuilder.setId(id);
     chatBuilder.setTitle("Test chat " + chatBuilder.getId());
     return chatBuilder;
   }
 
-  private static User.Builder buildMockUser() {
+  private static User.Builder buildMockUser(String id) {
     Random random = new Random();
     User.Builder userBuilder = User.newBuilder();
-    userBuilder.setId("mock-id");
+    userBuilder.setId(id);
     userBuilder.setUsername("user_" + userBuilder.getId());
     return userBuilder;
   }
 
-  private static Message.Builder buildMockMessage() {
+  private static Message.Builder buildMockMessage(String id) {
     Random random = new Random();
     Message.Builder messageBuilder = Message.newBuilder();
-    messageBuilder.setId("mock-id");
+    messageBuilder.setId(id);
     messageBuilder.setMessage("Test message " + messageBuilder.getId());
-    messageBuilder.setSender("id");
+    messageBuilder.setSender("user-" + id);
     return messageBuilder;
   }
 
@@ -35,15 +35,15 @@ class MessageService extends MessageServiceGrpc.MessageServiceImplBase {
   public void getChatList(GetChatListRequest req, StreamObserver<GetChatListResponse> responseObserver) {
     GetChatListResponse.Builder chatListResponseBuilder = GetChatListResponse.newBuilder();
 
-    User.Builder userBuilder1 = buildMockUser();
-    User.Builder userBuilder2 = buildMockUser();
+    User.Builder userBuilder1 = buildMockUser("user-1");
+    User.Builder userBuilder2 = buildMockUser("user-2");
 
-    Chat.Builder chatBuilder1 = buildMockChat();
+    Chat.Builder chatBuilder1 = buildMockChat("chat-1");
     chatBuilder1.addParticipants(userBuilder1);
     chatBuilder1.addParticipants(userBuilder2);
     chatListResponseBuilder.addChats(chatBuilder1);
 
-    Chat.Builder chatBuilder2 = buildMockChat();
+    Chat.Builder chatBuilder2 = buildMockChat("chat-2");
     chatBuilder2.addParticipants(userBuilder1);
     chatBuilder2.addParticipants(userBuilder2);
     chatListResponseBuilder.addChats(chatBuilder2);
@@ -56,10 +56,10 @@ class MessageService extends MessageServiceGrpc.MessageServiceImplBase {
 
   @Override
   public void getChat(GetChatRequest req, StreamObserver<GetChatResponse> responseObserver) {
-    User.Builder userBuilder1 = buildMockUser();
-    User.Builder userBuilder2 = buildMockUser();
+    User.Builder userBuilder1 = buildMockUser("user-1");
+    User.Builder userBuilder2 = buildMockUser("user-2");
 
-    Chat.Builder chatBuilder1 = buildMockChat();
+    Chat.Builder chatBuilder1 = buildMockChat("chat-1");
     chatBuilder1.addParticipants(userBuilder1);
     chatBuilder1.addParticipants(userBuilder2);
 
@@ -74,7 +74,7 @@ class MessageService extends MessageServiceGrpc.MessageServiceImplBase {
     Random random = new Random();
 
     Chat.Builder chatBuilder = Chat.newBuilder();
-    chatBuilder.setId(null);
+    chatBuilder.setId("mock");
     chatBuilder.setTitle(req.getTitle());
     for (String userId : req.getParticipantsList()) {
       User.Builder userBuilder = User.newBuilder();
@@ -113,10 +113,10 @@ class MessageService extends MessageServiceGrpc.MessageServiceImplBase {
 
     String chatId = req.getChatId();
 
-    messageListResponseBuilder.addMessages(buildMockMessage());
-    messageListResponseBuilder.addMessages(buildMockMessage());
-    messageListResponseBuilder.addMessages(buildMockMessage());
-    messageListResponseBuilder.addMessages(buildMockMessage());
+    messageListResponseBuilder.addMessages(buildMockMessage("msg-1"));
+    messageListResponseBuilder.addMessages(buildMockMessage("msg-2"));
+    messageListResponseBuilder.addMessages(buildMockMessage("msg-3"));
+    messageListResponseBuilder.addMessages(buildMockMessage("msg-4"));
 
     responseObserver.onNext(messageListResponseBuilder.build());
     responseObserver.onCompleted();
@@ -127,9 +127,9 @@ class MessageService extends MessageServiceGrpc.MessageServiceImplBase {
     Random random = new Random();
 
     Message.Builder messageBuilder = Message.newBuilder();
-    messageBuilder.setId(null);
+    messageBuilder.setId("msg-1");
     messageBuilder.setMessage(req.getMessage());
-    messageBuilder.setSender("id");
+    messageBuilder.setSender("user-id");
 
     SendMessageResponse messageResponse = SendMessageResponse.newBuilder().setMessage(messageBuilder).build();
 
