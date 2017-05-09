@@ -1,10 +1,15 @@
 package sjchat.users;
 
-import java.util.Random;
 import io.grpc.stub.StreamObserver;
+
+import java.util.Random;
+
 import sjchat.daos.UserDao;
 import sjchat.daos.UserDaoImpl;
 import sjchat.entities.UserEntity;
+
+import sjchat.users.tokens.AuthenticationResult;
+
 
 class UserService extends UserServiceGrpc.UserServiceImplBase {
   UserDao dao = new UserDaoImpl();
@@ -50,4 +55,26 @@ class UserService extends UserServiceGrpc.UserServiceImplBase {
     responseObserver.onNext(userResponse);
     responseObserver.onCompleted();
   }
+    
+  public void loginUserPassword(LoginRequest req, StreamObserver<LoginResponse> responseObserver) {
+    LoginResponse loginResponse = LoginResponse.newBuilder().setAuthenticated(true).build();
+    responseObserver.onNext(loginResponse);
+    responseObserver.onCompleted();
+  }
+
+  /**
+   * Logout from all devices
+   */
+  public void logout(AuthRequest req, StreamObserver<LogoutResponse> responseObserver) {
+    LogoutResponse logoutResponse = LogoutResponse
+      .newBuilder().setAuthenticated(true).build();
+    responseObserver.onCompleted();
+  }
+
+  public void validateToken(AuthRequest req, StreamObserver<ValidateTokenResponse> responseObserver) {
+    String username = req.getUsername();
+    String token = req.getToken();
+    AuthenticationResult authResult = UserAuthentication.getInstance().authenticateToken(username, token);
+  }
+
 }

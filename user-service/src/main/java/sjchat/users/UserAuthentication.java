@@ -44,6 +44,10 @@ public class UserAuthentication {
     return user;
   }
 
+  public String tokenize(String username) {
+    return this.builder.build(username, config.getExpiration());
+  }
+
   public AuthenticationResult authenticateUser(User user) {
     return authenticateToken(user.username, user.jws);
   }

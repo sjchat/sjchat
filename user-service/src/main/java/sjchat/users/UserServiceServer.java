@@ -8,6 +8,7 @@ import io.grpc.ServerBuilder;
 import io.grpc.stub.StreamObserver;
 import sjchat.users.UserAuthentication;
 import sjchat.users.tokens.AuthenticationResult;
+import sjchat.users.UserService;
 
 public class UserServiceServer {
   private Server server;
@@ -49,68 +50,5 @@ public class UserServiceServer {
     if (server != null) {
       server.awaitTermination();
     }
-  }
-
-  static class UserService extends UserServiceGrpc.UserServiceImplBase {
-
-    @Override
-    public void createUser(CreateUserRequest req, StreamObserver<CreateUserResponse> responseObserver) {
-      Random random = new Random();
-
-      User.Builder userBuilder = User.newBuilder();
-      userBuilder.setId(Integer.toString(Math.abs(random.nextInt(100))));
-      userBuilder.setUsername(req.getUsername());
-
-      CreateUserResponse userResponse = CreateUserResponse.newBuilder().setUser(userBuilder).build();
-
-      responseObserver.onNext(userResponse);
-      responseObserver.onCompleted();
-    }
-
-    @Override
-    public void getUser(GetUserRequest req, StreamObserver<GetUserResponse> responseObserver) {
-      User.Builder userBuilder = User.newBuilder();
-      userBuilder.setId(req.getId());
-      userBuilder.setUsername("user_" + req.getId());
-
-      GetUserResponse userResponse = GetUserResponse.newBuilder().setUser(userBuilder).build();
-
-      responseObserver.onNext(userResponse);
-      responseObserver.onCompleted();
-    }
-
-    @Override
-    public void updateUser(UpdateUserRequest req, StreamObserver<UpdateUserResponse> responseObserver) {
-      User.Builder userBuilder = User.newBuilder();
-      userBuilder.setId(req.getId());
-      userBuilder.setUsername(req.getUsername());
-
-      UpdateUserResponse userResponse = UpdateUserResponse.newBuilder().setUser(userBuilder).build();
-
-      responseObserver.onNext(userResponse);
-      responseObserver.onCompleted();
-    }
-
-    public void loginUserPassword(LoginRequest req, StreamObserver<LoginResponse> responseObserver) {
-      LoginResponse loginResponse = LoginResponse.newBuilder().setAuthenticated(true).build();
-      responseObserver.onNext(loginResponse);
-      responseObserver.onCompleted();
-    }
-
-    /**
-     * Logout from all devices
-     */
-    public void logout(AuthRequest req, StreamObserver<LogoutResponse> responseObserver) {
-      LogoutResponse logoutResponse = LogoutResponse
-        .newBuilder().setAuthenticated(true).build();
-      responseObserver.onCompleted();
-    }
-
-    public void validateToken(AuthRequest req, StreamObserver<ValidateTokenResponse> responseObserver) {
-      String username = req.getUsername();
-      String token = req.getToken();
-      AuthenticationResult authResult = UserAuthentication.getInstance().authenticateToken(username, token);
-    }
-
   }
 }
