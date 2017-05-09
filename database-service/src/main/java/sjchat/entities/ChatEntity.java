@@ -16,8 +16,6 @@ public class ChatEntity {
     private String title;
     @Column(name="participants")
     private List<String> participantIds;
-    @Column(name="messages")
-    private List<String> messages;
 
     public String getId(){
         return id;
@@ -28,9 +26,4 @@ public class ChatEntity {
     public List<String> getParticipants(){
         return participantIds;
     }
-    public List<String> getMessages(){
-        return messages;
-    }
-
-
 }
