@@ -7,28 +7,150 @@
     <script src="https://unpkg.com/react@15/dist/react.js"></script>
     <script src="https://unpkg.com/react-dom@15/dist/react-dom.js"></script>
     <script src="js/browser.min.js"></script>
+    
+    <link rel="stylesheet" type="text/css" href="styles/App.css">
+    <link rel="stylesheet" type="text/css" href="styles/ChatApp.css">
+    <style>
+        body, html{
+            height: 100vh;
+            width: 100%;
+            border: 0;
+            padding: 0;
+            margin: 0;
+            margin-top: 0;
+            outline: 0;
+            background-position: center;
+        }
+        h1{
+            text-align: center;
+            border: 0;
+            padding: 0;
+            margin: 0;
+            margin-top: 0;
+            outline: 0;
+        }
+    </style>
+
 </head>
-<body>
-
-    <div id="container"></div>
-
+<body style="background-color:gray">
+    <div id="app">
     <script type="text/babel">
-        class Comp extends React.Component{
-            render(){
-                return(
-                    <div>
-                    <h2>Simple</h2>
-                    <h2>Component</h2>
-                    <h3>Test</h3>
-                    </div>
-                    );
-            }
-        };
-        ReactDOM.render(
-            <Comp />,
-            document.getElementById('container')
-        );
-    </script>
 
+        class InputBox extends React.Component {
+            constructor(props){
+                super(props);
+                this.state = {chatInput : ''};
+                this.submitHandler = this.submitHandler.bind(this);
+                this.textChangeHandler = this.textChangeHandler.bind(this);
+            }
+
+            textChangeHandler(event){
+                this.setState({chatInput: event.target.value})
+            }
+
+            submitHandler(event){
+                event.preventDefault();
+                this.setState({chatInput: ""})
+                this.props.onSend(this.state.chatInput);
+            }
+
+            render() {
+                return (
+                    <form className = 'chat-input' onSubmit={this.submitHandler}>
+                        <input type="text"
+                            onChange={this.textChangeHandler}
+                            value={this.state.chatInput}
+                            placeholder="Write input here!"
+                            required/>
+                    </form>
+                );
+            }
+        }
+        
+
+        class Message extends React.Component {
+            render() {
+                return (
+                    <div className={'message ${fromMe}'}>
+                        <div className={'username ${username}'}>
+                            {this.props.username}
+                        </div>
+                        <div className={'message-body'}>
+                            {this.props.message}
+                        </div>
+                    </div>
+                );
+            };
+        }
+
+        class MessageBox extends React.Component {
+            componentDidUpdate(){
+                const objDiv = document.getElementById("messageList");
+                objDiv.scrollTop = objDiv.scrollHeight;
+            }
+
+            render() {
+                const messages = this.props.messages.map((message, i) =>{
+                    return (
+                        <Message 
+                        key={i}
+                        username={message.username}
+                        message={message.message}
+                        fromMe={message.fromMe} />
+                        );
+                });
+
+                return (
+                    <div className='messages' id='messageList'>
+                    { messages }
+                    </div>
+                );
+            }
+        }
+
+        MessageBox.defaultProps = {
+                messages: []
+            };
+
+        class App extends React.Component {
+            constructor(props){
+                super(props);
+                this.state = {messages:[], username:"User"};
+                this.sendHandler = this.sendHandler.bind(this);
+            }
+
+            addMessage(message){
+                const messages = this.state.messages;
+                messages.push(message);
+                this.setState({messages});
+            }
+
+            sendHandler(message){
+                const messageObject={
+                    username:this.props.username,
+                    message
+                };
+                messageObject.fromMe = true;
+                this.addMessage(messageObject);
+            }
+
+            render() {
+                return (
+                    <div className='container'>
+                    <h1>Chat app</h1>
+                    <MessageBox messages={this.state.messages}/>
+                    <InputBox onSend = {this.sendHandler}/>
+                    </div>
+                );
+            }
+        }
+
+        ReactDOM.render(
+            <App />,
+            document.getElementById('app')
+        );
+
+    </script>
+    </div>
 </body>
 </html>
