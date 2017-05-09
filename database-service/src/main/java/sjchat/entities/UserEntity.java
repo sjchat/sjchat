@@ -1,14 +1,22 @@
-package sjchat.restapi.entities;
+package sjchat.entities;
 
-public class User {
+import javax.persistence.*;
 
+@Entity
+@Table(name = "users")
+public class UserEntity {
+
+  @Id
+  @GeneratedValue(strategy = GenerationType.AUTO)
   private String id;
+  @Column(name = "username")
   private String username;
+  private String password;
 
-  public User() {
+  public UserEntity() {
   }
 
-  public User(String id, String username) {
+  public UserEntity(String id, String username) {
     this.id = id;
     this.username = username;
   }

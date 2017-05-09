@@ -5,19 +5,19 @@ import java.util.List;
 
 public class Chat {
 
-  private long id;
+  private String id;
   private String title;
-  private List<User> users;
+  private List<User> participants;
 
   public Chat() {
-    users = new ArrayList<>();
+    participants = new ArrayList<>();
   }
 
-  public long getId() {
+  public String getId() {
     return id;
   }
 
-  public void setId(long id) {
+  public void setId(String id) {
     this.id = id;
   }
 
@@ -29,11 +29,11 @@ public class Chat {
     this.title = title;
   }
 
-  public List<User> getUsers() {
-    return users;
+  public List<User> getParticipants() {
+    return participants;
   }
 
-  public void addUser(User user) {
-    users.add(user);
+  public void addParticipant(User user) {
+    participants.add(user);
   }
 }

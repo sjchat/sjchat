@@ -14,22 +14,29 @@ import java.util.List;
 
 import io.grpc.Channel;
 import io.grpc.ManagedChannelBuilder;
-import sjchat.messages.ChatDataRequest;
-import sjchat.messages.ChatListRequest;
-import sjchat.messages.ChatListResponse;
-import sjchat.messages.ChatResponse;
-import sjchat.messages.MessageListRequest;
-import sjchat.messages.MessageListResponse;
-import sjchat.messages.MessageResponse;
+import sjchat.messages.CreateChatRequest;
+import sjchat.messages.CreateChatResponse;
+import sjchat.messages.GetChatListRequest;
+import sjchat.messages.GetChatListResponse;
+import sjchat.messages.GetChatRequest;
+import sjchat.messages.GetChatResponse;
+import sjchat.messages.GetMessagesRequest;
+import sjchat.messages.GetMessagesResponse;
 import sjchat.messages.MessageServiceGrpc;
-import sjchat.messages.NewMessageRequest;
+import sjchat.messages.SendMessageRequest;
+import sjchat.messages.SendMessageResponse;
+import sjchat.messages.UpdateChatRequest;
+import sjchat.messages.UpdateChatResponse;
 import sjchat.restapi.entities.Chat;
 import sjchat.restapi.entities.ChatRequest;
 import sjchat.restapi.entities.Message;
 import sjchat.restapi.entities.User;
-import sjchat.users.UserDataRequest;
-import sjchat.users.UserRequest;
-import sjchat.users.UserResponse;
+import sjchat.users.CreateUserRequest;
+import sjchat.users.CreateUserResponse;
+import sjchat.users.GetUserRequest;
+import sjchat.users.GetUserResponse;
+import sjchat.users.UpdateUserRequest;
+import sjchat.users.UpdateUserResponse;
 import sjchat.users.UserServiceGrpc;
 
 @RestController
@@ -43,11 +50,17 @@ public class ChatController {
   }
 
   private static Channel buildMessageServiceChannel() {
-    return ManagedChannelBuilder.forAddress("localhost", 50052).usePlaintext(true).build(); //TODO: Put port in config file
+    String host = System.getenv("MESSAGE_SERVICE_HOST");
+    host = (host == null) ? "localhost" : host;
+
+    return ManagedChannelBuilder.forAddress(host, 50052).usePlaintext(true).build(); //TODO: Put port in config file
   }
 
   private static Channel buildUserServiceChannel() {
-    return ManagedChannelBuilder.forAddress("localhost", 50051).usePlaintext(true).build(); //TODO: Put port in config file
+    String host = System.getenv("USER_SERVICE_HOST");
+    host = (host == null) ? "localhost" : host;
+
+    return ManagedChannelBuilder.forAddress(host, 50051).usePlaintext(true).build(); //TODO: Put port in config file
   }
 
   private static Chat buildChatFromResponse(sjchat.messages.Chat responseChat) {
@@ -55,10 +68,10 @@ public class ChatController {
     chat.setId(responseChat.getId());
     chat.setTitle(responseChat.getTitle());
 
-    List<sjchat.users.User> chatUsers = responseChat.getUsersList();
+    List<sjchat.users.User> chatUsers = responseChat.getParticipantsList();
     for (sjchat.users.User chatUser : chatUsers) {
       User user = buildUserFromResponse(chatUser);
-      chat.addUser(user);
+      chat.addParticipant(user);
     }
 
     return chat;
@@ -68,7 +81,7 @@ public class ChatController {
     Message message = new Message();
     message.setId(responseMessage.getId());
     message.setMessage(responseMessage.getMessage());
-    message.setUser(responseMessage.getUser());
+    message.setUser(responseMessage.getSender());
 
     return message;
   }
@@ -89,9 +102,9 @@ public class ChatController {
   public ResponseEntity<List<Chat>> getChatList() {
     final MessageServiceGrpc.MessageServiceBlockingStub blockingStub = MessageServiceGrpc.newBlockingStub(messageServiceChannel);
 
-    ArrayList<Chat> chatList = new ArrayList<>();
+    List<Chat> chatList = new ArrayList<>();
 
-    ChatListResponse response = blockingStub.getChatList(ChatListRequest.newBuilder().build());
+    GetChatListResponse response = blockingStub.getChatList(GetChatListRequest.newBuilder().build());
     for (sjchat.messages.Chat responseChat : response.getChatsList()) {
       Chat chat = buildChatFromResponse(responseChat);
       chatList.add(chat);
@@ -109,13 +122,13 @@ public class ChatController {
   public ResponseEntity<Chat> createChat(@RequestBody ChatRequest chatRequest) {
     final MessageServiceGrpc.MessageServiceBlockingStub blockingStub = MessageServiceGrpc.newBlockingStub(messageServiceChannel);
 
-    ChatDataRequest.Builder chatDataRequestBuilder = ChatDataRequest.newBuilder();
+    CreateChatRequest.Builder chatDataRequestBuilder = CreateChatRequest.newBuilder();
     chatDataRequestBuilder.setTitle(chatRequest.getTitle());
-    for (long userId : chatRequest.getUsers()) {
-      chatDataRequestBuilder.addUsers(userId);
+    for (String userId : chatRequest.getParticipants()) {
+      chatDataRequestBuilder.addParticipants(userId);
     }
 
-    ChatResponse response = blockingStub.createChat(chatDataRequestBuilder.build());
+    CreateChatResponse response = blockingStub.createChat(chatDataRequestBuilder.build());
     sjchat.messages.Chat responseChat = response.getChat();
     Chat chat = buildChatFromResponse(responseChat);
 
@@ -127,10 +140,10 @@ public class ChatController {
           method = RequestMethod.GET,
           produces = "application/json")
   @ResponseBody
-  public ResponseEntity<Chat> getChat(@PathVariable long chatId) {
+  public ResponseEntity<Chat> getChat(@PathVariable String chatId) {
     final MessageServiceGrpc.MessageServiceBlockingStub blockingStub = MessageServiceGrpc.newBlockingStub(messageServiceChannel);
 
-    ChatResponse response = blockingStub.getChat(sjchat.messages.ChatRequest.newBuilder().setId(chatId).build());
+    GetChatResponse response = blockingStub.getChat(GetChatRequest.newBuilder().setId(chatId).build());
     sjchat.messages.Chat responseChat = response.getChat();
     Chat chat = buildChatFromResponse(responseChat);
     return new ResponseEntity<>(chat, HttpStatus.OK);
@@ -142,17 +155,17 @@ public class ChatController {
           produces = "application/json",
           consumes = "application/json")
   @ResponseBody
-  public ResponseEntity<Chat> updateChat(@PathVariable long chatId, @RequestBody ChatRequest chatRequest) {
+  public ResponseEntity<Chat> updateChat(@PathVariable String chatId, @RequestBody ChatRequest chatRequest) {
     final MessageServiceGrpc.MessageServiceBlockingStub blockingStub = MessageServiceGrpc.newBlockingStub(messageServiceChannel);
 
-    ChatDataRequest.Builder chatDataRequestBuilder = ChatDataRequest.newBuilder();
+    UpdateChatRequest.Builder chatDataRequestBuilder = UpdateChatRequest.newBuilder();
     chatDataRequestBuilder.setId(chatId);
     chatDataRequestBuilder.setTitle(chatRequest.getTitle());
-    for (long userId : chatRequest.getUsers()) {
-      chatDataRequestBuilder.addUsers(userId);
+    for (String userId : chatRequest.getParticipants()) {
+      chatDataRequestBuilder.addParticipants(userId);
     }
 
-    ChatResponse response = blockingStub.updateChat(chatDataRequestBuilder.build());
+    UpdateChatResponse response = blockingStub.updateChat(chatDataRequestBuilder.build());
     sjchat.messages.Chat responseChat = response.getChat();
     Chat chat = buildChatFromResponse(responseChat);
 
@@ -164,12 +177,12 @@ public class ChatController {
           method = RequestMethod.GET,
           produces = "application/json")
   @ResponseBody
-  public ResponseEntity<List<Message>> getMessagesList(@PathVariable long chatId) {
+  public ResponseEntity<List<Message>> getMessagesList(@PathVariable String chatId) {
     final MessageServiceGrpc.MessageServiceBlockingStub blockingStub = MessageServiceGrpc.newBlockingStub(messageServiceChannel);
 
     ArrayList<Message> messageList = new ArrayList<>();
 
-    MessageListResponse response = blockingStub.getMessages(MessageListRequest.newBuilder().setChatId(chatId).build());
+    GetMessagesResponse response = blockingStub.getMessages(GetMessagesRequest.newBuilder().setChatId(chatId).build());
     for (sjchat.messages.Message responseMessage : response.getMessagesList()) {
       Message message = buildMessageFromResponse(responseMessage);
       messageList.add(message);
@@ -184,19 +197,19 @@ public class ChatController {
           produces = "application/json",
           consumes = "application/json")
   @ResponseBody
-  public ResponseEntity<Message> createMessage(@PathVariable long chatId, @RequestBody Message messageRequest) {
+  public ResponseEntity<Message> createMessage(@PathVariable String chatId, @RequestBody Message messageRequest) {
     final MessageServiceGrpc.MessageServiceBlockingStub blockingStub = MessageServiceGrpc.newBlockingStub(messageServiceChannel);
 
-    NewMessageRequest.Builder messageRequestBuilder = NewMessageRequest.newBuilder();
+    SendMessageRequest.Builder messageRequestBuilder = SendMessageRequest.newBuilder();
     messageRequestBuilder.setMessage(messageRequest.getMessage());
 
-    MessageResponse response = blockingStub.sendMessage(messageRequestBuilder.build());
+    SendMessageResponse response = blockingStub.sendMessage(messageRequestBuilder.build());
     sjchat.messages.Message responseMessage = response.getMessage();
     Message message = buildMessageFromResponse(responseMessage);
 
     return new ResponseEntity<>(message, HttpStatus.OK);
   }
-
+  
   @RequestMapping(
           value = "/user",
           method = RequestMethod.POST,
@@ -206,10 +219,10 @@ public class ChatController {
   public ResponseEntity<User> createUser(@RequestBody User userRequest) {
     final UserServiceGrpc.UserServiceBlockingStub blockingStub = UserServiceGrpc.newBlockingStub(userServiceChannel);
 
-    UserDataRequest.Builder userDataRequestBuilder = UserDataRequest.newBuilder();
+    CreateUserRequest.Builder userDataRequestBuilder = CreateUserRequest.newBuilder();
     userDataRequestBuilder.setUsername(userRequest.getUsername());
 
-    UserResponse response = blockingStub.createUser(userDataRequestBuilder.build());
+    CreateUserResponse response = blockingStub.createUser(userDataRequestBuilder.build());
     sjchat.users.User responseUser = response.getUser();
     User user = buildUserFromResponse(responseUser);
 
@@ -221,10 +234,10 @@ public class ChatController {
           method = RequestMethod.GET,
           produces = "application/json")
   @ResponseBody
-  public ResponseEntity<User> getUser(@PathVariable long userId) {
+  public ResponseEntity<User> getUser(@PathVariable String userId) {
     final UserServiceGrpc.UserServiceBlockingStub blockingStub = UserServiceGrpc.newBlockingStub(userServiceChannel);
 
-    UserResponse response = blockingStub.getUser(UserRequest.newBuilder().setId(userId).build());
+    GetUserResponse response = blockingStub.getUser(GetUserRequest.newBuilder().setId(userId).build());
     sjchat.users.User responseUser = response.getUser();
     User user = buildUserFromResponse(responseUser);
 
@@ -237,14 +250,14 @@ public class ChatController {
           produces = "application/json",
           consumes = "application/json")
   @ResponseBody
-  public ResponseEntity<User> updateUser(@PathVariable long userId, @RequestBody User userRequest) {
+  public ResponseEntity<User> updateUser(@PathVariable String userId, @RequestBody User userRequest) {
     final UserServiceGrpc.UserServiceBlockingStub blockingStub = UserServiceGrpc.newBlockingStub(userServiceChannel);
 
-    UserDataRequest.Builder userDataRequestBuilder = UserDataRequest.newBuilder();
+    UpdateUserRequest.Builder userDataRequestBuilder = UpdateUserRequest.newBuilder();
     userDataRequestBuilder.setId(userId);
     userDataRequestBuilder.setUsername(userRequest.getUsername());
 
-    UserResponse response = blockingStub.createUser(userDataRequestBuilder.build());
+    UpdateUserResponse response = blockingStub.updateUser(userDataRequestBuilder.build());
     sjchat.users.User responseUser = response.getUser();
     User user = buildUserFromResponse(responseUser);
 
