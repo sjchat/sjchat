@@ -2,6 +2,7 @@ package sjchat.users;
 
 import io.grpc.stub.StreamObserver;
 
+import java.util.Date;
 import java.util.Random;
 
 import sjchat.daos.UserDao;
@@ -58,15 +59,15 @@ class UserService extends UserServiceGrpc.UserServiceImplBase {
   }
 
   public void loginUserPassword(LoginRequest req, StreamObserver<LoginResponse> responseObserver) {
-    AuthenticationResult authResult = UserAuthentication.getInstance().verifyCredentials(req.username, req.password);
-    LoginResponse.Builder loginResponse = LoginResponse.newBuilder().setAuthenticated(authResult.success)
+    AuthenticationResult authResult = UserAuthentication.getInstance().verifyCredentials(req.getUsername, req.getPassword);
+    LoginResponse.Builder loginResponse = LoginResponse.newBuilder().setAuthenticated(authResult.success);
     if(authResult.success) {
       loginResponse.setErrorMessage(authResult.message);
     } else {
       loginResponse.setToken(authResult.token);
     }
 
-    responseObserver.onNext(loginResponse);
+    responseObserver.onNext(loginResponse.build());
     responseObserver.onCompleted();
   }
 
@@ -74,8 +75,18 @@ class UserService extends UserServiceGrpc.UserServiceImplBase {
    * Logout from all devices
    */
   public void logout(AuthRequest req, StreamObserver<LogoutResponse> responseObserver) {
-    LogoutResponse logoutResponse = LogoutResponse
-      .newBuilder().setAuthenticated(true).build();
+    UserEntity userEntity = dao.findByUsername(req.getUsername);
+    LogoutResponse logoutResponse;
+    if (userEntity == null) {
+      logoutResponse = LogoutResponse.newBuilder().setAuthenticated(false).setMessage("No such username").build();
+    } else if (UserAuthentication.authenticateToken(req.getUsername, req.getToken).success) {
+      logoutResponse = LogoutResponse.newBuilder().setAuthenticated(true).build();
+      userEntity.setLastForcedLogout(new Date());
+      dao.update(userEntity);
+    } else {
+      logoutResponse = LogoutResponse.newBuilder().setAuthenticated(false).setMessage("Token expired").build();
+    }
+    responseObserver.onNext(logoutResponse);
     responseObserver.onCompleted();
   }
 
