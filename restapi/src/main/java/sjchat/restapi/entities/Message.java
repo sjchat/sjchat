@@ -4,15 +4,15 @@ public class Message {
 
   private String id;
   private String message;
-  private String user;
+  private String sender;
 
   public Message() {
   }
 
-  public Message(String id, String message, String user) {
+  public Message(String id, String message, String sender) {
     this.id = id;
     this.message = message;
-    this.user = user;
+    this.sender = sender;
   }
 
   public String getId() {
@@ -31,11 +31,11 @@ public class Message {
     this.message = message;
   }
 
-  public String getUser() {
-    return user;
+  public String getSender() {
+    return sender;
   }
 
   public void setUser(String user) {
-    this.user = user;
+    this.sender = user;
   }
 }
