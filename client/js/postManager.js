@@ -4,52 +4,44 @@ class PostManager {
         this.url = myUrl;
     }
     
-    addMessage(chatid, myMessage) {
+    postData(inUrl, inData, callback) {
+        $.ajax({
+            url: this.url+"/"+inUrl,
+            type: "POST",
+            data: JSON.stringify(inData),
+            contentType: "application/json",
+            dataType: "json",
+            success: function(data, status){
+                if (status != "success") {
+                    console.log("data not sent due to " + status);
+                } else {
+                    if (callback != null)
+                        callback(data);
+                }
+            }
+        });
+    }
+    
+    addMessage(chatId, myMessage, callback) {
         
-        $.post(this.url + "/" + chatid +"/message", JSON.stringify({
-            "message": myMessage
-        }),
-        function(data, status) {
-            if (status != "success") {
-                console.log("message not sent due to " + status);
-                return -1;
-            } else {
-                var value = JSON.parse(data);
-                return value.id;
-            }
-	   });
+        this.postData("chat/" + chatId +"/message", {
+            "message": myMessage,
+            "sender": 1
+        }, callback);
     }
 
-    addUser(myUsername) {
-	
-        $.post(this.url + "/user", JSON.stringify({
-            username: myUsername
-        }),
-        function(data, status) {
-            if(status != "success") {
-                console.log("user not sent due to " + status);
-                return -1;
-            } else {
-                var value = JSON.parse(data);
-                return value.id;
-            }
-        });
+    addUser(myUsername, callback) {
+
+        this.postData("user", {
+            "username": myUsername
+        }, callback);
     }
 
-    addChat(myTitle, myUsers) {
-	
-        $.post(this.url + "/user", JSON.stringify({
+    addChat(myTitle, myParticipants, callback) {
+
+        this.postData("chat", {
             "title": myTitle,
-            "users": myUsers
-        }),
-        function(data, status) {
-            if(status != "success") {
-                console.log("chat not sent due to " + status);
-            } else {
-                var value = JSON.parse(data);
-                return -1;
-                return value.id;
-            }
-        });
+            "participants": myParticipants
+        }, callback);
     }
 }
