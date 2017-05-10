@@ -4,6 +4,7 @@
     <meta charset="utf-8">
 	<title>Chat prototype</title>
 	<script src="js/jquery-3.2.1.min.js"></script>
+    <script src="js/postManager.js"></script>
 	<script src="js/dataManager.js"></script>
 	<script src="js/loadInitialData.js"></script>
 	<script src="https://unpkg.com/react@15/dist/react.js"></script>
@@ -17,10 +18,19 @@
 	<script>
 		var apiAddress = window.location.protocol +'//'+ window.location.hostname +':8080';
 		var dataManager = new DataManager();
+        var postManager = new PostManager(apiAddress);
 
 		$.ajaxSetup({
 			async: false
 		});
+        
+        var myId = postManager.addUser("poffe");
+        var chatId = postManager.addChat("monologue", ["poffe"]);
+        postManager.addMessage(chatId, "Hello darkness");
+        postManager.addMessage(chatId, "my old friend");
+        postManager.addMessage(chatId, "swedish spring");
+        
+        console.log(myId);
 
 		loadInitialData(dataManager, apiAddress);
 	</script>
