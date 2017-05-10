@@ -13,6 +13,9 @@ mvn -f user-service install
 echo "Building message service"
 mvn -f message-service install
 
+echo "Building queue project"
+mvn -f queue install
+
 echo "Building rest api"
 mvn -f restapi install
 

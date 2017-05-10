@@ -9,6 +9,9 @@ import io.grpc.stub.StreamObserver;
 import sjchat.daos.ChatDao;
 import sjchat.daos.ChatDaoImpl;
 import sjchat.daos.MessageDao;
+import sjchat.queue.MessageExchange;
+import sjchat.queue.QueueException;
+import sjchat.queue.producer.MessageProducer;
 import sjchat.daos.MessageDaoImpl;
 import sjchat.entities.ChatEntity;
 import sjchat.entities.MessageEntity;
@@ -21,6 +24,7 @@ class MessageService extends MessageServiceGrpc.MessageServiceImplBase {
   MessageDao messageDao = new MessageDaoImpl();
   ChatDao chatDao = new ChatDaoImpl();
   private Channel userServiceChannel = buildUserServiceChannel();
+  private MessageExchange messageExchange;
 
   private static Channel buildUserServiceChannel() {
     String host = System.getenv("USER_SERVICE_HOST");
@@ -28,6 +32,16 @@ class MessageService extends MessageServiceGrpc.MessageServiceImplBase {
 
     return ManagedChannelBuilder.forAddress(host, 50051).usePlaintext(true).build();
   }
+
+  public MessageService() {
+    messageExchange = new MessageExchange();
+    try {
+      messageExchange.initialize();
+    } catch (QueueException exception) {
+      System.out.println("Could not initialize message exchange");
+    }
+  }
+  
   private static Chat.Builder buildMockChat(String id) {
     Random random = new Random();
     Chat.Builder chatBuilder = Chat.newBuilder();
@@ -148,10 +162,21 @@ class MessageService extends MessageServiceGrpc.MessageServiceImplBase {
 
     MessageEntity entity = new MessageEntity(null, req.getChatId(), req.getMessage(), req.getSender());
     messageDao.create(entity);
+    
     messageBuilder.setId(entity.getId()).setMessage(entity.getMessage()).setSender(entity.getSender());
-    SendMessageResponse messageResponse = SendMessageResponse.newBuilder().setMessage(messageBuilder).build();
+    Message message = messageBuilder.build();
+    
+    SendMessageResponse messageResponse = SendMessageResponse.newBuilder().setMessage(message).build();
 
     responseObserver.onNext(messageResponse);
+
+    MessageProducer producer = new MessageProducer(messageExchange);
+    try {
+      producer.dispatchMessage(message);
+    } catch (QueueException exception) {
+      System.out.println("Could not dispatch message from crawler producer");
+    }
+
     responseObserver.onCompleted();
   }
 }

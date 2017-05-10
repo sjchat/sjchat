@@ -8,5 +8,6 @@ public class MessageServiceServer {
   public static void main(String[] args) throws Exception {
     GRPCServer messageServiceServer = new GRPCServer(new MessageService(), port);
     messageServiceServer.start();
+    messageServiceServer.blockUntilShutdown();
   }
 }
