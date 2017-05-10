@@ -52,7 +52,7 @@ class PostManager {
         return id;
     }
 
-    addChat(myTitle, myUsers) {
+    addChat(myTitle, myParticipants) {
     
         var id = -1;
         
@@ -61,7 +61,7 @@ class PostManager {
             type: "POST",
             data: JSON.stringify({
                 "title": myTitle,
-                "users": myUsers
+                "participants": myUsers
             }),
             contentType: "application/json",
             dataType: "json",
