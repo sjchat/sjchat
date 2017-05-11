@@ -1,5 +1,6 @@
 package sjchat.restapi.controllers;
 
+import io.grpc.StatusRuntimeException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -38,6 +39,7 @@ import sjchat.users.GetUserResponse;
 import sjchat.users.UpdateUserRequest;
 import sjchat.users.UpdateUserResponse;
 import sjchat.users.UserServiceGrpc;
+import sjchat.users.exceptions.UserAlreadyExistsException;
 
 @RestController
 public class ChatController {
@@ -216,14 +218,20 @@ public class ChatController {
           produces = "application/json",
           consumes = "application/json")
   @ResponseBody
-  public ResponseEntity<User> createUser(@RequestBody User userRequest) {
+  public ResponseEntity<User> createUser(@RequestBody User userRequest) throws UserAlreadyExistsException{
     final UserServiceGrpc.UserServiceBlockingStub blockingStub = UserServiceGrpc.newBlockingStub(userServiceChannel);
 
     CreateUserRequest.Builder userDataRequestBuilder = CreateUserRequest.newBuilder();
     userDataRequestBuilder.setUsername(userRequest.getUsername());
 
-    CreateUserResponse response = blockingStub.createUser(userDataRequestBuilder.build());
+    CreateUserResponse response;
+    try{
+      response = blockingStub.createUser(userDataRequestBuilder.build());
+    }catch(StatusRuntimeException e){
+      throw new UserAlreadyExistsException();
+    }
     sjchat.users.User responseUser = response.getUser();
+
     User user = buildUserFromResponse(responseUser);
 
     return new ResponseEntity<>(user, HttpStatus.CREATED);
