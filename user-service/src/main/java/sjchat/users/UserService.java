@@ -1,20 +1,33 @@
 package sjchat.users;
 
+import java.util.List;
 import java.util.Random;
 
 import io.grpc.stub.StreamObserver;
+import org.bson.types.ObjectId;
 import sjchat.daos.UserDao;
 import sjchat.daos.UserDaoImpl;
 import sjchat.entities.UserEntity;
+import sjchat.users.exceptions.UserAlreadyExistsException;
+
+import javax.persistence.EntityExistsException;
+import javax.persistence.PersistenceException;
 
 class UserService extends UserServiceGrpc.UserServiceImplBase {
   UserDao dao = new UserDaoImpl();
+
   @Override
   public void createUser(CreateUserRequest req, StreamObserver<CreateUserResponse> responseObserver) {
     UserEntity entity = new UserEntity(null, req.getUsername());
     //TODO: Check that no user with this username exists (kundera should throw an exception I think?)
+
+    if(dao.findByUsername(entity.getUsername()) != null){
+      responseObserver.onError(new UserAlreadyExistsException());
+      responseObserver.onCompleted();
+      return;
+    }
+
     dao.create(entity);
-    entity = dao.findByUsername(req.getUsername());
 
     User.Builder userBuilder = User.newBuilder();
     userBuilder.setId(entity.getId());
