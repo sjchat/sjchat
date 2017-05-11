@@ -4,76 +4,53 @@ class PostManager {
         this.url = myUrl;
     }
     
-    addMessage(chatid, myMessage) {
+    postData(inUrl, inData) {
         
-        var id = -1;
+        var outData = undefined;
         
         $.ajax({
-            url: this.url + "/" + chatid +"/message",
+            url: inUrl,
             type: "POST",
-            data: JSON.stringify({
-                "message": myMessage
-            }),
+            data: JSON.stringify(inData),
             contentType: "application/json",
             dataType: "json",
             success: function(data, status){
                 if (status != "success") {
-                    console.log("message not sent due to " + status);
+                    console.log("data not sent due to " + status);
                 } else {
-                    id = data.id;
+                    outData = data;
                 }
             }
         });
         
-        return id;
+        return outData;
+    }
+    
+    addMessage(chatId, myMessage) {
+        
+        var messageData = this.postData(this.url + "/" + chatId +"/message", {
+                "message": myMessage
+            });
+        
+        if(messageData != undefined) return messageData.id;
     }
 
     addUser(myUsername) {
         
-        var id = -1;
-        
-        $.ajax({
-            url: this.url + "/user",
-            type: "POST",
-            data: JSON.stringify({
+        var userData = this.postData(this.url + "/user", {
                 "username": myUsername
-            }),
-            contentType: "application/json",
-            dataType: "json",
-            success: function(data, status){
-                if (status != "success") {
-                    console.log("user not sent due to " + status);
-                } else {
-                    id = data.id;
-                }
-            }
-        });
+            });
         
-        return id;
+        if(userData != undefined) return userData.id;
     }
 
     addChat(myTitle, myParticipants) {
-    
-        var id = -1;
-        
-        $.ajax({
-            url: this.url + "/chat",
-            type: "POST",
-            data: JSON.stringify({
+            
+        var chatData = this.postData(this.url + "/chat", {
                 "title": myTitle,
-                "participants": myUsers
-            }),
-            contentType: "application/json",
-            dataType: "json",
-            success: function(data, status){
-                if (status != "success") {
-                    console.log("chat not sent due to " + status);
-                } else {
-                    var id = data.id;
-                }
-            }
-        });
+                "participants": myParticipants
+            });
         
-        return id;
+        if(chatData != undefined) return chatData.id;
     }
 }

@@ -23,14 +23,6 @@
 		$.ajaxSetup({
 			async: false
 		});
-        
-        var myId = postManager.addUser("poffe");
-        var chatId = postManager.addChat("monologue", ["poffe"]);
-        postManager.addMessage(chatId, "Hello darkness");
-        postManager.addMessage(chatId, "my old friend");
-        postManager.addMessage(chatId, "swedish spring");
-        
-        console.log(myId);
 
 		loadInitialData(dataManager, apiAddress);
 	</script>
