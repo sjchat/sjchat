@@ -1,22 +1,8 @@
 set -e
 echo "Build started"
 
-echo "Building database service"
-mvn -f database-service install
-
-echo "Building service general"
-mvn -f service-general install
-
-echo "Building user service"
-mvn -f user-service install
-
-echo "Building message service"
-mvn -f message-service install
-
-echo "Building rest api"
-mvn -f restapi install
-
-
+# Build all services
+mvn -T 1C install
 
 # Docker
 
