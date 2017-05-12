@@ -19,7 +19,6 @@ class UserService extends UserServiceGrpc.UserServiceImplBase {
   @Override
   public void createUser(CreateUserRequest req, StreamObserver<CreateUserResponse> responseObserver) {
     UserEntity entity = new UserEntity(null, req.getUsername());
-    //TODO: Check that no user with this username exists (kundera should throw an exception I think?)
 
     if(dao.findByUsername(entity.getUsername()) != null){
       responseObserver.onError(new UserAlreadyExistsException());
