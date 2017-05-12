@@ -9,7 +9,7 @@ class PostManager {
         var outData = undefined;
         
         $.ajax({
-            url: inUrl,
+            url: this.url+"/"+inUrl,
             type: "POST",
             data: JSON.stringify(inData),
             contentType: "application/json",
@@ -28,28 +28,28 @@ class PostManager {
     
     addMessage(chatId, myMessage) {
         
-        var messageData = this.postData(this.url + "/" + chatId +"/message", {
-                "message": myMessage
-            });
+        var messageData = this.postData("chat/" + chatId +"/message", {
+            "message": myMessage
+        });
         
         if(messageData != undefined) return messageData.id;
     }
 
     addUser(myUsername) {
         
-        var userData = this.postData(this.url + "/user", {
-                "username": myUsername
-            });
+        var userData = this.postData("user", {
+            "username": myUsername
+        });
         
         if(userData != undefined) return userData.id;
     }
 
     addChat(myTitle, myParticipants) {
             
-        var chatData = this.postData(this.url + "/chat", {
-                "title": myTitle,
-                "participants": myParticipants
-            });
+        var chatData = this.postData("chat", {
+            "title": myTitle,
+            "participants": myParticipants
+        });
         
         if(chatData != undefined) return chatData.id;
     }
