@@ -13,7 +13,9 @@ import org.junit.Test;
 
 public final class IntegrationTest {
   
-  private static final String IP_ADDR = "192.168.99.100";
+  private static String IP_ADDR = null;
+  private static int TIMEOUT = -1;
+  private static int STARTUP_WAIT = -1;
   
   public IntegrationTest() {}
   
@@ -21,9 +23,43 @@ public final class IntegrationTest {
   public static void setUpClass() {
     DockerSetup.startDocker();
     
+    IP_ADDR = System.getProperty("dockerIP");
+    if (IP_ADDR == null && !IP_ADDR.isEmpty()) {
+      System.out.println("Property \"dockerIP\" not found, defaulting to localhost.");
+      IP_ADDR = "localhost";
+    }
+    
+    try {
+      String p = System.getProperty("timeout");
+      if (p != null && !p.isEmpty()) {
+        TIMEOUT = Math.max(Integer.parseInt(System.getProperty("timeout")), 0);
+      }
+    } catch (NumberFormatException e) {
+      System.out.println("Invalid integer: " + System.getProperty("timeout"));
+    }
+    
+    if (TIMEOUT < 0) {
+      System.out.println("Property \"timeout\" not found, defaulting to 10000 ms.");
+      TIMEOUT = 10000;
+    }
+    
+    try {
+      String p = System.getProperty("startupWait");
+      if (p != null && !p.isEmpty()) {
+        STARTUP_WAIT = Math.max(Integer.parseInt(System.getProperty("startupWait")), 0);
+      }
+    } catch (NumberFormatException e) {
+      System.out.println("Invalid integer: " + System.getProperty("startupWait"));
+    }
+    
+    if (STARTUP_WAIT < 0) {
+      System.out.println("Property \"startupWait\" not found, defaulting to 10000 ms.");
+      STARTUP_WAIT = 10000;
+    }
+    
     // make sure all services are properly started
     try {
-      Thread.sleep(10000);
+      Thread.sleep(STARTUP_WAIT);
     } catch (InterruptedException e) {}
   }
   
@@ -37,7 +73,7 @@ public final class IntegrationTest {
    */
   private void testConnect(String addr, int port) {
     try (Socket sock = new Socket()) {
-      sock.connect(new InetSocketAddress(addr, port), 10000);
+      sock.connect(new InetSocketAddress(addr, port), TIMEOUT);
       
       assertTrue(sock.isConnected());
     } catch (IOException e) {
@@ -72,7 +108,7 @@ public final class IntegrationTest {
   
   @Test
   public void testGetEmptyChatList() throws IOException {
-    HttpResponse response = HttpUtil.httpGet("http://" + IP_ADDR + ":8080/chat");
+    HttpResponse response = HttpUtil.httpGet("http://" + IP_ADDR + ":8080/chat", TIMEOUT);
     assertEquals(200, response.responseCode);
     
     System.out.println(response);
@@ -86,7 +122,7 @@ public final class IntegrationTest {
   
   @Test
   public void testMockGetChatResponse() throws IOException {
-    HttpResponse response = HttpUtil.httpGet("http://" + IP_ADDR + ":8080/chat/1/");
+    HttpResponse response = HttpUtil.httpGet("http://" + IP_ADDR + ":8080/chat/1/", TIMEOUT);
     assertEquals(200, response.responseCode);
     
     System.out.println(response);
@@ -94,7 +130,7 @@ public final class IntegrationTest {
   
   @Test
   public void testLoadClientPage() throws IOException {
-    HttpResponse response = HttpUtil.httpGet("http://192.168.99.100:8082/client.html");
+    HttpResponse response = HttpUtil.httpGet("http://" + IP_ADDR + ":8082/client.html", TIMEOUT);
     assertEquals(200, response.responseCode);
     
     System.out.println(response);

@@ -10,15 +10,15 @@ public final class HttpUtil {
   
   private HttpUtil() {}
   
-  public static HttpResponse httpGet(String url) throws IOException {
-    return httpGet(new URL(url));
+  public static HttpResponse httpGet(String url, int timeout) throws IOException {
+    return httpGet(new URL(url), timeout);
   }
   
-  public static HttpResponse httpGet(URL url) throws IOException {
+  public static HttpResponse httpGet(URL url, int timeout) throws IOException {
     HttpURLConnection con = (HttpURLConnection)url.openConnection();
     
     con.setRequestMethod("GET");
-    con.setConnectTimeout(10000);
+    con.setConnectTimeout(timeout);
     
     StringBuilder response = new StringBuilder();
     
