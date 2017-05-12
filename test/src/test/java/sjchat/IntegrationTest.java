@@ -6,7 +6,6 @@ import com.google.gson.JsonParser;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import org.eclipse.persistence.jpa.jpql.Assert;
 import org.junit.AfterClass;
 import static org.junit.Assert.*;
 import org.junit.BeforeClass;
@@ -40,9 +39,9 @@ public final class IntegrationTest {
     try (Socket sock = new Socket()) {
       sock.connect(new InetSocketAddress(addr, port), 10000);
       
-      Assert.isTrue(sock.isConnected(), "Unable to connect to " + addr + ":" + port);
+      assertTrue(sock.isConnected());
     } catch (IOException e) {
-      Assert.fail("Unable to connect to " + addr + ":" + port + " (" + e.toString() + ")");
+      fail("Unable to connect to " + addr + ":" + port + " (" + e.toString() + ")");
     }
   }
   
