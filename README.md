@@ -55,6 +55,9 @@ This command probably create some downtime.
 4. Kill the old script with `sudo` and `jobs`/`ps`/`kill`
 5. Start the new script with `sudo sh run-deploy-service.sh`
 
+### Testing
+The integration tests reside in the `test` folder. To run them, enter the folder and run `mvn test -DdockerIP=xxx.xxx.xxx.xxx`, with the x:es replaced by the IP used to connect to the Docker services. If omitted, this defaults to `localhost`.
+
 ### It doesn't work! :c
 
 If you're stuck ask on slack for help, and update this with what went wrong and how you solved it!
