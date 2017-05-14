@@ -43,6 +43,7 @@ import sjchat.users.exceptions.UserAlreadyExistsException;
 
 @RestController
 public class ChatController {
+
   private Channel messageServiceChannel;
   private Channel userServiceChannel;
 
