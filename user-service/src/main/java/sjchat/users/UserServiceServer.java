@@ -8,6 +8,5 @@ public class UserServiceServer {
   public static void main(String[] args) throws Exception {
     GRPCServer userServiceServer = new GRPCServer(new UserService(), port);
     userServiceServer.start();
-    userServiceServer.blockUntilShutdown();
   }
 }
