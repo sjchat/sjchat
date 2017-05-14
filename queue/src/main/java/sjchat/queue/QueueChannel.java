@@ -29,10 +29,7 @@ public abstract class QueueChannel {
       connection = factory.newConnection();
       channel = connection.createChannel();
 
-    } catch (IOException exception) {
-      shutdown();
-      throw QueueException.initializationFailed(this, exception);
-    } catch (TimeoutException exception) {
+    } catch (IOException | TimeoutException exception) {
       shutdown();
       throw QueueException.initializationFailed(this, exception);
     }
@@ -46,9 +43,7 @@ public abstract class QueueChannel {
       if (connection != null) {
         connection.close();
       }
-    } catch (IOException exception) {
-      throw QueueException.shutdownFailed(this, exception);
-    } catch (TimeoutException exception) {
+    } catch (IOException | TimeoutException exception) {
       throw QueueException.shutdownFailed(this, exception);
     }
   }
