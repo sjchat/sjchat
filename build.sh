@@ -1,9 +1,8 @@
 set -e
 echo "Build started"
 
-echo "Building queue project"
-mvn -f queue install
-
+# Build all service
+mvn -T 1C install
 
 # Docker
 
