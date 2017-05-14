@@ -52,7 +52,7 @@ This command probably create some downtime.
 1. Upload scripts to server with `gcloud compute copy-files tools/deploy-service.py tools/deploy-script.sh tools/start-deploy-service.sh root@sjchat-staging-mgr1:/home/docker-user/auto-deploy/`. Select zone 10 (europe-west-c)
 2. SSH in with `gcloud compute ssh sjchat-staging-mgr1`
 3. Move to correct folder with `cd /home/docker-user/auto-deploy/`
-4. Kill the old script with `sudo` and `jobs`/`ps`/`kill`
+4. Kill the old script with `sudo` and `jobs`/`ps -e`/`kill`
 5. Start the new script with `sudo sh run-deploy-service.sh`
 
 ### It doesn't work! :c
