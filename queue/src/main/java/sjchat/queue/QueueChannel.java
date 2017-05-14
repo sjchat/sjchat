@@ -7,11 +7,8 @@ import com.rabbitmq.client.ConnectionFactory;
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
-import sjchat.queue.consumer.Consumer;
-
 public abstract class QueueChannel {
 
-  private final static String QUEUE_HOST = "localhost";
   private Connection connection;
   private Channel channel;
 
@@ -22,9 +19,12 @@ public abstract class QueueChannel {
   }
 
   public void initialize() throws QueueException {
+    String host = System.getenv("QUEUE_HOST");
+    host = (host == null) ? "localhost" : host;
+
     try {
       ConnectionFactory factory = new ConnectionFactory();
-      factory.setHost(QUEUE_HOST);
+      factory.setHost(host);
 
       connection = factory.newConnection();
       channel = connection.createChannel();
@@ -40,13 +40,15 @@ public abstract class QueueChannel {
 
   protected void shutdown() throws QueueException {
     try {
-      channel.close();
-      connection.close();
+      if (channel != null) {
+        channel.close();
+      }
+      if (connection != null) {
+        connection.close();
+      }
     } catch (IOException exception) {
-      shutdown();
       throw QueueException.shutdownFailed(this, exception);
     } catch (TimeoutException exception) {
-      shutdown();
       throw QueueException.shutdownFailed(this, exception);
     }
   }

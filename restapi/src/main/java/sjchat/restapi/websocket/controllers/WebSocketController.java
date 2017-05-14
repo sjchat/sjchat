@@ -17,7 +17,6 @@ import sjchat.queue.MessageQueue;
 import sjchat.queue.QueueException;
 import sjchat.queue.consumer.MessageConsumer;
 import sjchat.queue.consumer.MessageConsumerCallback;
-import sjchat.restapi.entities.Chat;
 import sjchat.restapi.websocket.WebSocketHandler;
 import sjchat.restapi.websocket.models.AbstractResponse;
 import sjchat.restapi.websocket.models.EnrollUserAction;
@@ -25,27 +24,19 @@ import sjchat.restapi.websocket.models.SuccessResponse;
 import sjchat.users.User;
 
 public class WebSocketController implements MessageConsumerCallback {
-  private Channel messageServiceChannel;
   private final Map<String, WebSocketSession> userSessionMap;
+  private Channel messageServiceChannel;
+  private MessageQueue messageQueue;
 
   public WebSocketController() throws Exception {
     messageServiceChannel = buildMessageServiceChannel();
 
-    MessageQueue messageQueue = new MessageQueue();
-    try {
-      messageQueue.initialize();
-    } catch (QueueException exception) {
-      System.out.println("Could not initialize message queue");
-    }
-
-    MessageConsumer consumer = new MessageConsumer(messageQueue);
-    try {
-      messageQueue.addConsumer(consumer);
-    } catch (QueueException exception) {
-      System.out.println("Could not add message consumer to queue");
-    }
-    consumer.setCallback(this);
-
+    new Thread(new Runnable() {
+      @Override
+      public void run() {
+        initializeMessageQueue();
+      }
+    }).start();
     userSessionMap = new HashMap<>();
   }
 
@@ -54,6 +45,46 @@ public class WebSocketController implements MessageConsumerCallback {
     host = (host == null) ? "localhost" : host;
 
     return ManagedChannelBuilder.forAddress(host, 50052).usePlaintext(true).build(); //TODO: Put port in config file
+  }
+
+  private void initializeMessageQueue() {
+    try {
+      tryInitializeMessageQueue();
+      setupMessageConsumer();
+    } catch (Exception e) {
+      System.out.println("Could not initialize message queue");
+      System.out.println(e.toString());
+    }
+  }
+
+  private void setupMessageConsumer() throws QueueException {
+    MessageConsumer consumer = new MessageConsumer(messageQueue);
+    messageQueue.addConsumer(consumer);
+    consumer.setCallback(this);
+  }
+
+  private void tryInitializeMessageQueue() throws Exception {
+    int attempts = 0;
+    int maxAttempts = 5;
+    int timeSleep = 10;
+    messageQueue = new MessageQueue();
+
+    while (attempts < maxAttempts) {
+      try {
+        messageQueue.initialize();
+        break;
+      } catch (QueueException exception) {
+        attempts++;
+        if (attempts < maxAttempts) {
+          System.out.println("Could not initialize message queue");
+          System.out.println(exception.toString());
+          System.out.println("Retrying in " + timeSleep + " seconds.");
+          Thread.sleep(timeSleep * 1000);
+        } else {
+          throw exception;
+        }
+      }
+    }
   }
 
   public AbstractResponse enrollUser(EnrollUserAction action, WebSocketSession session) throws Exception {
@@ -72,7 +103,6 @@ public class WebSocketController implements MessageConsumerCallback {
 
   public void consumeMessage(Message message) {
     String messageString = message.getMessage();
-    System.out.println("New message" + messageString);
 
     final MessageServiceGrpc.MessageServiceBlockingStub blockingStub = MessageServiceGrpc.newBlockingStub(messageServiceChannel);
 
@@ -88,7 +118,7 @@ public class WebSocketController implements MessageConsumerCallback {
         try {
           WebSocketHandler.sendMessageTextMessage(messageString, session);
         } catch (IOException exception) {
-          System.out.println("Failed to send message to socket:" +  exception.getMessage());
+          System.out.println("Failed to send message to socket:" + exception.getMessage());
         }
       }
     }

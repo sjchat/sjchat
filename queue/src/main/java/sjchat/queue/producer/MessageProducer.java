@@ -1,7 +1,6 @@
 package sjchat.queue.producer;
 
 import sjchat.messages.Message;
-import sjchat.queue.Queue;
 import sjchat.queue.QueueChannel;
 import sjchat.queue.QueueException;
 import sjchat.queue.workitem.MessageWorkItem;

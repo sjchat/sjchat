@@ -48,6 +48,11 @@ public class WebSocketHandler extends TextWebSocketHandler {
     return null;
   }
 
+  public static void sendMessageTextMessage(String message, WebSocketSession session) throws IOException {
+    TextMessage msg = new TextMessage(message);
+    session.sendMessage(msg);
+  }
+
   @Override
   public void handleTransportError(WebSocketSession session, Throwable throwable) throws Exception {
     System.out.println("error occurred at sender " + session);
@@ -85,10 +90,5 @@ public class WebSocketHandler extends TextWebSocketHandler {
     }
 
     sendMessageTextMessage(jsonResponse, session);
-  }
-
-  public static void sendMessageTextMessage(String message, WebSocketSession session) throws IOException {
-    TextMessage msg = new TextMessage(message);
-    session.sendMessage(msg);
   }
 }

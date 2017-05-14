@@ -12,7 +12,7 @@ public class SendMessageAction extends AbstractAction {
     return chatId;
   }
 
-  public String getMessage () {
+  public String getMessage() {
     return message;
   }
 

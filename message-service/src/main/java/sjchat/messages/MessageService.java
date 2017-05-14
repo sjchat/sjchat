@@ -9,13 +9,13 @@ import io.grpc.stub.StreamObserver;
 import sjchat.daos.ChatDao;
 import sjchat.daos.ChatDaoImpl;
 import sjchat.daos.MessageDao;
-import sjchat.queue.MessageExchange;
-import sjchat.queue.QueueException;
-import sjchat.queue.producer.MessageProducer;
 import sjchat.daos.MessageDaoImpl;
 import sjchat.entities.ChatEntity;
 import sjchat.entities.MessageEntity;
 import sjchat.exceptions.NoEntityExistsException;
+import sjchat.queue.MessageExchange;
+import sjchat.queue.QueueException;
+import sjchat.queue.producer.MessageProducer;
 import sjchat.users.GetUserRequest;
 import sjchat.users.User;
 import sjchat.users.UserServiceGrpc;
@@ -26,6 +26,15 @@ class MessageService extends MessageServiceGrpc.MessageServiceImplBase {
   private Channel userServiceChannel = buildUserServiceChannel();
   private MessageExchange messageExchange;
 
+  public MessageService() throws Exception {
+    new Thread(new Runnable() {
+      @Override
+      public void run() {
+        initializeMessageExchange();
+      }
+    }).start();
+  }
+
   private static Channel buildUserServiceChannel() {
     String host = System.getenv("USER_SERVICE_HOST");
     host = (host == null) ? "localhost" : host;
@@ -33,15 +42,6 @@ class MessageService extends MessageServiceGrpc.MessageServiceImplBase {
     return ManagedChannelBuilder.forAddress(host, 50051).usePlaintext(true).build();
   }
 
-  public MessageService() {
-    messageExchange = new MessageExchange();
-    try {
-      messageExchange.initialize();
-    } catch (QueueException exception) {
-      System.out.println("Could not initialize message exchange");
-    }
-  }
-  
   private static Chat.Builder buildMockChat(String id) {
     Random random = new Random();
     Chat.Builder chatBuilder = Chat.newBuilder();
@@ -67,10 +67,43 @@ class MessageService extends MessageServiceGrpc.MessageServiceImplBase {
     return messageBuilder;
   }
 
-  public Chat buildChat(ChatEntity entity){
+  private void initializeMessageExchange() {
+    try {
+      tryInitializeMessageExchange();
+    } catch (Exception e) {
+      System.out.println("Could not initialize message exchange");
+      System.out.println(e.toString());
+    }
+  }
+
+  private void tryInitializeMessageExchange() throws Exception {
+    int attempts = 0;
+    int maxAttempts = 5;
+    int timeSleep = 10;
+    messageExchange = new MessageExchange();
+
+    while (attempts < maxAttempts) {
+      try {
+        messageExchange.initialize();
+        break;
+      } catch (QueueException exception) {
+        attempts++;
+        if (attempts < maxAttempts) {
+          System.out.println("Could not initialize message exchange");
+          System.out.println(exception.toString());
+          System.out.println("Retrying in " + timeSleep + " seconds.");
+          Thread.sleep(timeSleep * 1000);
+        } else {
+          throw exception;
+        }
+      }
+    }
+  }
+
+  public Chat buildChat(ChatEntity entity) {
     Chat.Builder builder = Chat.newBuilder().setId(entity.getId()).setTitle(entity.getTitle());
     final UserServiceGrpc.UserServiceBlockingStub blockingStub = UserServiceGrpc.newBlockingStub(userServiceChannel);
-    for(String userId : entity.getParticipants()){
+    for (String userId : entity.getParticipants()) {
       builder.addParticipants(blockingStub.getUser(GetUserRequest.newBuilder().setId(userId).build()).getUser());
     }
     return builder.build();
@@ -81,7 +114,7 @@ class MessageService extends MessageServiceGrpc.MessageServiceImplBase {
     GetChatListResponse.Builder chatListResponseBuilder = GetChatListResponse.newBuilder();
 
     List<ChatEntity> chatEntityList = chatDao.findAll();
-    for(ChatEntity entity : chatEntityList){
+    for (ChatEntity entity : chatEntityList) {
       chatListResponseBuilder.addChats(buildChat(entity));
     }
 
@@ -95,9 +128,9 @@ class MessageService extends MessageServiceGrpc.MessageServiceImplBase {
   public void getChat(GetChatRequest req, StreamObserver<GetChatResponse> responseObserver) {
     ChatEntity entity = chatDao.find(req.getId());
     GetChatResponse chatResponse;
-    if(entity == null){
+    if (entity == null) {
       chatResponse = GetChatResponse.newBuilder().setChat(Chat.newBuilder().setId("null").setTitle("Not existing")).build();
-    }else{
+    } else {
       chatResponse = GetChatResponse.newBuilder().setChat(buildChat(entity)).build();
     }
 
@@ -130,9 +163,9 @@ class MessageService extends MessageServiceGrpc.MessageServiceImplBase {
             .setParticipants(req.getParticipantsList());
 
     ChatEntity entity = builder.build();
-    try{
+    try {
       entity = chatDao.update(entity);
-    }catch(NoEntityExistsException e){
+    } catch (NoEntityExistsException e) {
       System.out.println("No chat with id: " + req.getId() + " exists");
     }
 
@@ -148,7 +181,7 @@ class MessageService extends MessageServiceGrpc.MessageServiceImplBase {
 
     List<MessageEntity> messageEntities = messageDao.getInChat(req.getChatId());
 
-    for(MessageEntity entity : messageEntities){
+    for (MessageEntity entity : messageEntities) {
       messageListResponseBuilder.addMessages(Message.newBuilder().setId(entity.getId()).setSender(entity.getSender()).setMessage(entity.getMessage()));
     }
 
@@ -162,10 +195,10 @@ class MessageService extends MessageServiceGrpc.MessageServiceImplBase {
 
     MessageEntity entity = new MessageEntity(null, req.getChatId(), req.getMessage(), req.getSender());
     messageDao.create(entity);
-    
-    messageBuilder.setId(entity.getId()).setMessage(entity.getMessage()).setSender(entity.getSender());
+
+    messageBuilder.setId(entity.getId()).setMessage(entity.getMessage()).setSender(entity.getSender()).setChat(entity.getChatid());
     Message message = messageBuilder.build();
-    
+
     SendMessageResponse messageResponse = SendMessageResponse.newBuilder().setMessage(message).build();
 
     responseObserver.onNext(messageResponse);
@@ -174,7 +207,7 @@ class MessageService extends MessageServiceGrpc.MessageServiceImplBase {
     try {
       producer.dispatchMessage(message);
     } catch (QueueException exception) {
-      System.out.println("Could not dispatch message from crawler producer");
+      System.out.println("Could not dispatch message to message exchange");
     }
 
     responseObserver.onCompleted();
