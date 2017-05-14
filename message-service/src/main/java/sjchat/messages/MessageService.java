@@ -28,7 +28,6 @@ class MessageService extends MessageServiceGrpc.MessageServiceImplBase {
 
   public MessageService() throws Exception {
     new Thread(new Runnable() {
-      @Override
       public void run() {
         initializeMessageExchange();
       }

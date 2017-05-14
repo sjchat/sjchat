@@ -32,7 +32,6 @@ public class WebSocketController implements MessageConsumerCallback {
     messageServiceChannel = buildMessageServiceChannel();
 
     new Thread(new Runnable() {
-      @Override
       public void run() {
         initializeMessageQueue();
       }
