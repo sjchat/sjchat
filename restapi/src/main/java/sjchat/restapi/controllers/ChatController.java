@@ -31,7 +31,6 @@ import sjchat.messages.UpdateChatRequest;
 import sjchat.messages.UpdateChatResponse;
 import sjchat.restapi.entities.Chat;
 import sjchat.restapi.entities.ChatRequest;
-import sjchat.restapi.entities.ErrorResponse;
 import sjchat.restapi.entities.Message;
 import sjchat.restapi.entities.User;
 import sjchat.restapi.exceptions.MissingOrEmptyParameterException;
