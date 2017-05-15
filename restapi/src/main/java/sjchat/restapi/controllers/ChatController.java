@@ -30,6 +30,7 @@ import sjchat.messages.UpdateChatRequest;
 import sjchat.messages.UpdateChatResponse;
 import sjchat.restapi.entities.Chat;
 import sjchat.restapi.entities.ChatRequest;
+import sjchat.restapi.entities.ErrorResponse;
 import sjchat.restapi.entities.Message;
 import sjchat.restapi.entities.User;
 import sjchat.users.CreateUserRequest;
@@ -121,8 +122,12 @@ public class ChatController {
           produces = "application/json",
           consumes = "application/json")
   @ResponseBody
-  public ResponseEntity<Chat> createChat(@RequestBody ChatRequest chatRequest) {
+  public ResponseEntity<Object> createChat(@RequestBody ChatRequest chatRequest) {
     final MessageServiceGrpc.MessageServiceBlockingStub blockingStub = MessageServiceGrpc.newBlockingStub(messageServiceChannel);
+
+    if (chatRequest.getTitle() == null || chatRequest.getTitle().length() == 0) {
+      return new ResponseEntity<>(new ErrorResponse("Empty of missing title"), HttpStatus.BAD_REQUEST);
+    }
 
     CreateChatRequest.Builder chatDataRequestBuilder = CreateChatRequest.newBuilder();
     chatDataRequestBuilder.setTitle(chatRequest.getTitle());
@@ -157,8 +162,12 @@ public class ChatController {
           produces = "application/json",
           consumes = "application/json")
   @ResponseBody
-  public ResponseEntity<Chat> updateChat(@PathVariable String chatId, @RequestBody ChatRequest chatRequest) {
+  public ResponseEntity<Object> updateChat(@PathVariable String chatId, @RequestBody ChatRequest chatRequest) {
     final MessageServiceGrpc.MessageServiceBlockingStub blockingStub = MessageServiceGrpc.newBlockingStub(messageServiceChannel);
+
+    if (chatRequest.getTitle() == null || chatRequest.getTitle().length() == 0) {
+      return new ResponseEntity<>(new ErrorResponse("Empty of missing title"), HttpStatus.BAD_REQUEST);
+    }
 
     UpdateChatRequest.Builder chatDataRequestBuilder = UpdateChatRequest.newBuilder();
     chatDataRequestBuilder.setId(chatId);

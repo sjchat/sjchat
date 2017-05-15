@@ -40,7 +40,7 @@ class MessageService extends MessageServiceGrpc.MessageServiceImplBase {
 
     return ManagedChannelBuilder.forAddress(host, 50051).usePlaintext(true).build();
   }
-  
+
   private void initializeMessageExchange() {
     try {
       tryInitializeMessageExchange();
@@ -115,6 +115,11 @@ class MessageService extends MessageServiceGrpc.MessageServiceImplBase {
 
   @Override
   public void createChat(CreateChatRequest req, StreamObserver<CreateChatResponse> responseObserver) {
+    if (req.getTitle() == null || req.getTitle().length() == 0) {
+      responseObserver.onError(new Exception("Title is empty or missing"));
+      responseObserver.onCompleted();
+    }
+
     ChatEntity.Builder chatBuilder = new ChatEntity.Builder();
     chatBuilder.setId(null);
     chatBuilder.setTitle(req.getTitle());
