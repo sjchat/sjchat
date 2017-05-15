@@ -1,8 +1,9 @@
-function loadInitialData(dataManager, apiAddress){
+function loadInitialData(dataManager, apiAddress, callback){
 	// Add chats
 	$.get(apiAddress+"/chat", function(data){
-		var chats = data;
+		var promises = [];
 
+		var chats = data;
 		for (let chat of chats){
 			dataManager.putChat(chat);
 
@@ -10,16 +11,24 @@ function loadInitialData(dataManager, apiAddress){
 				dataManager.putUser(user);
 			}
 		}
-	});
 
-	// Add messages to chats
-	for (var chatId in dataManager.chats){
-		$.get(apiAddress+"/chat/"+chatId+"/message", function(data){
-			var messages = data;
+		var addMessageClosure = function(chatId){
+			return function(data){
+				var messages = data;
 
-			for (let message of messages){
-				dataManager.putMessage(chatId, message);
+				for (let message of messages)
+					dataManager.putMessage(chatId, message);
 			}
-		});
-	}
+		}
+
+		// Add messages to chats
+		for (var chatId in dataManager.chats){
+			promises.push($.get(apiAddress+"/chat/"+chatId+"/message", addMessageClosure(chatId)));
+		}
+
+		$.when.apply($, promises).then(function() {
+			if (callback != null)
+				callback();
+		}, function() {console.log("error")});
+	});
 }

@@ -1,14 +1,18 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8">
+	<meta charset="utf-8">
 	<title>Chat prototype</title>
 	<script src="js/jquery-3.2.1.min.js"></script>
+	<script src="js/postManager.js"></script>
 	<script src="js/dataManager.js"></script>
+	<script src="js/loginManager.js"></script>
 	<script src="js/loadInitialData.js"></script>
-	<script src="https://unpkg.com/react@15/dist/react.js"></script>
-	<script src="https://unpkg.com/react-dom@15/dist/react-dom.js"></script>
+	<script src="js/js.cookie.js"></script>
+	<script src="js/react/react.js"></script>
+	<script src="js/react/react-dom.js"></script>
 	<script src="js/react/browser.min.js"></script>
+	<script type="text/babel" src="js/reactComponents.jsx"></script>
 </head>
 <body>
 	<h1>
@@ -17,29 +21,18 @@
 	<script>
 		var apiAddress = window.location.protocol +'//'+ window.location.hostname +':8080';
 		var dataManager = new DataManager();
+		var postManager = new PostManager(apiAddress);
 
-		$.ajaxSetup({
-			async: false
-		});
-
-		loadInitialData(dataManager, apiAddress);
+		//dataManager.addDebugChats();
 	</script>
 
-	<div style="width: 30%; background-color: #FF55AA; float: left">
-		<h3>Chats</h3>
-		<div id = "chatList"></div>
-	</div>
-
-	<div style="width: 70%; background-color: #AA55FF; float: right">
-		<div id = "chatView"></div>
-	</div>
+	<div id="application"></div>
 
 	<div style="clear:both;">
 		<br/>
 		<p id="datadump"> </p>
 	</div>
 
-	<script type="text/babel" src="js/reactComponents.jsx"></script>
 	
 </body>
 </html>
