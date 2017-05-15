@@ -9,7 +9,7 @@
             {
                
                // Let us open a web socket
-               var ws = new WebSocket("ws://" + window.hostname + ":8080/websocket");
+               var ws = new WebSocket("ws://" + window.location.hostname + ":8080/websocket");
 				
                ws.onopen = function()
                {
