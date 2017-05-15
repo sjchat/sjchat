@@ -3,6 +3,7 @@ package sjchat.restapi.controllers;
 import io.grpc.StatusRuntimeException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,6 +34,7 @@ import sjchat.restapi.entities.ChatRequest;
 import sjchat.restapi.entities.ErrorResponse;
 import sjchat.restapi.entities.Message;
 import sjchat.restapi.entities.User;
+import sjchat.restapi.exceptions.MissingOrEmptyParameterException;
 import sjchat.users.CreateUserRequest;
 import sjchat.users.CreateUserResponse;
 import sjchat.users.GetUserRequest;
@@ -122,11 +124,11 @@ public class ChatController {
           produces = "application/json",
           consumes = "application/json")
   @ResponseBody
-  public ResponseEntity<Object> createChat(@RequestBody ChatRequest chatRequest) {
+  public ResponseEntity<Object> createChat(@RequestBody ChatRequest chatRequest) throws Exception {
     final MessageServiceGrpc.MessageServiceBlockingStub blockingStub = MessageServiceGrpc.newBlockingStub(messageServiceChannel);
 
     if (chatRequest.getTitle() == null || chatRequest.getTitle().length() == 0) {
-      return new ResponseEntity<>(new ErrorResponse("Empty of missing title"), HttpStatus.BAD_REQUEST);
+      throw new MissingOrEmptyParameterException("Empty or missing title");
     }
 
     CreateChatRequest.Builder chatDataRequestBuilder = CreateChatRequest.newBuilder();
@@ -166,7 +168,7 @@ public class ChatController {
     final MessageServiceGrpc.MessageServiceBlockingStub blockingStub = MessageServiceGrpc.newBlockingStub(messageServiceChannel);
 
     if (chatRequest.getTitle() == null || chatRequest.getTitle().length() == 0) {
-      return new ResponseEntity<>(new ErrorResponse("Empty of missing title"), HttpStatus.BAD_REQUEST);
+      throw new MissingOrEmptyParameterException("Empty or missing title");
     }
 
     UpdateChatRequest.Builder chatDataRequestBuilder = UpdateChatRequest.newBuilder();
