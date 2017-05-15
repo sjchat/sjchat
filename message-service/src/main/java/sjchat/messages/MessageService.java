@@ -136,6 +136,11 @@ class MessageService extends MessageServiceGrpc.MessageServiceImplBase {
 
   @Override
   public void updateChat(UpdateChatRequest req, StreamObserver<UpdateChatResponse> responseObserver) {
+    if (req.getTitle() == null || req.getTitle().length() == 0) {
+      responseObserver.onError(new Exception("Title is empty or missing"));
+      responseObserver.onCompleted();
+    }
+
     ChatEntity.Builder builder = new ChatEntity.Builder();
     builder.setId(req.getId())
             .setTitle(req.getTitle())
