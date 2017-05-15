@@ -8,5 +8,6 @@ EXPOSE 8080
 
 ENV MESSAGE_SERVICE_HOST message-service
 ENV USER_SERVICE_HOST user-service
+ENV QUEUE_HOST queue
 
 ENTRYPOINT ["java", "-jar", "restapi-0.0.1-SNAPSHOT.jar"]

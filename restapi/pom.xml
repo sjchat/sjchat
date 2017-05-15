@@ -40,6 +40,13 @@
       <scope>compile</scope>
     </dependency>
 
+  <dependency>
+      <groupId>com.sjchat</groupId>
+      <artifactId>queue</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+      <scope>compile</scope>
+  </dependency>
+
     <dependency>
       <groupId>com.sjchat</groupId>
       <artifactId>users</artifactId>
@@ -85,6 +92,18 @@
     </dependency>
 
     <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-websocket</artifactId>
+            <version>4.2.4.RELEASE</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-messaging</artifactId>
+            <version>4.2.4.RELEASE</version>
+        </dependency>
+
+        <dependency>
       <groupId>io.grpc</groupId>
       <artifactId>grpc-netty</artifactId>
       <version>1.0.1</version>

@@ -10,6 +10,7 @@
     <packaging>pom</packaging>
     
     <modules>
+        <module>queue</module>
         <module>service-general</module>
         <module>database-service</module>
         <module>message-service</module>

@@ -1,7 +1,7 @@
 set -e
 echo "Build started"
 
-# Build all services
+# Build all service
 mvn -T 1C install
 
 # Docker

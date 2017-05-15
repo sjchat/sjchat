@@ -8,5 +8,6 @@ EXPOSE 50052
 
 ENV DATABASE_HOST database
 ENV USER_SERVICE_HOST user-service
+ENV QUEUE_HOST queue
 
 ENTRYPOINT ["java", "-jar", "messages-0.0.1-SNAPSHOT-jar-with-dependencies.jar"]
