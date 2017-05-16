@@ -132,8 +132,8 @@ class ChatMessage extends React.Component {
 	render() {
 		var username = dataManager.users[this.props.data.sender].username;
 		return (
-			<div className="username">
-				<span>{username}<br/></span>
+			<div className="message">
+				<span className="username">{username}<br/></span>
 				{this.props.data.message}
 			</div>
 		);
