@@ -1,0 +1,28 @@
+*{
+    font-family: Courier;
+    background-color: lightblue;
+}
+
+
+.chatlist {
+    width: 30%;
+    background-color: rgb(255, 85, 170);
+    float: left;
+}
+
+.chatview {
+    width: 100%;
+    background-color: rgb(170, 85, 255);
+    float: right;
+}
+
+.username {
+    background-color: rgba(255, 255, 255, 0.5);
+    marginTop: 2px;
+    fontSize: 70%;
+    color: white;
+}
+
+.messagefield {
+    width: 100%;
+}
