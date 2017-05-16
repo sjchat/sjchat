@@ -132,7 +132,7 @@ class ChatMessage extends React.Component {
 	render() {
 		var username = dataManager.users[this.props.data.sender].username;
 		return (
-			<div class="username">
+			<div className="username">
 				<span>{username}<br/></span>
 				{this.props.data.message}
 			</div>
@@ -176,7 +176,7 @@ class ChatView extends React.Component {
 				<br/>
 				Write message:
 				<form id="messageForm" onSubmit = {this.sendMessage}>
-					<input type="text" ref="messageField" class = "messagefield"/>
+					<input type="text" ref="messageField" className = "messagefield"/>
 				</form>
 			</div>
 		);
@@ -231,12 +231,12 @@ class Application extends React.Component {
 				<span>Logged in as {LoginManager.username} </span>
 				 <a href="#" onClick={this.logout}>Logout</a>
 				<div>
-					<div class="chatlist">
+					<div className="chatlist">
 						<h3>Chats</h3>
 						<ChatList id="chatList" setChatId={this.setChatId}/>
 					</div>
 
-					<div class="chatview">
+					<div className="chatview">
 						<ChatView id="chatView" chatId={this.state.chatId}/>
 					</div>
 				</div>
