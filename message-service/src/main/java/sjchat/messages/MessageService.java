@@ -43,31 +43,6 @@ class MessageService extends MessageServiceGrpc.MessageServiceImplBase {
     return ManagedChannelBuilder.forAddress(host, 50051).usePlaintext(true).build();
   }
 
-  private static Chat.Builder buildMockChat(String id) {
-    Random random = new Random();
-    Chat.Builder chatBuilder = Chat.newBuilder();
-    chatBuilder.setId("mock-id");
-    chatBuilder.setTitle("Test chat " + chatBuilder.getId());
-    return chatBuilder;
-  }
-
-  private static User.Builder buildMockUser() {
-    Random random = new Random();
-    User.Builder userBuilder = User.newBuilder();
-    userBuilder.setId("mock-id");
-    userBuilder.setUsername("user_" + userBuilder.getId());
-    return userBuilder;
-  }
-
-  private static Message.Builder buildMockMessage() {
-    Random random = new Random();
-    Message.Builder messageBuilder = Message.newBuilder();
-    messageBuilder.setId("mock-id");
-    messageBuilder.setMessage("Test message " + messageBuilder.getId());
-    messageBuilder.setSender("id");
-    return messageBuilder;
-  }
-
   private void initializeMessageExchange() {
     try {
       tryInitializeMessageExchange();
