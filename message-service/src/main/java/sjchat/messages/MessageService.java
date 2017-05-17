@@ -3,7 +3,6 @@ package sjchat.messages;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Random;
 
 import io.grpc.Channel;
 import io.grpc.ManagedChannelBuilder;
@@ -19,7 +18,6 @@ import sjchat.queue.MessageExchange;
 import sjchat.queue.QueueException;
 import sjchat.queue.producer.MessageProducer;
 import sjchat.users.GetUserRequest;
-import sjchat.users.User;
 import sjchat.users.UserServiceGrpc;
 
 class MessageService extends MessageServiceGrpc.MessageServiceImplBase {
@@ -158,11 +156,7 @@ class MessageService extends MessageServiceGrpc.MessageServiceImplBase {
     List<MessageEntity> messageEntities = messageDao.getInChat(req.getChatId());
 
     for (MessageEntity entity : messageEntities) {
-      messageListResponseBuilder.addMessages(Message.newBuilder()
-              .setId(entity.getId())
-              .setSender(entity.getSender())
-              .setMessage(entity.getMessage())
-              .setCreatedAt(entity.getCreatedAt()));
+      messageListResponseBuilder.addMessages(messageFromMessageEntity(entity));
     }
 
     Collections.sort(messageEntities, new Comparator<MessageEntity>() {
@@ -177,17 +171,11 @@ class MessageService extends MessageServiceGrpc.MessageServiceImplBase {
 
   @Override
   public void sendMessage(SendMessageRequest req, StreamObserver<SendMessageResponse> responseObserver) {
-    Message.Builder messageBuilder = Message.newBuilder();
 
     MessageEntity entity = new MessageEntity(null, req.getChatId(), req.getMessage(), req.getSender(), System.currentTimeMillis());
     messageDao.create(entity);
 
-    messageBuilder.setId(entity.getId())
-            .setMessage(entity.getMessage())
-            .setSender(entity.getSender())
-            .setChat(entity.getChatid())
-            .setCreatedAt(entity.getCreatedAt());
-    Message message = messageBuilder.build();
+    Message message = messageFromMessageEntity(entity);
 
     SendMessageResponse messageResponse = SendMessageResponse.newBuilder().setMessage(message).build();
 
@@ -201,5 +189,14 @@ class MessageService extends MessageServiceGrpc.MessageServiceImplBase {
     }
 
     responseObserver.onCompleted();
+  }
+
+  public Message messageFromMessageEntity(MessageEntity entity){
+    return Message.newBuilder()
+            .setId(entity.getId())
+            .setMessage(entity.getMessage())
+            .setSender(entity.getSender())
+            .setChat(entity.getChatid())
+            .setCreatedAt(entity.getCreatedAt()).build();
   }
 }
