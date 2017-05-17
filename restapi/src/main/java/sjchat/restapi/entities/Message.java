@@ -5,6 +5,7 @@ public class Message {
   private String id;
   private String message;
   private String sender;
+  private long createdAt;
 
   public Message() {
   }
@@ -37,5 +38,13 @@ public class Message {
 
   public void setUser(String user) {
     this.sender = user;
+  }
+
+  public long getCreatedAt(){
+    return createdAt;
+  }
+
+  public void setCreatedAt(long createdAt){
+    this.createdAt = createdAt;
   }
 }

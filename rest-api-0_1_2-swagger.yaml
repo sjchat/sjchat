@@ -109,7 +109,7 @@ paths:
       produces:
         - application/json
       description: |
-        Gets a list of `Message` objects in the given chat.
+        Gets a list of `Message` objects in the given chat. Sorted by createdAt in ascending order.
       parameters:
         - name: chatId
           in: path
@@ -265,6 +265,8 @@ definitions:
       message:
         type: string
       sender:
+        type: integer
+      createdAt:
         type: integer
   NewMessage:
     type: object

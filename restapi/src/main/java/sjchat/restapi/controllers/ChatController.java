@@ -84,7 +84,7 @@ public class ChatController {
     message.setId(responseMessage.getId());
     message.setMessage(responseMessage.getMessage());
     message.setUser(responseMessage.getSender());
-
+    message.setCreatedAt(responseMessage.getCreatedAt());
     return message;
   }
 
