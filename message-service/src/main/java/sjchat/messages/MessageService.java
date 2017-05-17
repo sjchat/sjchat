@@ -1,5 +1,7 @@
 package sjchat.messages;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 
@@ -181,8 +183,18 @@ class MessageService extends MessageServiceGrpc.MessageServiceImplBase {
     List<MessageEntity> messageEntities = messageDao.getInChat(req.getChatId());
 
     for (MessageEntity entity : messageEntities) {
-      messageListResponseBuilder.addMessages(Message.newBuilder().setId(entity.getId()).setSender(entity.getSender()).setMessage(entity.getMessage()));
+      messageListResponseBuilder.addMessages(Message.newBuilder()
+              .setId(entity.getId())
+              .setSender(entity.getSender())
+              .setMessage(entity.getMessage())
+              .setCreatedAt(entity.getCreatedAt()));
     }
+
+    Collections.sort(messageEntities, new Comparator<MessageEntity>() {
+      public int compare(MessageEntity lhs, MessageEntity rhs) {
+        return Long.compare(lhs.getCreatedAt(), rhs.getCreatedAt());
+      }
+    });
 
     responseObserver.onNext(messageListResponseBuilder.build());
     responseObserver.onCompleted();
@@ -192,10 +204,14 @@ class MessageService extends MessageServiceGrpc.MessageServiceImplBase {
   public void sendMessage(SendMessageRequest req, StreamObserver<SendMessageResponse> responseObserver) {
     Message.Builder messageBuilder = Message.newBuilder();
 
-    MessageEntity entity = new MessageEntity(null, req.getChatId(), req.getMessage(), req.getSender());
+    MessageEntity entity = new MessageEntity(null, req.getChatId(), req.getMessage(), req.getSender(), System.currentTimeMillis());
     messageDao.create(entity);
 
-    messageBuilder.setId(entity.getId()).setMessage(entity.getMessage()).setSender(entity.getSender()).setChat(entity.getChatid());
+    messageBuilder.setId(entity.getId())
+            .setMessage(entity.getMessage())
+            .setSender(entity.getSender())
+            .setChat(entity.getChatid())
+            .setCreatedAt(entity.getCreatedAt());
     Message message = messageBuilder.build();
 
     SendMessageResponse messageResponse = SendMessageResponse.newBuilder().setMessage(message).build();

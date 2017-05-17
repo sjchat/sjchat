@@ -17,13 +17,16 @@ public class MessageEntity {
     private String message;
     @Column(name="sender")
     private String sender;
+    @Column(name="created_at")
+    private long createdAt;
 
     public MessageEntity(){}
-    public MessageEntity(String id, String chatid, String message, String sender){
+    public MessageEntity(String id, String chatid, String message, String sender, long createdAt){
         this.id = id;
         this.chatid = chatid;
         this.message = message;
         this.sender = sender;
+        this.createdAt = createdAt;
     }
 
     public String getMessage(){
@@ -37,5 +40,8 @@ public class MessageEntity {
     }
     public String getId(){
         return id;
+    }
+    public long getCreatedAt(){
+        return createdAt;
     }
 }
