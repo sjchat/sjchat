@@ -32,13 +32,7 @@ import sjchat.restapi.entities.Chat;
 import sjchat.restapi.entities.ChatRequest;
 import sjchat.restapi.entities.Message;
 import sjchat.restapi.entities.User;
-import sjchat.users.CreateUserRequest;
-import sjchat.users.CreateUserResponse;
-import sjchat.users.GetUserRequest;
-import sjchat.users.GetUserResponse;
-import sjchat.users.UpdateUserRequest;
-import sjchat.users.UpdateUserResponse;
-import sjchat.users.UserServiceGrpc;
+import sjchat.users.*;
 import sjchat.users.exceptions.UserAlreadyExistsException;
 
 @RestController
@@ -94,6 +88,19 @@ public class ChatController {
     user.setUsername(responseUser.getUsername());
 
     return user;
+  }
+
+  @RequestMapping(
+          value="user/get/{username}",
+          method=RequestMethod.GET,
+          produces = "application/json"
+  )
+  @ResponseBody
+  public ResponseEntity<User> getUserByUsername(@PathVariable(name = "username") String username){
+    final UserServiceGrpc.UserServiceBlockingStub service = UserServiceGrpc.newBlockingStub(userServiceChannel);
+    //service.getUser(GetUserRequest.newBuilder().set)
+    GetByUsernameResponse response = service.getByUsername(GetByUsernameRequest.newBuilder().setUsername(username).build());
+    return new ResponseEntity<User>(buildUserFromResponse(response.getUser()), HttpStatus.OK);
   }
 
   @RequestMapping(
