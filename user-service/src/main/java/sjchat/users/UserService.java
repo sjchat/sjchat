@@ -28,14 +28,37 @@ class UserService extends UserServiceGrpc.UserServiceImplBase {
 
     dao.create(entity);
 
-    User.Builder userBuilder = User.newBuilder();
-    userBuilder.setId(entity.getId());
-    userBuilder.setUsername(entity.getUsername());
+
+    User.Builder userBuilder = fromUserEntity(entity);
 
     CreateUserResponse userResponse = CreateUserResponse.newBuilder().setUser(userBuilder).build();
 
     responseObserver.onNext(userResponse);
     responseObserver.onCompleted();
+  }
+
+  @Override
+  public void getByUsername(GetByUsernameRequest request, StreamObserver<GetByUsernameResponse> streamObserver){
+    UserEntity entity = dao.findByUsername(request.getUsername());
+
+    if(entity == null){
+      streamObserver.onError(new Exception("User does not exist"));
+      return;
+    }
+
+    User.Builder userBuilder = fromUserEntity(entity);
+
+    GetByUsernameResponse response = GetByUsernameResponse.newBuilder().setUser(userBuilder.build()).build();
+
+    streamObserver.onNext(response);
+    streamObserver.onCompleted();
+  }
+
+  public User.Builder fromUserEntity(UserEntity entity){
+    User.Builder userBuilder = User.newBuilder();
+    userBuilder.setId(entity.getId());
+    userBuilder.setUsername(entity.getUsername());
+    return userBuilder;
   }
 
   @Override
