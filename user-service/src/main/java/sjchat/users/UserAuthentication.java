@@ -3,11 +3,9 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 
-
 import java.lang.Exception;
 import java.util.Date;
 import sjchat.users.tokens.*;
-import sjchat.users.entities.User;
 
 import sjchat.daos.UserDao;
 import sjchat.daos.UserDaoImpl;
@@ -57,18 +55,8 @@ public class UserAuthentication {
 
   }
 
-  public User tokenize(User user) {
-    user.jws = this.builder.build(user.username, config.getExpiration());
-
-    return user;
-  }
-
   public String tokenize(String username) {
     return this.builder.build(username, config.getExpiration());
-  }
-
-  public AuthenticationResult authenticateUser(User user) {
-    return authenticateToken(user.username, user.jws);
   }
 
   public AuthenticationResult authenticateToken(String username, String serializedToken) {

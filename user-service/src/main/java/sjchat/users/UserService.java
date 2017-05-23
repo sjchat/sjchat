@@ -16,19 +16,26 @@ import sjchat.users.tokens.AuthenticationResult;
 
 class UserService extends UserServiceGrpc.UserServiceImplBase {
   UserDao dao = new UserDaoImpl();
+  
+  //returns null id if user already exist, i am assuming that dao.create assigns an ID.
   @Override
   public void createUser(CreateUserRequest req, StreamObserver<CreateUserResponse> responseObserver) {
+    
+
     UserEntity entity = new UserEntity(null, req.getUsername());
-    //TODO: Check that no user with this username exists (kundera should throw an exception I think?)
-    dao.create(entity);
-    entity = dao.findByUsername(req.getUsername());
+
+    if (dao.findByUsername(req.getUsername()) == null) {
+      dao.create(entity);
+      entity = dao.findByUsername(req.getUsername());
+
+    }
 
     User.Builder userBuilder = User.newBuilder();
     userBuilder.setId(entity.getId());
     userBuilder.setUsername(entity.getUsername());
 
     CreateUserResponse userResponse = CreateUserResponse.newBuilder().setUser(userBuilder).build();
-
+    
     responseObserver.onNext(userResponse);
     responseObserver.onCompleted();
   }
@@ -46,6 +53,7 @@ class UserService extends UserServiceGrpc.UserServiceImplBase {
     responseObserver.onCompleted();
   }
 
+  //What's this supposed to do?
   @Override
   public void updateUser(UpdateUserRequest req, StreamObserver<UpdateUserResponse> responseObserver) {
 

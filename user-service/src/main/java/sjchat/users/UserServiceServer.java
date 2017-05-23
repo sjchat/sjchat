@@ -6,9 +6,6 @@ import java.util.Random;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import io.grpc.stub.StreamObserver;
-import sjchat.users.UserAuthentication;
-import sjchat.users.tokens.AuthenticationResult;
-import sjchat.users.UserService;
 
 public class UserServiceServer {
   private Server server;
