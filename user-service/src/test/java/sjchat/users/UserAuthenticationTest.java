@@ -1,29 +1,29 @@
 package sjchat.users;
 
 import java.io.IOException;
+import java.util.Date;
 import org.junit.Test;
-import sjchat.users.exceptions.AuthenticationException;
-import sjchat.users.tokens.TokenizationData;
+import sjchat.users.tokens.*;
 import static org.junit.Assert.*;
 
 public class UserAuthenticationTest {
 
   @Test
     public void TokenizationAndAuthentication() throws IOException {
-    /*
-      String user = "Kalle";
+  
+      TokenConfig.Configurations config = TokenConfig.get();
 
-      TokenizationData token = UserAuthentication.getInstance().tokenizeUser(user);
-
-      assertNotNull(token.token);
+      TokenAuth tokenauth = new TokenAuth(config.issuer, config.secret);
+      TokenBuilder tokenbuilder = new TokenBuilder(config.issuer, config.secret);
+      
+      String username = "Kalle";
+      String token = tokenbuilder.build(username, new Date(System.currentTimeMillis()), config.getExpiration());
 
       try {
-        UserAuthentication.getInstance().authenticateUser(user, token.token);
-      } catch (AuthenticationException e) {
+        assertNotNull(tokenauth.authenticate(username, token));
+      } catch (Exception e) {
         assertTrue(false);
       }
-
-      */
     }
 }
 

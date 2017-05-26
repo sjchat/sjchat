@@ -49,11 +49,13 @@ public class UserAuthentication {
   public UserAuthentication checkUserExists(String username, String password) throws AuthenticationException {
     UserEntity user = dao.findByUsername(username);
 
-    if (user == null)
+    if (user == null) {
       throw new AuthenticationException("Bad username");
+    }
 
-    if (user.getPassword() != password)
+    if (user.getPassword() != password) {
       throw new AuthenticationException("Bad password");
+    }
 
     return this;
   }
@@ -61,9 +63,10 @@ public class UserAuthentication {
   public UserAuthentication checkUsernameExists(String username) throws AuthenticationException {
     UserEntity user = dao.findByUsername(username);
 
-    if (user == null)
+    if (user == null) {
       throw new AuthenticationException("Bad username");
-
+    }
+    
     return this;
   }
 
