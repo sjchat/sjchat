@@ -11,7 +11,7 @@ import sjchat.entities.UserEntity;
 import sjchat.exceptions.NoEntityExistsException;
 
 import sjchat.users.UserAuthentication;
-import sjchat.users.tokens.AuthenticationResult;
+import sjchat.users.exceptions.AuthenticationException;
 
 
 class UserService extends UserServiceGrpc.UserServiceImplBase {
@@ -21,6 +21,7 @@ class UserService extends UserServiceGrpc.UserServiceImplBase {
   @Override
   public void createUser(CreateUserRequest req, StreamObserver<CreateUserResponse> responseObserver) {
     
+
 
     UserEntity entity = new UserEntity(null, req.getUsername());
 
@@ -34,7 +35,7 @@ class UserService extends UserServiceGrpc.UserServiceImplBase {
     userBuilder.setId(entity.getId());
     userBuilder.setUsername(entity.getUsername());
 
-    CreateUserResponse userResponse = CreateUserResponse.newBuilder().setUser(userBuilder).build();
+    CreateUserResponse userResponse = CreateUserResponse.newBuilder().setUser(userBuilder.build()).build();
     
     responseObserver.onNext(userResponse);
     responseObserver.onCompleted();
@@ -68,43 +69,84 @@ class UserService extends UserServiceGrpc.UserServiceImplBase {
   }
 
   public void loginUserPassword(LoginRequest req, StreamObserver<LoginResponse> responseObserver) {
-    AuthenticationResult authResult = UserAuthentication.getInstance().verifyCredentials(req.getUsername(), req.getPassword());
-    LoginResponse.Builder loginResponse = LoginResponse.newBuilder().setAuthenticated(authResult.success);
-    if(authResult.success) {
-      loginResponse.setErrorMessage(authResult.message);
-    } else {
-      loginResponse.setToken(authResult.token);
+    LoginResponse loginResponse;
+
+    try {
+      loginResponse = LoginResponse
+        .newBuilder()
+        .setAuthenticated(true)
+        .setToken(UserAuthentication
+        .getInstance()
+        .checkUserExists(req.getUsername(), req.getPassword())
+        .tokenizeUser(req.getUsername()).token)
+        .build();
+
+    } catch (AuthenticationException e) {
+      loginResponse = LoginResponse
+        .newBuilder()
+        .setAuthenticated(false)
+        .setErrorMessage(e.getMessage())
+        .build();
     }
 
-    responseObserver.onNext(loginResponse.build());
+    responseObserver.onNext(loginResponse);
     responseObserver.onCompleted();
   }
 
-  /**
-   * Logout from all devices
-   */
-  public void logout(AuthRequest req, StreamObserver<LogoutResponse> responseObserver) {
-    UserEntity userEntity = dao.findByUsername(req.getUsername());
+  public void logout (AuthRequest req, StreamObserver<LogoutResponse> responseObserver) {
     LogoutResponse logoutResponse;
-    if (userEntity == null) {
-      logoutResponse = LogoutResponse.newBuilder().setAuthenticated(false).setErrorMessage("No such username").build();
-    } else if (UserAuthentication.getInstance().authenticateToken(req.getUsername(), req.getToken()).success) {
-      logoutResponse = LogoutResponse.newBuilder().setAuthenticated(true).build();
-      userEntity.setLastForcedLogout(new Date());
-      try {
-        dao.update(userEntity);
-      } catch (NoEntityExistsException e){}
-    } else {
-      logoutResponse = LogoutResponse.newBuilder().setAuthenticated(false).setErrorMessage("Token expired").build();
+    try {
+      UserAuthentication
+        .getInstance()
+        .checkUsernameExists(req.getUsername())
+        .authenticateUser(req.getUsername(), req.getToken());
+
+      UserAuthentication
+        .getInstance()
+        .updateUser(req.getUsername())
+        .setLastForcedLogoutNow()
+        .update();
+      
+     logoutResponse = LogoutResponse
+     .newBuilder()
+     .setAuthenticated(true)
+     .build();
+
+    } catch (AuthenticationException | NoEntityExistsException e) {
+      logoutResponse = LogoutResponse
+        .newBuilder()
+        .setAuthenticated(false)
+        .setErrorMessage(e.getMessage())
+        .build();
     }
+    
     responseObserver.onNext(logoutResponse);
     responseObserver.onCompleted();
   }
 
+  
   public void validateToken(AuthRequest req, StreamObserver<ValidateTokenResponse> responseObserver) {
-    String username = req.getUsername();
-    String token = req.getToken();
-    AuthenticationResult authResult = UserAuthentication.getInstance().authenticateToken(username, token);
+    ValidateTokenResponse validateTokenResponse;
+
+    try {
+      UserAuthentication
+        .getInstance()
+        .authenticateUser(req.getUsername(), req.getToken());
+      
+      validateTokenResponse = ValidateTokenResponse
+        .newBuilder()
+        .setValid(true)
+        .build();
+    
+    } catch (AuthenticationException e) {
+      validateTokenResponse = ValidateTokenResponse
+        .newBuilder()
+        .setValid(false)
+        .build();
+    }
+
+    responseObserver.onNext(validateTokenResponse);
+    responseObserver.onCompleted();
   }
 
 }

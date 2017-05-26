@@ -13,10 +13,10 @@ public class TokenBuilder {
     this.issuer = issuer;
   }
 
-  public String build(String subject, Date expiration) {
+  public String build(String subject, Date issuedAt, Date expiration) {
     return Jwts.builder()
       .setSubject(subject)
-      .setIssuedAt(new Date(System.currentTimeMillis()))
+      .setIssuedAt(issuedAt)
       .setExpiration(expiration)
       .setIssuer(this.issuer)
       .signWith(SignatureAlgorithm.HS512, this.secret)

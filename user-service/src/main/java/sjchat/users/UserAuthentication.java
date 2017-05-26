@@ -5,18 +5,21 @@ import io.jsonwebtoken.Jwts;
 
 import java.lang.Exception;
 import java.util.Date;
-import sjchat.users.tokens.*;
 
 import sjchat.daos.UserDao;
 import sjchat.daos.UserDaoImpl;
 import sjchat.entities.UserEntity;
+import sjchat.exceptions.NoEntityExistsException;
+
+import sjchat.users.exceptions.AuthenticationException;
+import sjchat.users.tokens.*;
 
 public class UserAuthentication {
   private TokenConfig.Configurations config;
   private TokenAuth auth;
   private TokenBuilder builder;
-  private final Date nulldate = new Date(0);
-  private final UserDao dao = new UserDaoImpl();
+  private final Date nulldate;
+  private final UserDao dao;
 
   public void updateConfiguration() {
     TokenConfig.refreshConfiguration();
@@ -29,6 +32,8 @@ public class UserAuthentication {
     this.config = TokenConfig.get();
     this.auth = new TokenAuth(this.config.issuer, this.config.secret);
     this.builder = new TokenBuilder(this.config.issuer, this.config.secret);
+    this.nulldate = new Date(0);
+    this.dao = new UserDaoImpl();
   }
 
 
@@ -41,39 +46,80 @@ public class UserAuthentication {
     private static final UserAuthentication INSTANCE = new UserAuthentication();
   }
 
-  public AuthenticationResult verifyCredentials(String username, String password) {
+  public UserAuthentication checkUserExists(String username, String password) throws AuthenticationException {
     UserEntity user = dao.findByUsername(username);
-    Date expiration = config.getExpiration();
 
     if (user == null)
-      return new AuthenticationResult("User does not exist", false, nulldate, "");
+      throw new AuthenticationException("Bad username");
 
-    if (user.getPassword() == password)
-      return new AuthenticationResult("Authentication successful", true, expiration, this.tokenize(username));
+    if (user.getPassword() != password)
+      throw new AuthenticationException("Bad password");
 
-    return new AuthenticationResult("Wrong Password", false, nulldate, "");
-
+    return this;
   }
 
-  public String tokenize(String username) {
-    return this.builder.build(username, config.getExpiration());
+  public UserAuthentication checkUsernameExists(String username) throws AuthenticationException {
+    UserEntity user = dao.findByUsername(username);
+
+    if (user == null)
+      throw new AuthenticationException("Bad username");
+
+    return this;
   }
 
-  public AuthenticationResult authenticateToken(String username, String serializedToken) {
+  public TokenizationData tokenizeUser(String username) {
+    Date expiration = config.getExpiration();
+    Date issuedAt = new Date(System.currentTimeMillis());
+
+    return new TokenizationData(this.builder.build(username, issuedAt, expiration), issuedAt, expiration);
+  }
+
+
+
+
+  public TokenizationData authenticateUser(String username, String serializedToken) throws AuthenticationException {
     Jws<Claims> token;
+
     try {
       token = this.auth.authenticate(username, serializedToken);
     } catch (Exception e) {
-      return new AuthenticationResult(username
-                                      + " failed to authenticate, reason being:  "
-                                      + e.getMessage(), false, nulldate, "");
+      throw new AuthenticationException(e.getMessage());
     }
 
-    return new AuthenticationResult(token.getBody().getSubject()
-                                    + " Authenticated Successfully "
-                                    + " token expires at "
-                                    + token.getBody().getExpiration().toGMTString(),
-                                    true,
-                                    token.getBody().getIssuedAt(), serializedToken);
+    return new TokenizationData(serializedToken, token.getBody().getIssuedAt(), token.getBody().getExpiration());
+
+  }
+
+  public UserUpdater updateUser(String username) throws NoEntityExistsException {
+    return new UserUpdater(dao.findByUsername(username), dao);
+  }
+
+
+  static class UserUpdater {
+  
+    public final UserEntity user;
+    private final UserDao dao;
+
+    public UserUpdater(UserEntity user, UserDao dao) {
+      this.user = user;
+      this.dao = dao;
+    }
+
+    public UserUpdater setLastForcedLogout(Date date) {
+      this.user.setLastForcedLogout(date);
+
+      return this;
+    }
+
+    public UserUpdater setLastForcedLogoutNow() {
+      this.user.setLastForcedLogout(new Date(System.currentTimeMillis()));
+      
+      return this;
+    }
+
+
+    public void update() throws NoEntityExistsException {
+      dao.update(this.user);
+    }
   }
 }
