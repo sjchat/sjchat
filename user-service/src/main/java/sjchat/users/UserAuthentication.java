@@ -2,10 +2,8 @@ package sjchat.users;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
-
 import java.lang.Exception;
 import java.util.Date;
-
 import sjchat.daos.UserDao;
 import sjchat.daos.UserDaoImpl;
 import sjchat.entities.UserEntity;
