@@ -1,5 +1,6 @@
 package sjchat.users;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
@@ -9,7 +10,10 @@ import sjchat.daos.UserDao;
 import sjchat.daos.UserDaoImpl;
 import sjchat.entities.UserEntity;
 import sjchat.users.exceptions.UserAlreadyExistsException;
+import sjchat.users.UserAuthentication;
+import sjchat.users.exceptions.AuthenticationException;
 
+import sjchat.exceptions.NoEntityExistsException;
 import javax.persistence.EntityExistsException;
 import javax.persistence.PersistenceException;
 
@@ -18,8 +22,8 @@ class UserService extends UserServiceGrpc.UserServiceImplBase {
 
   @Override
   public void createUser(CreateUserRequest req, StreamObserver<CreateUserResponse> responseObserver) {
+    
     UserEntity entity = new UserEntity(null, req.getUsername());
-
     if(dao.findByUsername(entity.getUsername()) != null){
       responseObserver.onError(new UserAlreadyExistsException());
       responseObserver.onCompleted();
@@ -28,11 +32,10 @@ class UserService extends UserServiceGrpc.UserServiceImplBase {
 
     dao.create(entity);
 
-
     User.Builder userBuilder = fromUserEntity(entity);
 
-    CreateUserResponse userResponse = CreateUserResponse.newBuilder().setUser(userBuilder).build();
-
+    CreateUserResponse userResponse = CreateUserResponse.newBuilder().setUser(userBuilder.build()).build();
+    
     responseObserver.onNext(userResponse);
     responseObserver.onCompleted();
   }
@@ -74,6 +77,7 @@ class UserService extends UserServiceGrpc.UserServiceImplBase {
     responseObserver.onCompleted();
   }
 
+  //What's this supposed to do?
   @Override
   public void updateUser(UpdateUserRequest req, StreamObserver<UpdateUserResponse> responseObserver) {
 
@@ -86,4 +90,86 @@ class UserService extends UserServiceGrpc.UserServiceImplBase {
     responseObserver.onNext(userResponse);
     responseObserver.onCompleted();
   }
+
+  public void loginUserPassword(LoginRequest req, StreamObserver<LoginResponse> responseObserver) {
+    LoginResponse loginResponse;
+
+    try {
+      loginResponse = LoginResponse
+        .newBuilder()
+        .setAuthenticated(true)
+        .setToken(UserAuthentication
+        .getInstance()
+        .checkUserExists(req.getUsername(), req.getPassword())
+        .tokenizeUser(req.getUsername()).token)
+        .build();
+
+    } catch (AuthenticationException e) {
+      loginResponse = LoginResponse
+        .newBuilder()
+        .setAuthenticated(false)
+        .setErrorMessage(e.getMessage())
+        .build();
+    }
+
+    responseObserver.onNext(loginResponse);
+    responseObserver.onCompleted();
+  }
+
+  public void logout (AuthRequest req, StreamObserver<LogoutResponse> responseObserver) {
+    LogoutResponse logoutResponse;
+    try {
+      UserAuthentication
+        .getInstance()
+        .checkUsernameExists(req.getUsername())
+        .authenticateUser(req.getUsername(), req.getToken());
+
+      UserAuthentication
+        .getInstance()
+        .updateUser(req.getUsername())
+        .setLastForcedLogoutNow()
+        .update();
+      
+     logoutResponse = LogoutResponse
+     .newBuilder()
+     .setAuthenticated(true)
+     .build();
+
+    } catch (AuthenticationException | NoEntityExistsException e) {
+      logoutResponse = LogoutResponse
+        .newBuilder()
+        .setAuthenticated(false)
+        .setErrorMessage(e.getMessage())
+        .build();
+    }
+    
+    responseObserver.onNext(logoutResponse);
+    responseObserver.onCompleted();
+  }
+
+  
+  public void validateToken(AuthRequest req, StreamObserver<ValidateTokenResponse> responseObserver) {
+    ValidateTokenResponse validateTokenResponse;
+
+    try {
+      UserAuthentication
+        .getInstance()
+        .authenticateUser(req.getUsername(), req.getToken());
+      
+      validateTokenResponse = ValidateTokenResponse
+        .newBuilder()
+        .setValid(true)
+        .build();
+    
+    } catch (AuthenticationException e) {
+      validateTokenResponse = ValidateTokenResponse
+        .newBuilder()
+        .setValid(false)
+        .build();
+    }
+
+    responseObserver.onNext(validateTokenResponse);
+    responseObserver.onCompleted();
+  }
+
 }

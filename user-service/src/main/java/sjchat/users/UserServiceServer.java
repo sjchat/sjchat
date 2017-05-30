@@ -1,12 +1,52 @@
+
 package sjchat.users;
 
-import sjchat.general.GRPCServer;
+import java.io.IOException;
+import java.util.Random;
+
+import io.grpc.Server;
+import io.grpc.ServerBuilder;
+import io.grpc.stub.StreamObserver;
 
 public class UserServiceServer {
-  private static final int port = 50051;
+  private Server server;
+  private final int port;
 
   public static void main(String[] args) throws Exception {
-    GRPCServer userServiceServer = new GRPCServer(new UserService(), port);
+    UserServiceServer userServiceServer = new UserServiceServer(UserServerConfig.getPort());
     userServiceServer.start();
+    userServiceServer.blockUntilShutdown();
+  }
+
+  public UserServiceServer(int port) {
+    this.port = port;
+  }
+
+  private void start() throws IOException {
+    this.server = ServerBuilder.forPort(port).addService(new UserService()).build().start();
+    System.out.println("Server started, listening on " + port);
+    Runtime.getRuntime().addShutdownHook(new Thread() {
+      @Override
+      public void run() {
+        System.err.println("*** shutting down gRPC server since JVM is shutting down");
+        UserServiceServer.this.stop();
+        System.err.println("*** server shut down");
+      }
+    });
+  }
+
+  private void stop() {
+    if (this.server != null) {
+      this.server.shutdown();
+    }
+  }
+
+  /**
+   * Await termination on the main thread since the grpc library uses daemon threads.
+   */
+  private void blockUntilShutdown() throws InterruptedException {
+    if (this.server != null) {
+      this.server.awaitTermination();
+    }
   }
 }

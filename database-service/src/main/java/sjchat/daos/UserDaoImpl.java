@@ -31,4 +31,5 @@ public class UserDaoImpl extends DaoImpl implements UserDao {
   public UserEntity find(String id){
     return super.find(UserEntity.class, id);
   }
+
 }
