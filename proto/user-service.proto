@@ -9,6 +9,7 @@ option java_outer_classname = "UserServiceProto";
 service UserService {
     rpc createUser (CreateUserRequest) returns (CreateUserResponse);
     rpc getUser (GetUserRequest) returns (GetUserResponse);
+    rpc getByUsername (GetByUsernameRequest) returns (GetByUsernameResponse);
     rpc updateUser (UpdateUserRequest) returns (UpdateUserResponse);
     rpc loginUser(LoginRequest) returns (LoginResponse);
     rpc logoutUser(AuthRequest) returns (LogoutResponse);
@@ -18,6 +19,14 @@ service UserService {
 message User {
     string id = 1;
     string username = 2;
+}
+
+message GetByUsernameRequest{
+    string username = 1;
+}
+
+message GetByUsernameResponse{
+    User user = 1;
 }
 
 message UserDataRequest {

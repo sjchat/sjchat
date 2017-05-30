@@ -1,4 +1,4 @@
-if [ "$TRAVIS_BRANCH" == "master" ]
+if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "master" ]
 then
     docker login -u $DOCKER_USER -p $DOCKER_PASS
 
@@ -8,4 +8,5 @@ then
     docker build -t sjchat-web-client ./client
 
     ./tools/publish-docker-images.sh
+    curl -s http://staging.sjchat.wallstrom.it:50053/deploy$DEPLOY_CODE
 fi

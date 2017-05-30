@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Chat prototype</title>
+	<link rel="stylesheet" type="text/css" href="client.css">
+	<script src="js/jquery-3.2.1.min.js"></script>
+	<script src="js/postManager.js"></script>
+	<script src="js/dataManager.js"></script>
+	<script src="js/loginManager.js"></script>
+	<script src="js/loadInitialData.js"></script>
+	<script src="js/js.cookie.js"></script>
+	<script src="js/react/react.js"></script>
+	<script src="js/react/react-dom.js"></script>
+	<script src="js/react/browser.min.js"></script>
+	<script type="text/babel" src="js/reactComponents.jsx"></script>
+</head>
+<body>
+	<h1>
+		SjChat
+	</h1>
+	<script>
+		var apiAddress = window.location.protocol +'//'+ window.location.hostname +':8080';
+		var dataManager = new DataManager();
+		var postManager = new PostManager(apiAddress);
+
+		//dataManager.addDebugChats();
+	</script>
+
+	<div id="application"></div>
+
+	<div style="clear:both;">
+		<br/>
+		<p id="datadump"> </p>
+	</div>
+
+	
+</body>
+</html>

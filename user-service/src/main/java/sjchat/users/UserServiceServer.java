@@ -1,3 +1,4 @@
+
 package sjchat.users;
 
 import java.io.IOException;
@@ -22,7 +23,7 @@ public class UserServiceServer {
   }
 
   private void start() throws IOException {
-    server = ServerBuilder.forPort(port).addService(new UserService()).build().start();
+    this.server = ServerBuilder.forPort(port).addService(new UserService()).build().start();
     System.out.println("Server started, listening on " + port);
     Runtime.getRuntime().addShutdownHook(new Thread() {
       @Override
@@ -35,8 +36,8 @@ public class UserServiceServer {
   }
 
   private void stop() {
-    if (server != null) {
-      server.shutdown();
+    if (this.server != null) {
+      this.server.shutdown();
     }
   }
 
@@ -44,8 +45,8 @@ public class UserServiceServer {
    * Await termination on the main thread since the grpc library uses daemon threads.
    */
   private void blockUntilShutdown() throws InterruptedException {
-    if (server != null) {
-      server.awaitTermination();
+    if (this.server != null) {
+      this.server.awaitTermination();
     }
   }
 }

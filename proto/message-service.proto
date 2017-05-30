@@ -61,6 +61,8 @@ message GetMessagesResponse {
 
 message SendMessageRequest {
     string message = 1;
+    string chatId = 2;
+    string sender = 3;
 }
 
 message SendMessageResponse {
@@ -77,4 +79,6 @@ message Message {
     string id = 1;
     string message = 2;
     string sender = 3;
+    string chat = 4;
+    int64 createdAt = 5;
 }

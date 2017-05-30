@@ -1,6 +1,7 @@
-# sjchat
+# SjChat [![Build Status](https://travis-ci.org/sjchat/sjchat.svg?branch=master)](https://travis-ci.org/sjchat/sjchat)
 
-[![Build Status](https://travis-ci.org/sjchat/sjchat.svg?branch=master)](https://travis-ci.org/sjchat/sjchat)
+[![SjChat](graphic/logo-300w.png?raw=true)](http://staging.sjchat.wallstrom.it:8082)
+
 
 
 ## General
@@ -37,17 +38,23 @@ You need both **maven** and **docker** to compile and run the project.
 3. You can now access the services via `localhost:8080` etc.
 4. If you want to stop developing and waste your time on other schoolwork, run `docker stack rm sjchat`.
 
-### Pushing to staging/dev
+### Manually pushing to staging/dev
 
 1. Build with `sh build.sh`
-2. Upload all images to the public docker hub with `sh tools/publish-docker-images.sh` (You will need to join the organsiation sjchat on docker hub to get access)
-3. Upload the latest docker-compose file to the manager server with `docker-machine scp docker-compose-staging.yaml sjchat-staging-mgr1:~`
+2. Upload all images to the public docker hub with `sh tools/publish-docker-images.sh` (You will need to join the organisation sjchat on docker hub to get access)
+3. Upload the latest docker-compose file to the manager server with `docker-machine scp docker-compose-staging.yaml sjchat-staging-mgr1:~` or `gcloud compute copy-files docker-compose-staging.yaml sjchat-staging-mgr1:/home/docker-user/`
 4. SSH to the manager server in the docker swarm and run 
 ```
 docker-machine ssh sjchat-staging-mgr1 "sudo docker stack deploy -c docker-compose-staging.yaml sjchat"
 ```
-
 This command probably create some downtime.
+
+### Updating staging deployment script
+1. Upload scripts to server with `gcloud compute copy-files tools/deploy-service.py tools/deploy-script.sh tools/start-deploy-service.sh root@sjchat-staging-mgr1:/home/docker-user/auto-deploy/`. Select zone 10 (europe-west-c)
+2. SSH in with `gcloud compute ssh sjchat-staging-mgr1`
+3. Move to correct folder with `cd /home/docker-user/auto-deploy/`
+4. Kill the old script with `sudo` and `jobs`/`ps -e`/`kill`
+5. Start the new script with `sudo sh run-deploy-service.sh`
 
 ### It doesn't work! :c
 

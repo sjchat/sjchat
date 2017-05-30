@@ -1,5 +1,16 @@
 version: "3"
 services:
+ queue:
+    image: rabbitmq:3.6.9
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
+    ports:
+      - "5672:5672"
+    networks:
+      - webnet
+
   restapi:
     image: sjchat/sjchat-restapi
     deploy:
@@ -13,9 +24,12 @@ services:
         max_attempts: 3
     ports:
       - "8080:8080"
+    logging:
+      driver: gcplogs
     networks:
       - webnet
     depends_on:
+      - queue
       - message-service
       - user-service
 
@@ -32,8 +46,14 @@ services:
         max_attempts: 3
     ports:
       - "50052:50052"
+    logging:
+      driver: gcplogs
     networks:
       - webnet
+    depends_on:
+      - database
+      - user-service
+      - queue
 
   database:
     image: mongo:3.4.4
@@ -43,6 +63,8 @@ services:
         constraints: [node.role == manager]
     ports:
       - "27017:27017"
+    logging:
+      driver: gcplogs
     networks:
       - webnet
 
@@ -59,13 +81,19 @@ services:
         max_attempts: 3
     ports:
       - "50051:50051"
+    logging:
+      driver: gcplogs
     networks:
       - webnet
+    depends_on:
+      - database
 
   web-client:
     image: sjchat/sjchat-web-client
     ports:
       - "8082:80"
+    logging:
+      driver: gcplogs
     networks:
       - webnet
 

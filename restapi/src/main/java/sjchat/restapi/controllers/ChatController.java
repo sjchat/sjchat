@@ -1,5 +1,6 @@
 package sjchat.restapi.controllers;
 
+import io.grpc.StatusRuntimeException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,13 +32,8 @@ import sjchat.restapi.entities.Chat;
 import sjchat.restapi.entities.ChatRequest;
 import sjchat.restapi.entities.Message;
 import sjchat.restapi.entities.User;
-import sjchat.users.CreateUserRequest;
-import sjchat.users.CreateUserResponse;
-import sjchat.users.GetUserRequest;
-import sjchat.users.GetUserResponse;
-import sjchat.users.UpdateUserRequest;
-import sjchat.users.UpdateUserResponse;
-import sjchat.users.UserServiceGrpc;
+import sjchat.users.*;
+import sjchat.users.exceptions.UserAlreadyExistsException;
 
 @RestController
 public class ChatController {
@@ -82,7 +78,7 @@ public class ChatController {
     message.setId(responseMessage.getId());
     message.setMessage(responseMessage.getMessage());
     message.setUser(responseMessage.getSender());
-
+    message.setCreatedAt(responseMessage.getCreatedAt());
     return message;
   }
 
@@ -92,6 +88,19 @@ public class ChatController {
     user.setUsername(responseUser.getUsername());
 
     return user;
+  }
+
+  @RequestMapping(
+          value="user/get/{username}",
+          method=RequestMethod.GET,
+          produces = "application/json"
+  )
+  @ResponseBody
+  public ResponseEntity<User> getUserByUsername(@PathVariable(name = "username") String username){
+    final UserServiceGrpc.UserServiceBlockingStub service = UserServiceGrpc.newBlockingStub(userServiceChannel);
+    //service.getUser(GetUserRequest.newBuilder().set)
+    GetByUsernameResponse response = service.getByUsername(GetByUsernameRequest.newBuilder().setUsername(username).build());
+    return new ResponseEntity<User>(buildUserFromResponse(response.getUser()), HttpStatus.OK);
   }
 
   @RequestMapping(
@@ -201,7 +210,7 @@ public class ChatController {
     final MessageServiceGrpc.MessageServiceBlockingStub blockingStub = MessageServiceGrpc.newBlockingStub(messageServiceChannel);
 
     SendMessageRequest.Builder messageRequestBuilder = SendMessageRequest.newBuilder();
-    messageRequestBuilder.setMessage(messageRequest.getMessage());
+    messageRequestBuilder.setMessage(messageRequest.getMessage()).setChatId(chatId).setSender(messageRequest.getSender());
 
     SendMessageResponse response = blockingStub.sendMessage(messageRequestBuilder.build());
     sjchat.messages.Message responseMessage = response.getMessage();
@@ -209,21 +218,27 @@ public class ChatController {
 
     return new ResponseEntity<>(message, HttpStatus.OK);
   }
-  
+
   @RequestMapping(
           value = "/user",
           method = RequestMethod.POST,
           produces = "application/json",
           consumes = "application/json")
   @ResponseBody
-  public ResponseEntity<User> createUser(@RequestBody User userRequest) {
+  public ResponseEntity<User> createUser(@RequestBody User userRequest) throws UserAlreadyExistsException{
     final UserServiceGrpc.UserServiceBlockingStub blockingStub = UserServiceGrpc.newBlockingStub(userServiceChannel);
 
     CreateUserRequest.Builder userDataRequestBuilder = CreateUserRequest.newBuilder();
     userDataRequestBuilder.setUsername(userRequest.getUsername());
 
-    CreateUserResponse response = blockingStub.createUser(userDataRequestBuilder.build());
+    CreateUserResponse response;
+    try{
+      response = blockingStub.createUser(userDataRequestBuilder.build());
+    }catch(StatusRuntimeException e){
+      throw new UserAlreadyExistsException();
+    }
     sjchat.users.User responseUser = response.getUser();
+
     User user = buildUserFromResponse(responseUser);
 
     return new ResponseEntity<>(user, HttpStatus.CREATED);

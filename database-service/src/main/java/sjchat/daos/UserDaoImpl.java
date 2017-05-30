@@ -2,6 +2,8 @@ package sjchat.daos;
 
 import sjchat.entities.UserEntity;
 
+import javax.persistence.EntityTransaction;
+import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 import java.util.List;
 
