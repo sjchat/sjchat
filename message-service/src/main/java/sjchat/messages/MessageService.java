@@ -21,8 +21,6 @@ import sjchat.queue.producer.MessageProducer;
 import sjchat.users.GetUserRequest;
 import sjchat.users.UserServiceGrpc;
 
-import javax.ejb.NoSuchEntityException;
-
 class MessageService extends MessageServiceGrpc.MessageServiceImplBase {
   MessageDao messageDao = new MessageDaoImpl();
   ChatDao chatDao = new ChatDaoImpl();
