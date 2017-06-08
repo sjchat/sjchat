@@ -14,11 +14,10 @@ public class TokenAuth {
     this.secret = secret;
   }
 
-  public Jws<Claims> authenticate(String username, String jws) {
+  public Jws<Claims> authenticate(String jws) {
     return Jwts.parser()
       .requireIssuer(this.issuer)
       .setSigningKey(this.secret)
-      .requireSubject(username)
       .parseClaimsJws(jws);
 
   }

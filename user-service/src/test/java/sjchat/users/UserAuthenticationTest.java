@@ -20,7 +20,7 @@ public class UserAuthenticationTest {
       String token = tokenbuilder.build(username, new Date(System.currentTimeMillis()), config.getExpiration());
 
       try {
-        assertNotNull(tokenauth.authenticate(username, token));
+        assertNotNull(tokenauth.authenticate(token));
       } catch (Exception e) {
         assertTrue(false);
       }

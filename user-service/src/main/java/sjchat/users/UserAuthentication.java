@@ -72,22 +72,22 @@ public class UserAuthentication {
     Date expiration = config.getExpiration();
     Date issuedAt = new Date(System.currentTimeMillis());
 
-    return new TokenizationData(this.builder.build(username, issuedAt, expiration), issuedAt, expiration);
+    return new TokenizationData(this.builder.build(username, issuedAt, expiration), username, issuedAt, expiration);
   }
 
 
 
 
-  public TokenizationData authenticateUser(String username, String serializedToken) throws AuthenticationException {
+  public TokenizationData authenticateUser(String serializedToken) throws AuthenticationException {
     Jws<Claims> token;
 
     try {
-      token = this.auth.authenticate(username, serializedToken);
+      token = this.auth.authenticate(serializedToken);
     } catch (Exception e) {
       throw new AuthenticationException(e.getMessage());
     }
 
-    return new TokenizationData(serializedToken, token.getBody().getIssuedAt(), token.getBody().getExpiration());
+    return new TokenizationData(serializedToken, token.getBody().getSubject(), token.getBody().getIssuedAt(), token.getBody().getExpiration());
 
   }
 

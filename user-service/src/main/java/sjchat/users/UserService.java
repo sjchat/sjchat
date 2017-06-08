@@ -119,14 +119,14 @@ class UserService extends UserServiceGrpc.UserServiceImplBase {
   public void logout (AuthRequest req, StreamObserver<LogoutResponse> responseObserver) {
     LogoutResponse logoutResponse;
     try {
-      UserAuthentication
-        .getInstance()
-        .checkUsernameExists(req.getUsername())
-        .authenticateUser(req.getUsername(), req.getToken());
 
       UserAuthentication
         .getInstance()
-        .updateUser(req.getUsername())
+        .updateUser(
+            UserAuthentication
+            .getInstance()
+            .authenticateUser(req.getToken()).username
+            )
         .setLastForcedLogoutNow()
         .update();
       
@@ -154,7 +154,7 @@ class UserService extends UserServiceGrpc.UserServiceImplBase {
     try {
       UserAuthentication
         .getInstance()
-        .authenticateUser(req.getUsername(), req.getToken());
+        .authenticateUser(req.getToken());
       
       validateTokenResponse = ValidateTokenResponse
         .newBuilder()
