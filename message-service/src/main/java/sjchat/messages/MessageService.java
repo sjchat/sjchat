@@ -1,5 +1,6 @@
 package sjchat.messages;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -19,6 +20,8 @@ import sjchat.queue.QueueException;
 import sjchat.queue.producer.MessageProducer;
 import sjchat.users.GetUserRequest;
 import sjchat.users.UserServiceGrpc;
+
+import javax.ejb.NoSuchEntityException;
 
 class MessageService extends MessageServiceGrpc.MessageServiceImplBase {
   MessageDao messageDao = new MessageDaoImpl();
@@ -171,6 +174,12 @@ class MessageService extends MessageServiceGrpc.MessageServiceImplBase {
 
   @Override
   public void sendMessage(SendMessageRequest req, StreamObserver<SendMessageResponse> responseObserver) {
+    try{
+      addParticipant(req.getChatId(), req.getSender());
+    }catch(NoEntityExistsException e){
+      responseObserver.onError(new Exception("No chat with that id exists"));
+      return;
+    }
 
     MessageEntity entity = new MessageEntity(null, req.getChatId(), req.getMessage(), req.getSender(), System.currentTimeMillis());
     messageDao.create(entity);
@@ -189,6 +198,21 @@ class MessageService extends MessageServiceGrpc.MessageServiceImplBase {
     }
 
     responseObserver.onCompleted();
+  }
+
+  private void addParticipant(String chatId, String participantId) throws NoEntityExistsException{
+    ChatEntity entity = chatDao.find(chatId);
+    List<String> participants = new ArrayList<String>();
+    participants.addAll(entity.getParticipants());
+    if(participants.indexOf(participantId) != -1){
+      return;
+    }
+    participants.add(participantId);
+    entity = new ChatEntity.Builder()
+            .setId(entity.getId())
+            .setTitle(entity.getTitle())
+            .setParticipants(participants).build();
+    chatDao.update(entity);
   }
 
   public Message messageFromMessageEntity(MessageEntity entity){
