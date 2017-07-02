@@ -14,8 +14,13 @@ import javax.persistence.EntityExistsException;
 import javax.persistence.PersistenceException;
 
 class UserService extends UserServiceGrpc.UserServiceImplBase {
-  UserDao dao = new UserDaoImpl();
-
+  UserDao dao;
+  public UserService(UserDao dao){
+    this.dao = dao;
+  }
+  public UserService(){
+    dao = new UserDaoImpl();
+  }
   @Override
   public void createUser(CreateUserRequest req, StreamObserver<CreateUserResponse> responseObserver) {
     UserEntity entity = new UserEntity(null, req.getUsername());
@@ -64,6 +69,10 @@ class UserService extends UserServiceGrpc.UserServiceImplBase {
   @Override
   public void getUser(GetUserRequest req, StreamObserver<GetUserResponse> responseObserver) {
     UserEntity entity = dao.find(req.getId());
+    if(entity == null){
+      responseObserver.onError(new Exception("User does not exist"));
+      return;
+    }
     User.Builder userBuilder = User.newBuilder();
     userBuilder.setId(entity.getId());
     userBuilder.setUsername(entity.getUsername());
